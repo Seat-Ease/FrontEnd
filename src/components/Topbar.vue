@@ -5,16 +5,10 @@
       <font-awesome-icon class="chevronDown" :icon="['fas', 'angle-down']" />
     </div>
     <div class="dateContainer">
-      <button class="forwardDate">
-        <font-awesome-icon :icon="['fas', 'chevron-left']" />
-      </button>
-      <button class="calendar">
-        <font-awesome-icon :icon="['fas', 'calendar']" />
-      </button>
+      <font-awesome-icon class="backwardDate" :icon="['fas', 'chevron-left']" />
+      <font-awesome-icon class="calendar" :icon="['fas', 'calendar']" />
       <p class="date">Thu, 13 Jan</p>
-      <button class="backwardDate">
-        <font-awesome-icon :icon="['fas', 'angle-right']" />
-      </button>
+      <font-awesome-icon class="forwardDate" :icon="['fas', 'chevron-right']" />
     </div>
   </div>
 </template>
@@ -24,7 +18,8 @@
   display: grid;
   grid-template-columns: 1fr 1.3fr;
   padding: 1rem 2rem;
-  background-color: #255f38;
+  background-color: #121123dd;
+  border-bottom: 0.1rem solid #222041;
 }
 .nameContainer,
 .dateContainer {
@@ -45,11 +40,9 @@
   font-size: 1.8rem;
   color: #fff;
 }
-.dateContainer > button {
-  background-color: #255f38;
-  border: none;
-  color: inherit;
-  font-size: inherit;
+.forwardDate,
+.calendar,
+.backwardDate {
   cursor: pointer;
 }
 </style>
