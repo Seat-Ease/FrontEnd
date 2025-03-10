@@ -2,6 +2,7 @@
 import Topbar from '@/components/Topbar.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import ReservationPanel from '@/components/ReservationPanel.vue'
+import FloorPanel from '@/components/FloorPanel.vue'
 </script>
 
 <template>
@@ -10,7 +11,7 @@ import ReservationPanel from '@/components/ReservationPanel.vue'
     <div class="mainContainer">
       <Sidebar />
       <ReservationPanel />
-      <div class="floorPlanPanel"></div>
+      <FloorPanel />
     </div>
   </main>
 </template>
