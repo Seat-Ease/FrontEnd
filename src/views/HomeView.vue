@@ -4,18 +4,25 @@ import Sidebar from '@/components/Sidebar.vue'
 import ReservationPanel from '@/components/ReservationPanel.vue'
 import FloorPanel from '@/components/FloorPanel.vue'
 import FloorSettingPanel from '@/components/FloorSettingPanel.vue'
+import { mainStore } from '@/stores/mainStore'
+import { computed } from 'vue'
+
+const store = mainStore()
+const editingFloorPlan = computed(() => store.floorSettingPanelShowing)
 </script>
 
 <template>
   <main>
     <Topbar />
     <div class="mainContainer">
-      <FloorSettingPanel />
-      <!-- <div class="homePanelContainer">
+      <div class="floorSettingPanelContainer" v-if="editingFloorPlan">
+        <FloorSettingPanel />
+      </div>
+      <div v-else class="homePanelContainer">
         <Sidebar />
         <ReservationPanel />
         <FloorPanel />
-      </div> -->
+      </div>
     </div>
   </main>
 </template>
@@ -52,6 +59,11 @@ main {
   display: grid;
   grid-template-columns: 0.65fr 2fr 6fr;
   width: 100%;
+  max-height: 100vh;
+}
+.floorSettingPanelContainer {
+  width: 100%;
+  height: 100%;
   max-height: 100vh;
 }
 </style>

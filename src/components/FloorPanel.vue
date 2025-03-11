@@ -1,3 +1,9 @@
+<script setup>
+import { mainStore } from '@/stores/mainStore'
+
+const main_store = mainStore()
+</script>
+
 <template>
   <div class="floorPlanPanel">
     <div class="topBarFloorPanel">
@@ -7,7 +13,7 @@
         <p class="room">Salle VIP</p>
       </div>
       <div class="modification">
-        <p>Modifier le plan</p>
+        <p @click="main_store.floorSettingPanelShowing = true">Modifier le plan</p>
       </div>
     </div>
     <div class="floorContainer"></div>

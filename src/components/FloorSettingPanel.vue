@@ -1,7 +1,7 @@
 <template>
   <div class="floorSettingContainer">
     <div class="topBar">
-      <button class="closeBtn">Fermer</button>
+      <button @click="main_store.floorSettingPanelShowing = false" class="closeBtn">Fermer</button>
       <p class="title">CONFIGURATIONS DU PLAN</p>
       <button class="saveBtn">Enregistrer</button>
     </div>
@@ -69,6 +69,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { floorStore } from '@/stores/floorStore'
+import { mainStore } from '@/stores/mainStore'
+
+const main_store = mainStore()
 
 const roomNameInput = ref('')
 const editingActivated = ref(false)
