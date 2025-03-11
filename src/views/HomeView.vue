@@ -3,15 +3,19 @@ import Topbar from '@/components/Topbar.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import ReservationPanel from '@/components/ReservationPanel.vue'
 import FloorPanel from '@/components/FloorPanel.vue'
+import FloorSettingPanel from '@/components/FloorSettingPanel.vue'
 </script>
 
 <template>
   <main>
     <Topbar />
     <div class="mainContainer">
-      <Sidebar />
-      <ReservationPanel />
-      <FloorPanel />
+      <FloorSettingPanel />
+      <!-- <div class="homePanelContainer">
+        <Sidebar />
+        <ReservationPanel />
+        <FloorPanel />
+      </div> -->
     </div>
   </main>
 </template>
@@ -40,10 +44,14 @@ main {
   max-height: 100vh;
 }
 .mainContainer {
-  display: grid;
-  width: 100%;
-  grid-template-columns: 0.65fr 2fr 6fr;
+  height: 100%;
   max-height: 100vh;
   flex: 1;
+}
+.homePanelContainer {
+  display: grid;
+  grid-template-columns: 0.65fr 2fr 6fr;
+  width: 100%;
+  max-height: 100vh;
 }
 </style>

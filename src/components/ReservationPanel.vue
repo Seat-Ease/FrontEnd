@@ -37,7 +37,7 @@ import ReservationShower from './ReservationShower.vue'
     </div>
   </div>
 </template>
-<style>
+<style scoped>
 .reservationPanel {
   border-right: 0.1rem solid rgb(207, 207, 207);
   display: flex;
@@ -60,8 +60,6 @@ import ReservationShower from './ReservationShower.vue'
 .active {
   color: #252189;
   font-weight: bold;
-  text-decoration: underline;
-  text-decoration-color: #252189;
 }
 .searchSection {
   display: flex;

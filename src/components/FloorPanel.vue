@@ -36,8 +36,6 @@
 .activeRoom {
   color: #252189;
   font-weight: bold;
-  text-decoration: underline;
-  text-decoration-color: #252189;
 }
 .modification {
   border-left: 0.1rem solid rgb(230, 230, 230);
