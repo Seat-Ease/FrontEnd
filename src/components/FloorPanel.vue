@@ -1,16 +1,27 @@
 <script setup>
 import { mainStore } from '@/stores/mainStore'
+import { floorStore } from '@/stores/floorStore'
+import { ref, computed } from 'vue'
 
 const main_store = mainStore()
+const floor_store = floorStore()
+const rooms = computed(() => floor_store.getRoomsList())
+const selectedRoomId = ref('')
 </script>
 
 <template>
   <div class="floorPlanPanel">
     <div class="topBarFloorPanel">
       <div class="roomsList">
-        <p class="room activeRoom">Salle Principale</p>
-        <p class="room">Terrasse</p>
-        <p class="room">Salle VIP</p>
+        <p
+          @click="selectedRoomId = room.id"
+          :class="{ selectedRoom: selectedRoomId === room.id }"
+          v-for="room in rooms"
+          :ref="room.id"
+          :id="room.id"
+        >
+          {{ room.name }}
+        </p>
       </div>
       <div class="modification">
         <p @click="main_store.floorSettingPanelShowing = true">Modifier le plan</p>
@@ -31,7 +42,7 @@ const main_store = mainStore()
   border-bottom: 0.1rem solid rgb(230, 230, 230);
   font-size: 1.2rem;
 }
-.room {
+.roomsList > p {
   cursor: pointer;
 }
 .roomsList {
@@ -39,7 +50,7 @@ const main_store = mainStore()
   gap: 4rem;
   padding-left: 1rem;
 }
-.activeRoom {
+.selectedRoom {
   color: #252189;
   font-weight: bold;
 }
