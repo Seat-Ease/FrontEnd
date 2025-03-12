@@ -10,16 +10,14 @@ export const floorStore = defineStore('floorStore', () => {
     return roomsList.value
   }
   const deleteRoom = (room_id) => {
-    console.log('before', roomsList.value)
-    roomsList.value = roomsList.value.filter((room) => room.id !== room_id)
-    console.log('after', roomsList.value)
+    roomsList.value = roomsList.value.filter((room) => room.id !== Number(room_id))
   }
-  const updateRoom = (roomObj) => {
-    const index = roomsList.value.findIndex((item) => item.id === roomObj.id)
+  const updateRoomName = (roomObj) => {
+    const index = roomsList.value.findIndex((item) => String(item.id) === String(roomObj.id))
     if (index !== -1) {
       roomsList.value[index].name = roomObj.name
     }
   }
 
-  return { updateRoomsList, getRoomsList, updateRoom, deleteRoom }
+  return { updateRoomsList, getRoomsList, updateRoomName, deleteRoom }
 })

@@ -116,14 +116,14 @@ const handleRoomCreation = async (e) => {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
   if (editingActivated.value === true) {
-    floor_store.updateRoom({ id: selectedRoomId.value, name: roomNameInput.value })
+    floor_store.updateRoomName({ id: selectedRoomId.value, name: roomNameInput.value })
     selectedRoomId.value = ''
     editingActivated.value = false
   } else {
     const newRoom = { id: Math.random(), name: roomNameInput.value, tables: [] }
     floor_store.updateRoomsList(newRoom)
     const stage = stageRef.value.getNode().children
-    if (selectedRoomId.value) {
+    if (selectedRoomId.value !== '') {
       const roomToHide = stage.find((room) => room.attrs.id === String(selectedRoomId.value))
       roomToHide.visible(false)
     }
@@ -151,10 +151,14 @@ const handleRoomSelection = (e) => {
 const handleRoomDeletion = (e) => {
   e.preventDefault()
   floor_store.deleteRoom(selectedRoomId.value)
+  const stage = stageRef.value.getNode().children
+  const roomToDelete = stage.find((room) => room.attrs.id === selectedRoomId.value)
+  roomToDelete.destroy()
+  selectedRoomId.value = ''
 }
 const activateEditing = () => {
   editingActivated.value = true
-  const room = rooms.find((item) => item.id === selectedRoomId.value)
+  const room = rooms.value.find((item) => String(item.id) === String(selectedRoomId.value))
   roomNameInput.value = room.name
 }
 onMounted(() => {
