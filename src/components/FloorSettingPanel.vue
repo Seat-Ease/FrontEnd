@@ -31,17 +31,17 @@
             <p class="detailLocalTitle">Ajouter une table</p>
             <div>
               <label for="tableName">Nom/Numéro de la table</label>
-              <input name="tableName" type="text" class="tableName" />
+              <input v-model="tableNameInput" name="tableName" type="text" class="tableName" />
             </div>
             <div>
               <label for="minCovers">Couvert minimal</label>
-              <input name="minCovers" type="text" class="minCovers" />
+              <input v-model="tableMinCoverInput" name="minCovers" type="text" class="minCovers" />
             </div>
             <div>
               <label for="maxCovers">Couvert maximal</label>
-              <input name="maxCovers" type="text" class="maxCovers" />
+              <input v-model="tableMaxCoverInput" name="maxCovers" type="text" class="maxCovers" />
             </div>
-            <button class="addTableBtn">Ajouter la table</button>
+            <button @click="handleTableCreation" class="addTableBtn">Ajouter la table</button>
           </form>
         </div>
       </div>
@@ -90,20 +90,8 @@ const stageConfig = reactive({
 const addLayer = async (room) => {
   await nextTick()
   if (!stageRef.value) return
-
   const stage = stageRef.value.getNode()
   const layer = new Konva.Layer({ id: String(room.id), opacity: 1, visible: true })
-
-  const simpleText = new Konva.Text({
-    x: stage.width() / 2,
-    y: 15,
-    text: room.name,
-    fontSize: 30,
-    fontFamily: 'Calibri',
-    fill: 'green',
-  })
-
-  layer.add(simpleText)
   stage.add(layer)
 }
 
@@ -111,6 +99,10 @@ const roomNameInput = ref('')
 const editingActivated = ref(false)
 const rooms = computed(() => floor_store.getRoomsList())
 const selectedRoomId = ref('')
+
+const tableNameInput = ref('')
+const tableMaxCoverInput = ref('')
+const tableMinCoverInput = ref('')
 
 const handleRoomCreation = async (e) => {
   e.preventDefault()
@@ -155,6 +147,63 @@ const handleRoomDeletion = (e) => {
   const roomToDelete = stage.find((room) => room.attrs.id === selectedRoomId.value)
   roomToDelete.destroy()
   selectedRoomId.value = ''
+}
+const handleTableCreation = (e) => {
+  e.preventDefault()
+  const stage = stageRef.value.getNode().children
+  const targetRoom = stage.find((room) => room.attrs.id === selectedRoomId.value)
+  if (!targetRoom) return
+
+  const table = new Konva.Rect({
+    x: 100,
+    y: 100,
+    width: 80,
+    height: 80,
+    fill: 'brown',
+    draggable: true,
+  })
+
+  const label = new Konva.Label({
+    x: table.x() + 10,
+    y: table.y() - 25,
+    opacity: 0.75,
+  })
+
+  const tag = new Konva.Tag({
+    fill: 'black',
+    cornerRadius: 4,
+    x: table.x() + 10,
+    y: table.y() - 25,
+  })
+
+  const text = new Konva.Text({
+    text: tableNameInput.value,
+    fontSize: 14,
+    fill: 'white',
+    padding: 4,
+    x: table.x() + 10,
+    y: table.y() - 25,
+  })
+
+  targetRoom.add(tag)
+  targetRoom.add(text)
+
+  // 🏗️ Make label follow the table
+  table.on('dragmove', () => {
+    label.x(table.x() + 10)
+    label.y(table.y() - 25)
+    tag.x(table.x() + 10)
+    tag.y(table.y() - 25)
+    text.x(table.x() + 10)
+    text.y(table.y() - 25)
+  })
+
+  targetRoom.add(table)
+  targetRoom.add(label)
+
+  tableNameInput.value = ''
+  tableMaxCoverInput.value = ''
+  tableMinCoverInput.value = ''
 }
 const activateEditing = () => {
   editingActivated.value = true
