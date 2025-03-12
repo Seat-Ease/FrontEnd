@@ -49,8 +49,8 @@
         <div class="topSection">
           <div class="roomsListContainer">
             <p
-              @click="selectedRoomId = room.id"
-              :class="{ selectedRoom: selectedRoomId === room.id }"
+              @click="handleRoomSelection"
+              :class="{ selectedRoom: selectedRoomId === String(room.id) }"
               v-for="room in rooms"
               :ref="room.id"
               :id="room.id"
@@ -61,38 +61,92 @@
           <p @click="activateEditing" class="editBtn">Modifier la salle</p>
           <p @click="handleRoomDeletion" class="deleteBtn">Supprimer la salle</p>
         </div>
-        <div class="canvasContainer"></div>
+        <div id="canvasContainer" ref="canvasContainer" class="canvasContainer">
+          <v-stage ref="stageRef" :config="stageConfig"></v-stage>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, nextTick, reactive } from 'vue'
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
+import Konva from 'konva'
 
 const main_store = mainStore()
+const floor_store = floorStore()
+
+const canvasContainer = ref(null)
+const stageRef = ref(null)
+const transformer = ref(null)
+
+const stageConfig = reactive({
+  width: 800,
+  height: 600,
+  draggable: false,
+})
+
+const addLayer = async (room) => {
+  await nextTick()
+  if (!stageRef.value) return
+
+  const stage = stageRef.value.getNode()
+  const layer = new Konva.Layer({ id: String(room.id), opacity: 1, visible: true })
+
+  const simpleText = new Konva.Text({
+    x: stage.width() / 2,
+    y: 15,
+    text: room.name,
+    fontSize: 30,
+    fontFamily: 'Calibri',
+    fill: 'green',
+  })
+
+  layer.add(simpleText)
+  stage.add(layer)
+}
 
 const roomNameInput = ref('')
 const editingActivated = ref(false)
-
-const floor_store = floorStore()
 const rooms = computed(() => floor_store.getRoomsList())
 const selectedRoomId = ref('')
 
-const handleRoomCreation = (e) => {
+const handleRoomCreation = async (e) => {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
   if (editingActivated.value === true) {
     floor_store.updateRoom({ id: selectedRoomId.value, name: roomNameInput.value })
-    roomNameInput.value = ''
     selectedRoomId.value = ''
     editingActivated.value = false
-    return
+  } else {
+    const newRoom = { id: Math.random(), name: roomNameInput.value, tables: [] }
+    floor_store.updateRoomsList(newRoom)
+    const stage = stageRef.value.getNode().children
+    if (selectedRoomId.value) {
+      const roomToHide = stage.find((room) => room.attrs.id === String(selectedRoomId.value))
+      roomToHide.visible(false)
+    }
+    addLayer(newRoom)
+    selectedRoomId.value = newRoom.id
   }
-  const room = { id: Math.random(), name: roomNameInput.value }
-  floor_store.updateRoomsList(room)
   roomNameInput.value = ''
+}
+const handleRoomSelection = (e) => {
+  const roomId = e.target.id
+  if (roomId === selectedRoomId.value) return
+  selectedRoomId.value = roomId
+  nextTick(() => {
+    const stage = stageRef.value.getNode().children
+    stage.forEach((room) => {
+      if (room.attrs.id !== selectedRoomId.value) {
+        room.visible(false)
+      } else {
+        room.visible(true)
+      }
+    })
+    stageRef.value.getNode().batchDraw()
+  })
 }
 const handleRoomDeletion = (e) => {
   e.preventDefault()
@@ -103,6 +157,12 @@ const activateEditing = () => {
   const room = rooms.find((item) => item.id === selectedRoomId.value)
   roomNameInput.value = room.name
 }
+onMounted(() => {
+  if (canvasContainer.value) {
+    stageConfig.width = canvasContainer.value.clientWidth
+    stageConfig.height = canvasContainer.value.clientHeight
+  }
+})
 </script>
 <style scoped>
 .floorSettingContainer,
@@ -219,6 +279,7 @@ const activateEditing = () => {
 }
 .roomsListContainer > p {
   min-width: 10%;
+  cursor: pointer;
 }
 .editBtn {
   color: #252189;

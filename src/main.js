@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import VueKonva from 'vue-konva'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
@@ -19,6 +20,7 @@ library.add(faCheck, faTimes)
 
 app.component('font-awesome-icon', FontAwesomeIcon)
 
+app.use(VueKonva)
 app.use(createPinia())
 app.use(router)
 
