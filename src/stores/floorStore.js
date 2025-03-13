@@ -18,6 +18,12 @@ export const floorStore = defineStore('floorStore', () => {
       roomsList.value[index].name = roomObj.name
     }
   }
+  const addTableToRoom = (room_id, tableObj) => {
+    const index = roomsList.value.findIndex((item) => String(item.id) === String(room_id))
+    if (index !== -1) {
+      roomsList.value[index].tables.push(tableObj)
+    }
+  }
 
-  return { updateRoomsList, getRoomsList, updateRoomName, deleteRoom }
+  return { updateRoomsList, getRoomsList, updateRoomName, deleteRoom, addTableToRoom }
 })

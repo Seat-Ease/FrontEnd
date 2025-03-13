@@ -41,6 +41,13 @@
               <label for="maxCovers">Couvert maximal</label>
               <input v-model="tableMaxCoverInput" name="maxCovers" type="text" class="maxCovers" />
             </div>
+            <div>
+              <label for="tableShape">Forme</label>
+              <select v-model="tableShapeInput" name="tableShape">
+                <option value="Rect" selected>Rectangle</option>
+                <option value="Circle">Cercle</option>
+              </select>
+            </div>
             <button @click="handleTableCreation" class="addTableBtn">Ajouter la table</button>
           </form>
         </div>
@@ -103,6 +110,7 @@ const selectedRoomId = ref('')
 const tableNameInput = ref('')
 const tableMaxCoverInput = ref('')
 const tableMinCoverInput = ref('')
+const tableShapeInput = ref('')
 
 const handleRoomCreation = async (e) => {
   e.preventDefault()
@@ -154,26 +162,59 @@ const handleTableCreation = (e) => {
   const targetRoom = stage.find((room) => room.attrs.id === selectedRoomId.value)
   if (!targetRoom) return
 
-  const table = new Konva.Rect({
+  let newTable
+
+  const newTableData = {
+    id: Math.random(),
     x: 100,
     y: 100,
     width: 80,
     height: 80,
-    fill: 'brown',
     draggable: true,
-  })
+    stroke: '#252189',
+    strokeWidth: 3,
+    name: tableNameInput.value,
+    minCovers: tableMinCoverInput.value,
+    maxCovers: tableMaxCoverInput.value,
+    shape: tableShapeInput.value,
+  }
+
+  floor_store.addTableToRoom(targetRoom.id, newTableData)
+
+  newTable =
+    tableShapeInput.value === 'Circle'
+      ? new Konva.Circle({
+          id: newTableData.id,
+          x: newTableData.x,
+          y: newTableData.y,
+          width: newTableData.width,
+          height: newTableData.height,
+          draggable: newTableData.draggable,
+          stroke: newTableData.stroke,
+          strokeWidth: newTableData.strokeWidth,
+        })
+      : new Konva.Rect({
+          id: newTableData.id,
+          x: newTableData.x,
+          y: newTableData.y,
+          width: newTableData.width,
+          height: newTableData.height,
+          draggable: newTableData.draggable,
+          stroke: newTableData.stroke,
+          strokeWidth: newTableData.strokeWidth,
+        })
 
   const label = new Konva.Label({
-    x: table.x() + 10,
-    y: table.y() - 25,
+    x: newTable.x() + 10,
+    y: newTable.y() - 25,
     opacity: 0.75,
   })
 
   const tag = new Konva.Tag({
     fill: 'black',
     cornerRadius: 4,
-    x: table.x() + 10,
-    y: table.y() - 25,
+    x: tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10,
+    y: tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25,
   })
 
   const text = new Konva.Text({
@@ -181,24 +222,23 @@ const handleTableCreation = (e) => {
     fontSize: 14,
     fill: 'white',
     padding: 4,
-    x: table.x() + 10,
-    y: table.y() - 25,
+    x: tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10,
+    y: tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25,
   })
 
   targetRoom.add(tag)
   targetRoom.add(text)
 
-  // 🏗️ Make label follow the table
-  table.on('dragmove', () => {
-    label.x(table.x() + 10)
-    label.y(table.y() - 25)
-    tag.x(table.x() + 10)
-    tag.y(table.y() - 25)
-    text.x(table.x() + 10)
-    text.y(table.y() - 25)
+  newTable.on('dragmove', () => {
+    label.x(tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10)
+    label.y(tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25)
+    tag.x(tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10)
+    tag.y(tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25)
+    text.x(tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10)
+    text.y(tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25)
   })
 
-  targetRoom.add(table)
+  targetRoom.add(newTable)
   targetRoom.add(label)
 
   tableNameInput.value = ''
