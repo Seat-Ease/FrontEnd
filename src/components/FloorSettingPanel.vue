@@ -17,14 +17,14 @@
         <div class="detailsContainer">
           <form class="roomForm">
             <p class="detailLocalTitle">
-              {{ editingActivated ? 'Modifier' : 'Ajouter' }} une salle
+              {{ roomEditingActivated ? 'Modifier' : 'Ajouter' }} une salle
             </p>
             <div>
               <label for="roomName">Nom de la salle</label>
               <input v-model="roomNameInput" name="roomName" type="text" class="roomNam" />
             </div>
-            <button @click="handleRoomCreation" class="addRoomBtn">
-              {{ editingActivated ? 'Enregistrer' : 'Ajouter la salle' }}
+            <button @click="handleRoomFormSubmit" class="addRoomBtn">
+              {{ roomEditingActivated ? 'Enregistrer' : 'Ajouter la salle' }}
             </button>
           </form>
           <form class="tableForm">
@@ -76,7 +76,7 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onMounted, nextTick, reactive } from 'vue'
+import { ref, onMounted, nextTick, reactive } from 'vue'
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
 import Konva from 'konva'
@@ -86,7 +86,6 @@ const floor_store = floorStore()
 
 const canvasContainer = ref(null)
 const stageRef = ref(null)
-const transformer = ref(null)
 
 const stageConfig = reactive({
   width: 800,
@@ -94,45 +93,54 @@ const stageConfig = reactive({
   draggable: false,
 })
 
-const addLayer = async (room) => {
+// Code related to rooms
+
+const roomNameInput = ref('')
+const roomEditingActivated = ref(false)
+const rooms = ref([])
+const selectedRoomId = ref('')
+
+async function createNewRoom(room_name) {
   await nextTick()
   if (!stageRef.value) return
+  const newRoomConfig = {
+    id: String(Math.random()),
+    name: room_name,
+    opacity: 1,
+    visible: true,
+  }
+  rooms.value.push(newRoomConfig)
   const stage = stageRef.value.getNode()
-  const layer = new Konva.Layer({ id: String(room.id), opacity: 1, visible: true })
+  const layer = new Konva.Layer(newRoomConfig)
   stage.add(layer)
 }
 
-const roomNameInput = ref('')
-const editingActivated = ref(false)
-const rooms = computed(() => floor_store.getRoomsList())
-const selectedRoomId = ref('')
-
-const tableNameInput = ref('')
-const tableMaxCoverInput = ref('')
-const tableMinCoverInput = ref('')
-const tableShapeInput = ref('')
-
-const handleRoomCreation = async (e) => {
+function updateRoomName(room_id, newName) {
+  const roomToUpdate = rooms.value.find((room) => String(room.id) === String(room_id))
+  if (roomToUpdate) {
+    roomToUpdate.name = newName
+  }
+}
+async function handleRoomFormSubmit(e) {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
-  if (editingActivated.value === true) {
-    floor_store.updateRoomName({ id: selectedRoomId.value, name: roomNameInput.value })
+  if (roomEditingActivated.value === true) {
+    updateRoomName(selectedRoomId.value, roomNameInput.value)
     selectedRoomId.value = ''
-    editingActivated.value = false
+    roomEditingActivated.value = false
   } else {
-    const newRoom = { id: Math.random(), name: roomNameInput.value, tables: [] }
-    floor_store.updateRoomsList(newRoom)
-    const stage = stageRef.value.getNode().children
     if (selectedRoomId.value !== '') {
+      const stage = stageRef.value.getNode().children
       const roomToHide = stage.find((room) => room.attrs.id === String(selectedRoomId.value))
       roomToHide.visible(false)
     }
-    addLayer(newRoom)
+    await createNewRoom(roomNameInput.value)
     selectedRoomId.value = newRoom.id
   }
   roomNameInput.value = ''
 }
-const handleRoomSelection = (e) => {
+
+function handleRoomSelection(e) {
   const roomId = e.target.id
   if (roomId === selectedRoomId.value) return
   selectedRoomId.value = roomId
@@ -150,12 +158,26 @@ const handleRoomSelection = (e) => {
 }
 const handleRoomDeletion = (e) => {
   e.preventDefault()
-  floor_store.deleteRoom(selectedRoomId.value)
   const stage = stageRef.value.getNode().children
-  const roomToDelete = stage.find((room) => room.attrs.id === selectedRoomId.value)
-  roomToDelete.destroy()
+  const roomToDelete = stage.find((room) => String(room.attrs.id) === String(selectedRoomId.value))
+  if (roomToDelete) {
+    roomToDelete.destroy()
+  }
+  rooms.value.filter((room) => String(room.id) !== String(selectedRoomId.value))
   selectedRoomId.value = ''
 }
+
+// Code related to rooms
+
+// Code related to tables
+
+const tableNameInput = ref('')
+const tableMaxCoverInput = ref('')
+const tableMinCoverInput = ref('')
+const tableShapeInput = ref('')
+const selectedTableId = ref('')
+const tables = ref([])
+
 const handleTableCreation = (e) => {
   e.preventDefault()
   const stage = stageRef.value.getNode().children
@@ -177,9 +199,10 @@ const handleTableCreation = (e) => {
     minCovers: tableMinCoverInput.value,
     maxCovers: tableMaxCoverInput.value,
     shape: tableShapeInput.value,
+    room_id: targetRoom.attrs.id,
   }
 
-  floor_store.addTableToRoom(targetRoom.id, newTableData)
+  tables.value.push(newTableData)
 
   newTable =
     tableShapeInput.value === 'Circle'
@@ -245,8 +268,11 @@ const handleTableCreation = (e) => {
   tableMaxCoverInput.value = ''
   tableMinCoverInput.value = ''
 }
+
+// Code related to tables
+
 const activateEditing = () => {
-  editingActivated.value = true
+  roomEditingActivated.value = true
   const room = rooms.value.find((item) => String(item.id) === String(selectedRoomId.value))
   roomNameInput.value = room.name
 }
