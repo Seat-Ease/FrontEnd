@@ -23,9 +23,14 @@
               <label for="roomName">Nom de la salle</label>
               <input v-model="roomNameInput" name="roomName" type="text" class="roomNam" />
             </div>
-            <button @click="handleRoomFormSubmit" class="addRoomBtn">
-              {{ roomEditingActivated ? 'Enregistrer' : 'Ajouter la salle' }}
-            </button>
+            <div class="btnsContainer">
+              <div class="deleteEditBtnsContainer" v-if="roomEditingActivated">
+                <button class="editBtn" @click="updateRoomName">Enregistrer</button>
+                <button class="deleteBtn" @click="handleRoomDeletion">Supprimer</button>
+                <button class="cancelBtn" @click="cancelEditing">Annuler</button>
+              </div>
+              <button v-else @click="createNewRoom" class="addRoomBtn">Ajouter la salle</button>
+            </div>
           </form>
           <form class="tableForm">
             <p class="detailLocalTitle">Ajouter une table</p>
@@ -65,8 +70,8 @@
               {{ room.name }}
             </p>
           </div>
-          <p @click="activateEditing" class="editBtn">Modifier la salle</p>
-          <p @click="handleRoomDeletion" class="deleteBtn">Supprimer la salle</p>
+          <p @click="roomEditingActivated = false" class="createBtn">Créer une salle</p>
+          <p @click="" class="createBtn">Créer une table</p>
         </div>
         <div id="canvasContainer" ref="canvasContainer" class="canvasContainer">
           <v-stage ref="stageRef" :config="stageConfig"></v-stage>
@@ -100,50 +105,42 @@ const roomEditingActivated = ref(false)
 const rooms = ref([])
 const selectedRoomId = ref('')
 
-async function createNewRoom(room_name) {
-  await nextTick()
+function createNewRoom(e) {
+  e.preventDefault()
+  if (roomNameInput.value.length === 0) return
   if (!stageRef.value) return
   const newRoomConfig = {
     id: String(Math.random()),
-    name: room_name,
-    opacity: 1,
-    visible: true,
+    name: roomNameInput.value,
   }
   rooms.value.push(newRoomConfig)
   const stage = stageRef.value.getNode()
-  const layer = new Konva.Layer(newRoomConfig)
+  const layer = new Konva.Layer({ ...newRoomConfig, opacity: 1, visible: true })
+  if (selectedRoomId.value !== '') {
+    const stage = stageRef.value.getNode().children
+    const roomToHide = stage.find((room) => room.attrs.id === String(selectedRoomId.value))
+    roomToHide.visible(false)
+  }
+  selectedRoomId.value = String(newRoomConfig.id)
+  roomNameInput.value = ''
   stage.add(layer)
 }
-
-function updateRoomName(room_id, newName) {
-  const roomToUpdate = rooms.value.find((room) => String(room.id) === String(room_id))
-  if (roomToUpdate) {
-    roomToUpdate.name = newName
-  }
-}
-async function handleRoomFormSubmit(e) {
+function updateRoomName(e) {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
-  if (roomEditingActivated.value === true) {
-    updateRoomName(selectedRoomId.value, roomNameInput.value)
-    selectedRoomId.value = ''
-    roomEditingActivated.value = false
-  } else {
-    if (selectedRoomId.value !== '') {
-      const stage = stageRef.value.getNode().children
-      const roomToHide = stage.find((room) => room.attrs.id === String(selectedRoomId.value))
-      roomToHide.visible(false)
-    }
-    await createNewRoom(roomNameInput.value)
-    selectedRoomId.value = newRoom.id
+  const roomToUpdate = rooms.value.find((room) => String(room.id) === String(selectedRoomId.value))
+  if (roomToUpdate) {
+    roomToUpdate.name = roomNameInput.value
   }
+  roomEditingActivated.value = false
+  selectedRoomId.value = ''
   roomNameInput.value = ''
 }
-
 function handleRoomSelection(e) {
   const roomId = e.target.id
-  if (roomId === selectedRoomId.value) return
+  roomEditingActivated.value = true
   selectedRoomId.value = roomId
+  roomNameInput.value = rooms.value.find((room) => String(room.id) === roomId).name
   nextTick(() => {
     const stage = stageRef.value.getNode().children
     stage.forEach((room) => {
@@ -156,15 +153,20 @@ function handleRoomSelection(e) {
     stageRef.value.getNode().batchDraw()
   })
 }
-const handleRoomDeletion = (e) => {
+function handleRoomDeletion(e) {
   e.preventDefault()
   const stage = stageRef.value.getNode().children
   const roomToDelete = stage.find((room) => String(room.attrs.id) === String(selectedRoomId.value))
-  if (roomToDelete) {
-    roomToDelete.destroy()
-  }
-  rooms.value.filter((room) => String(room.id) !== String(selectedRoomId.value))
+  if (!roomToDelete) return
+  rooms.value = rooms.value.filter((room) => String(room.id) !== String(selectedRoomId.value))
+  roomToDelete.destroy()
+  roomEditingActivated.value = false
   selectedRoomId.value = ''
+  roomNameInput.value = ''
+}
+function cancelEditing(e) {
+  roomEditingActivated.value = false
+  roomNameInput.value = ''
 }
 
 // Code related to rooms
@@ -400,7 +402,7 @@ onMounted(() => {
   min-width: 10%;
   cursor: pointer;
 }
-.editBtn {
+.createBtn {
   color: #252189;
   cursor: pointer;
 }
