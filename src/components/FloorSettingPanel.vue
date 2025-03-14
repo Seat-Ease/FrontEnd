@@ -19,15 +19,15 @@
             <p class="detailLocalTitle">
               {{ roomEditingActivated ? 'Modifier' : 'Ajouter' }} une salle
             </p>
-            <div>
+            <div class="inputContainer">
               <label for="roomName">Nom de la salle</label>
               <input v-model="roomNameInput" name="roomName" type="text" class="roomNam" />
             </div>
             <div class="btnsContainer">
               <div class="deleteEditBtnsContainer" v-if="roomEditingActivated">
-                <button class="editBtn" @click="updateRoomName">Enregistrer</button>
-                <button class="deleteBtn" @click="handleRoomDeletion">Supprimer</button>
-                <button class="cancelBtn" @click="cancelEditing">Annuler</button>
+                <button class="editRoomBtn" @click="updateRoomName">Enregistrer</button>
+                <button class="deleteRoomBtn" @click="handleRoomDeletion">Supprimer</button>
+                <button class="cancelRoomBtn" @click="cancelEditing">Annuler</button>
               </div>
               <button v-else @click="createNewRoom" class="addRoomBtn">Ajouter la salle</button>
             </div>
@@ -71,7 +71,7 @@
             </p>
           </div>
           <p @click="roomEditingActivated = false" class="createBtn">Créer une salle</p>
-          <p @click="" class="createBtn">Créer une table</p>
+          <p @click="" class="createTableBtn">Créer une table</p>
         </div>
         <div id="canvasContainer" ref="canvasContainer" class="canvasContainer">
           <v-stage ref="stageRef" :config="stageConfig"></v-stage>
@@ -349,8 +349,42 @@ onMounted(() => {
   gap: 5rem;
   padding: 2rem;
 }
+.btnsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.deleteEditBtnsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+.deleteEditBtnsContainer > button {
+  padding: 1rem 3rem;
+  font-weight: 700;
+  letter-spacing: 0.15rem;
+  border-radius: 2rem;
+  cursor: pointer;
+}
+.deleteRoomBtn {
+  color: red;
+  background-color: #fff;
+  border: 0.1rem solid red;
+}
+.editRoomBtn {
+  color: #252189;
+  background-color: #fff;
+  border: 0.1rem solid #252189;
+}
+.cancelRoomBtn {
+  color: #666;
+  background-color: #fff;
+  border: 0.1rem solid #666;
+}
 .tableForm > div,
-.roomForm > div {
+.inputContainer {
   display: grid;
   grid-template-columns: 2fr 2fr;
 }
@@ -402,12 +436,8 @@ onMounted(() => {
   min-width: 10%;
   cursor: pointer;
 }
-.createBtn {
+.createTableBtn {
   color: #252189;
-  cursor: pointer;
-}
-.deleteBtn {
-  color: red;
   cursor: pointer;
 }
 .selectedRoom {
