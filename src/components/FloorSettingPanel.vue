@@ -27,33 +27,44 @@
               <div class="deleteEditBtnsContainer" v-if="roomEditingActivated">
                 <button class="editRoomBtn" @click="updateRoomName">Enregistrer</button>
                 <button class="deleteRoomBtn" @click="handleRoomDeletion">Supprimer</button>
-                <button class="cancelRoomBtn" @click="cancelEditing">Annuler</button>
+                <button class="cancelRoomBtn" @click="cancelRoomEditing">Annuler</button>
               </div>
               <button v-else @click="createNewRoom" class="addRoomBtn">Ajouter la salle</button>
             </div>
           </form>
           <form class="tableForm">
-            <p class="detailLocalTitle">Ajouter une table</p>
-            <div>
+            <p class="detailLocalTitle">
+              {{ tableEditingActivated ? 'Modifier' : 'Ajouter' }} une table
+            </p>
+            <div class="inputContainer">
               <label for="tableName">Nom/Numéro de la table</label>
               <input v-model="tableNameInput" name="tableName" type="text" class="tableName" />
-            </div>
-            <div>
+            </div class="inputContainer">
+            <div class="inputContainer">
               <label for="minCovers">Couvert minimal</label>
               <input v-model="tableMinCoverInput" name="minCovers" type="text" class="minCovers" />
             </div>
-            <div>
+            <div class="inputContainer">
               <label for="maxCovers">Couvert maximal</label>
               <input v-model="tableMaxCoverInput" name="maxCovers" type="text" class="maxCovers" />
             </div>
-            <div>
+            <div class="inputContainer">
               <label for="tableShape">Forme</label>
               <select v-model="tableShapeInput" name="tableShape">
                 <option value="Rect" selected>Rectangle</option>
                 <option value="Circle">Cercle</option>
               </select>
             </div>
-            <button @click="handleTableCreation" class="addTableBtn">Ajouter la table</button>
+            <div class="btnsContainer">
+              <div class="deleteEditBtnsContainer" v-if="tableEditingActivated">
+                <button class="editRoomBtn" @click="updateTable">Enregistrer</button>
+                <button class="deleteRoomBtn" @click="">Supprimer</button>
+                <button class="cancelRoomBtn" @click="cancelTableEditing">Annuler</button>
+              </div>
+              <button v-else @click="handleTableCreation" class="addTableBtn">
+                Ajouter la table
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -160,7 +171,7 @@ function handleRoomDeletion(e) {
   selectedRoomId.value = ''
   roomNameInput.value = ''
 }
-function cancelEditing(e) {
+function cancelRoomEditing(e) {
   roomEditingActivated.value = false
   roomNameInput.value = ''
 }
@@ -175,17 +186,176 @@ const tableMinCoverInput = ref('')
 const tableShapeInput = ref('')
 const selectedTableId = ref('')
 const tables = ref([])
+const tableEditingActivated = ref(false)
+
+function createTable(newTableData) {
+  const stage = stageRef.value.getNode().children
+  const targetRoom = stage.find((room) => room.attrs.id === selectedRoomId.value)
+  if (!targetRoom) return
+
+  if (newTableData.shape === 'Circle') {
+    const newTable = new Konva.Circle({
+      id: String(newTableData.id),
+      x: newTableData.x + newTableData.width / 2,
+      y: newTableData.y + newTableData.height / 2,
+      width: newTableData.width,
+      height: newTableData.height,
+      draggable: newTableData.draggable,
+      stroke: newTableData.stroke,
+      strokeWidth: newTableData.strokeWidth,
+      name: newTableData.name
+    })
+
+    const label = new Konva.Label({
+      x: newTable.x() - 25,
+      y: newTable.y() - 65,
+      opacity: 0.75,
+      id: String(newTableData.id)
+    })
+
+    const tag = new Konva.Tag({
+      fill: 'black',
+      cornerRadius: 4,
+      x: newTable.x() - 25,
+      y: newTable.y() - 65,
+      id: String(newTableData.id)
+    })
+
+    const text = new Konva.Text({
+      text: newTable.attrs.name,
+      fontSize: 14,
+      fill: 'white',
+      padding: 4,
+      x: newTable.x() - 25,
+      y: newTable.y() - 65,
+      id: String(newTableData.id)
+    })
+
+    targetRoom.add(tag)
+    targetRoom.add(text)
+
+    newTable.on('dragmove', function() {
+      label.x(newTable.x() - 25)
+      label.y(newTable.y() - 65)
+      tag.x(newTable.x() - 25)
+      tag.y(newTable.y() - 65)
+      text.x(newTable.x() - 25)
+      text.y(newTable.y() - 65)
+    })
+
+    newTable.on('dragend', function() {
+      const tableToEdit = tables.value.find(table => String(table.id) === String(newTableData.id))
+      tableToEdit.x = newTable.x()
+      tableToEdit.y = newTable.y()
+    })
+
+    targetRoom.add(newTable)
+    targetRoom.add(label)
+
+    newTable.on('click tap', function(e) {
+      e.cancelBubble = true
+      tableEditingActivated.value = true
+      selectedTableId.value = newTableData.id
+      const tableToEdit = tables.value.find(table => String(table.id) === String(selectedTableId.value))
+      const stage = stageRef.value.getNode().children
+      const room = stage.find(room => String(room.attrs.id) === String(selectedRoomId.value))
+      const table = room.find(`#${selectedTableId.value}`)[2] // Gets all the elements with the id passed and the circle element is at positon 2 in the array
+      table.fill("#252189")
+      room.batchDraw()
+      if (tableToEdit) {
+        tableNameInput.value = tableToEdit.name
+        tableMinCoverInput.value = tableToEdit.minCovers
+        tableMaxCoverInput.value = tableToEdit.maxCovers
+        tableShapeInput.value = tableToEdit.shape
+      }
+    })
+
+  } else if (newTableData.shape === 'Rect') {
+    const newTable = new Konva.Rect({
+      id: String(newTableData.id),
+      x: newTableData.x,
+      y: newTableData.y,
+      width: newTableData.width,
+      height: newTableData.height,
+      draggable: newTableData.draggable,
+      stroke: newTableData.stroke,
+      strokeWidth: newTableData.strokeWidth,
+      name: newTableData.name
+    })
+
+    const label = new Konva.Label({
+      x: newTable.x() + 10,
+      y: newTable.y() - 25,
+      opacity: 0.75,
+      id: String(newTableData.id)
+    })
+
+    const tag = new Konva.Tag({
+      fill: 'black',
+      cornerRadius: 4,
+      x: newTable.x() + 10,
+      y: newTable.y() - 25,
+      id: String(newTableData.id)
+    })
+
+    const text = new Konva.Text({
+      text: newTable.attrs.name,
+      fontSize: 14,
+      fill: 'white',
+      padding: 4,
+      x: newTable.x() + 10,
+      y: newTable.y() - 25,
+      id: String(newTableData.id)
+    })
+
+    targetRoom.add(tag)
+    targetRoom.add(text)
+
+    newTable.on('dragmove', function() {
+      label.x(newTable.x() + 10)
+      label.y(newTable.y() - 25)
+      tag.x(newTable.x() + 10)
+      tag.y(newTable.y() - 25)
+      text.x(newTable.x() + 10)
+      text.y(newTable.y() - 25)
+    })
+
+    newTable.on('dragend', function() {
+      const tableToEdit = tables.value.find(table => String(table.id) === String(newTableData.id))
+      tableToEdit.x = newTable.x()
+      tableToEdit.y = newTable.y()
+    })
+
+    targetRoom.add(newTable)
+    targetRoom.add(label)
+
+    newTable.on('click tap', function(e) {
+      e.cancelBubble = true
+      tableEditingActivated.value = true
+      selectedTableId.value = newTableData.id
+      const tableToEdit = tables.value.find(table => String(table.id) === String(selectedTableId.value))
+      const stage = stageRef.value.getNode().children
+      const room = stage.find(room => String(room.attrs.id) === String(selectedRoomId.value))
+      const table = room.find(`#${selectedTableId.value}`)[2] // Gets all the elements with the id passed and the circle element is at positon 2 in the array
+      table.fill("#252189")
+      room.batchDraw()
+      if (tableToEdit) {
+        tableNameInput.value = tableToEdit.name
+        tableMinCoverInput.value = tableToEdit.minCovers
+        tableMaxCoverInput.value = tableToEdit.maxCovers
+        tableShapeInput.value = tableToEdit.shape
+      }
+    })
+  }
+}
 
 const handleTableCreation = (e) => {
   e.preventDefault()
   const stage = stageRef.value.getNode().children
   const targetRoom = stage.find((room) => room.attrs.id === selectedRoomId.value)
   if (!targetRoom) return
-
-  let newTable
-
   const newTableData = {
-    id: Math.random(),
+    id: String(Math.random()),
     x: 100,
     y: 100,
     width: 80,
@@ -199,81 +369,45 @@ const handleTableCreation = (e) => {
     shape: tableShapeInput.value,
     room_id: targetRoom.attrs.id,
   }
-
   tables.value.push(newTableData)
-
-  newTable =
-    tableShapeInput.value === 'Circle'
-      ? new Konva.Circle({
-          id: newTableData.id,
-          x: newTableData.x,
-          y: newTableData.y,
-          width: newTableData.width,
-          height: newTableData.height,
-          draggable: newTableData.draggable,
-          stroke: newTableData.stroke,
-          strokeWidth: newTableData.strokeWidth,
-        })
-      : new Konva.Rect({
-          id: newTableData.id,
-          x: newTableData.x,
-          y: newTableData.y,
-          width: newTableData.width,
-          height: newTableData.height,
-          draggable: newTableData.draggable,
-          stroke: newTableData.stroke,
-          strokeWidth: newTableData.strokeWidth,
-        })
-
-  const label = new Konva.Label({
-    x: newTable.x() + 10,
-    y: newTable.y() - 25,
-    opacity: 0.75,
-  })
-
-  const tag = new Konva.Tag({
-    fill: 'black',
-    cornerRadius: 4,
-    x: tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10,
-    y: tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25,
-  })
-
-  const text = new Konva.Text({
-    text: tableNameInput.value,
-    fontSize: 14,
-    fill: 'white',
-    padding: 4,
-    x: tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10,
-    y: tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25,
-  })
-
-  targetRoom.add(tag)
-  targetRoom.add(text)
-
-  newTable.on('dragmove', () => {
-    label.x(tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10)
-    label.y(tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25)
-    tag.x(tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10)
-    tag.y(tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25)
-    text.x(tableShapeInput.value === 'Circle' ? newTable.x() - 25 : newTable.x() + 10)
-    text.y(tableShapeInput.value === 'Circle' ? newTable.y() - 65 : newTable.y() - 25)
-  })
-
-  targetRoom.add(newTable)
-  targetRoom.add(label)
-
+  createTable(newTableData)
   tableNameInput.value = ''
   tableMaxCoverInput.value = ''
   tableMinCoverInput.value = ''
+  tableShapeInput.value = ''
+}
+
+function updateTable(e) {
+  e.preventDefault()
+  const tableToEdit = tables.value.find(table => String(table.id) === String(selectedTableId.value))
+  if (!tableToEdit) return
+  tableToEdit.name = tableNameInput.value
+  tableToEdit.minCovers = tableMinCoverInput.value
+  tableToEdit.maxCovers = tableMaxCoverInput.value
+  tableToEdit.shape = tableShapeInput.value
+  const stage = stageRef.value.getNode().children
+  const room = stage.find(room => String(room.attrs.id) === String(selectedRoomId.value))
+  const elements = room.find(`#${selectedTableId.value}`)
+  elements.forEach(element => element.destroy())
+  createTable(tableToEdit)
+  tableNameInput.value = ''
+  tableMaxCoverInput.value = ''
+  tableMinCoverInput.value = ''
+  tableShapeInput.value = ''
+  tableEditingActivated.value = false
+}
+
+function cancelTableEditing(e) {
+  e.preventDefault()
+  tableEditingActivated.value = false
+  tableNameInput.value = ''
+  tableMinCoverInput.value = ''
+  tableMaxCoverInput.value = ''
+  tableShapeInput.value = 'Circle'
 }
 
 // Code related to tables
 
-const activateEditing = () => {
-  roomEditingActivated.value = true
-  const room = rooms.value.find((item) => String(item.id) === String(selectedRoomId.value))
-  roomNameInput.value = room.name
-}
 onMounted(() => {
   if (canvasContainer.value) {
     stageConfig.width = canvasContainer.value.clientWidth
@@ -313,7 +447,7 @@ onMounted(() => {
   height: 100%;
   border-right: 0.1rem solid rgb(207, 207, 207);
   display: grid;
-  grid-template-rows: 0.4fr 0.7fr;
+  grid-template-rows: 0.3fr 0.7fr;
 }
 .optionsContainer {
   border-bottom: 0.1rem solid rgb(207, 207, 207);
@@ -379,7 +513,6 @@ onMounted(() => {
   background-color: #fff;
   border: 0.1rem solid #666;
 }
-.tableForm > div,
 .inputContainer {
   display: grid;
   grid-template-columns: 2fr 2fr;
@@ -419,7 +552,7 @@ onMounted(() => {
   overflow-x: scroll;
   padding: 1rem;
   align-items: center;
-  min-height: 2rem;
+  min-height: 4rem;
   font-size: 1.2rem;
   border-bottom: 0.1rem solid rgb(207, 207, 207);
 }
