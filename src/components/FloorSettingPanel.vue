@@ -58,7 +58,7 @@
             <div class="btnsContainer">
               <div class="deleteEditBtnsContainer" v-if="tableEditingActivated">
                 <button class="editRoomBtn" @click="updateTable">Enregistrer</button>
-                <button class="deleteRoomBtn" @click="">Supprimer</button>
+                <button class="deleteRoomBtn" @click="deleteTable">Supprimer</button>
                 <button class="cancelRoomBtn" @click="cancelTableEditing">Annuler</button>
               </div>
               <button v-else @click="handleTableCreation" class="addTableBtn">
@@ -196,8 +196,8 @@ function createTable(newTableData) {
   if (newTableData.shape === 'Circle') {
     const newTable = new Konva.Circle({
       id: String(newTableData.id),
-      x: newTableData.x + newTableData.width / 2,
-      y: newTableData.y + newTableData.height / 2,
+      x: newTableData.x,
+      y: newTableData.y,
       width: newTableData.width,
       height: newTableData.height,
       draggable: newTableData.draggable,
@@ -385,11 +385,21 @@ function updateTable(e) {
   tableToEdit.minCovers = tableMinCoverInput.value
   tableToEdit.maxCovers = tableMaxCoverInput.value
   tableToEdit.shape = tableShapeInput.value
+  deleteTable(e)
+  createTable(tableToEdit)
+  tableNameInput.value = ''
+  tableMaxCoverInput.value = ''
+  tableMinCoverInput.value = ''
+  tableShapeInput.value = ''
+  tableEditingActivated.value = false
+}
+
+function deleteTable(e) {
+  e.preventDefault()
   const stage = stageRef.value.getNode().children
   const room = stage.find(room => String(room.attrs.id) === String(selectedRoomId.value))
   const elements = room.find(`#${selectedTableId.value}`)
   elements.forEach(element => element.destroy())
-  createTable(tableToEdit)
   tableNameInput.value = ''
   tableMaxCoverInput.value = ''
   tableMinCoverInput.value = ''
