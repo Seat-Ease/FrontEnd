@@ -58,20 +58,16 @@
         </div>
       </div>
       <div class="mainSection">
-        <div class="topSection">
-          <div class="roomsListContainer">
-            <p
-              @click="handleRoomSelection"
-              :class="{ selectedRoom: selectedRoomId === String(room.id) }"
-              v-for="room in rooms"
-              :ref="room.id"
-              :id="room.id"
-            >
-              {{ room.name }}
-            </p>
-          </div>
-          <p @click="roomEditingActivated = false" class="createBtn">Créer une salle</p>
-          <p @click="" class="createTableBtn">Créer une table</p>
+        <div class="roomsListContainer">
+          <p
+            @click="handleRoomSelection"
+            :class="{ selectedRoom: selectedRoomId === String(room.id) }"
+            v-for="room in rooms"
+            :ref="room.id"
+            :id="room.id"
+          >
+            {{ room.name }}
+          </p>
         </div>
         <div id="canvasContainer" ref="canvasContainer" class="canvasContainer">
           <v-stage ref="stageRef" :config="stageConfig"></v-stage>
@@ -417,23 +413,18 @@ onMounted(() => {
   height: 100%;
   flex: 1;
 }
-.topSection {
-  display: grid;
-  grid-template-columns: 7fr 1.5fr 1.5fr;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 0.1rem solid rgb(207, 207, 207);
-  font-size: 1.2rem;
-}
 .roomsListContainer {
   display: flex;
-  gap: 1rem;
+  gap: 3rem;
   overflow-x: scroll;
-  padding-left: 1rem;
+  padding: 1rem;
   align-items: center;
+  min-height: 2rem;
+  font-size: 1.2rem;
+  border-bottom: 0.1rem solid rgb(207, 207, 207);
 }
 .roomsListContainer > p {
-  min-width: 10%;
+  min-width: 5%;
   cursor: pointer;
 }
 .createTableBtn {
