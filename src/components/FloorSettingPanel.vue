@@ -91,7 +91,10 @@
 import { ref, onMounted, nextTick, reactive } from 'vue'
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
+import { useId } from 'vue'
 import Konva from 'konva'
+
+const unique_id = useId();
 
 const main_store = mainStore()
 const floor_store = floorStore()
@@ -128,7 +131,7 @@ function createNewRoom(e) {
   if (roomNameInput.value.length === 0) return
   if (!stageRef.value) return
   const newRoomConfig = {
-    id: String(Math.random()),
+    id: String(unique_id),
     name: roomNameInput.value,
   }
   rooms.value.push(newRoomConfig)
@@ -366,7 +369,7 @@ const handleTableCreation = (e) => {
   const targetRoom = stage.find((room) => room.attrs.id === selectedRoomId.value)
   if (!targetRoom) return
   const newTableData = {
-    id: String(Math.random()),
+    id: String(unique_id),
     x: 100,
     y: 100,
     width: 80,
