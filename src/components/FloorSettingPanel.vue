@@ -3,7 +3,7 @@
     <div class="topBar">
       <button @click="main_store.floorSettingPanelShowing = false" class="closeBtn">Fermer</button>
       <p class="title">CONFIGURATIONS DU PLAN</p>
-      <button class="saveBtn">Enregistrer</button>
+      <button @click="saveFloorConfiguration" class="saveBtn">Enregistrer</button>
     </div>
     <div class="mainFloor">
       <div class="sideBar">
@@ -104,6 +104,17 @@ const stageConfig = reactive({
   height: 600,
   draggable: false,
 })
+
+function saveFloorConfiguration() {
+  const newFloorConfiguration = {
+    rooms: rooms.value,
+    tables: tables.value
+  }
+  // For future implementation
+  // Make api call to update the databe
+  // Then update floor store with returned value from backend
+  floor_store.setFloorSetting(newFloorConfiguration)
+}
 
 // Code related to rooms
 
@@ -413,7 +424,7 @@ function cancelTableEditing(e) {
   tableNameInput.value = ''
   tableMinCoverInput.value = ''
   tableMaxCoverInput.value = ''
-  tableShapeInput.value = 'Circle'
+  tableShapeInput.value = ''
 }
 
 // Code related to tables
