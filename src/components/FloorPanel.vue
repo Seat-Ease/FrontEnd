@@ -5,7 +5,7 @@ import { ref, computed } from 'vue'
 
 const main_store = mainStore()
 const floor_store = floorStore()
-const rooms = computed(() => floor_store.getRoomsList())
+const rooms = computed(() => floor_store.getFloorSetting())
 const selectedRoomId = ref('')
 </script>
 

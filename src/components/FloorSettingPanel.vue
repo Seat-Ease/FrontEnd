@@ -91,10 +91,11 @@
 import { ref, onMounted, nextTick, reactive } from 'vue'
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
-import { useId } from 'vue'
+import { v4 as uuidv4 } from 'uuid';
 import Konva from 'konva'
+import { onBeforeMount } from 'vue'
 
-const unique_id = useId();
+const dataFromStore = ref(null)
 
 const main_store = mainStore()
 const floor_store = floorStore()
@@ -131,7 +132,7 @@ function createNewRoom(e) {
   if (roomNameInput.value.length === 0) return
   if (!stageRef.value) return
   const newRoomConfig = {
-    id: String(unique_id),
+    id: String(uuidv4()),
     name: roomNameInput.value,
   }
   rooms.value.push(newRoomConfig)
@@ -202,9 +203,8 @@ const selectedTableId = ref('')
 const tables = ref([])
 const tableEditingActivated = ref(false)
 
-function createTable(newTableData) {
-  const stage = stageRef.value.getNode().children
-  const targetRoom = stage.find((room) => room.attrs.id === selectedRoomId.value)
+function createTable(stage, newTableData) {
+  const targetRoom = stage.find((room) => room.attrs.id === newTableData.room_id)
   if (!targetRoom) return
 
   if (newTableData.shape === 'Circle') {
@@ -369,7 +369,7 @@ const handleTableCreation = (e) => {
   const targetRoom = stage.find((room) => room.attrs.id === selectedRoomId.value)
   if (!targetRoom) return
   const newTableData = {
-    id: String(unique_id),
+    id: String(uuidv4()),
     x: 100,
     y: 100,
     width: 80,
@@ -384,7 +384,7 @@ const handleTableCreation = (e) => {
     room_id: targetRoom.attrs.id,
   }
   tables.value.push(newTableData)
-  createTable(newTableData)
+  createTable(stage, newTableData)
   tableNameInput.value = ''
   tableMaxCoverInput.value = ''
   tableMinCoverInput.value = ''
@@ -432,10 +432,43 @@ function cancelTableEditing(e) {
 
 // Code related to tables
 
+// Set up code
+
+onBeforeMount(() => {
+  dataFromStore.value = floor_store.getFloorSetting()
+  if (dataFromStore.value !== null) {
+    rooms.value = dataFromStore.value.rooms
+    tables.value = dataFromStore.value.tables
+  }
+})
+
 onMounted(() => {
   if (canvasContainer.value) {
     stageConfig.width = canvasContainer.value.clientWidth
     stageConfig.height = canvasContainer.value.clientHeight
+  }
+  const stage = stageRef.value.getNode()
+  if (stage  && dataFromStore.value !== null) {
+    // Create layers
+    rooms.value.forEach(room => {
+      const layer = new Konva.Layer({ ...room, opacity: 1, visible: true })
+      stage.add(layer)
+    })
+    // Makes the first one in the list visible
+    console.log()
+    selectedRoomId.value = rooms.value[0].id
+    stage.children.forEach((room) => {
+      if (room.attrs.id !== selectedRoomId.value) {
+        room.visible(false)
+      } else {
+        room.visible(true)
+      }
+    })
+    // Create tables in respective rooms
+    tables.value.forEach(table => {
+      createTable(stage.children, table)
+    })
+    stageRef.value.getNode().batchDraw()
   }
 })
 </script>
