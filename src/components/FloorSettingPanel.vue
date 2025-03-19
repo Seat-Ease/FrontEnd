@@ -1,5 +1,9 @@
 <template>
-  <div class="floorSettingContainer">
+  <div v-if="savingSetting" class="saveOVerlayContainer">
+    <p>Merci de patienter pendant que nous enregistrons vos modifications</p>
+    <div class="ball"></div>
+  </div>
+  <div v-else class="floorSettingContainer">
     <div class="topBar">
       <button @click="main_store.floorSettingPanelShowing = false" class="closeBtn">Fermer</button>
       <p class="title">CONFIGURATIONS DU PLAN</p>
@@ -109,7 +113,13 @@ const stageConfig = reactive({
   draggable: false,
 })
 
-function saveFloorConfiguration() {
+const savingSetting = ref(false)
+
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+
+async function saveFloorConfiguration() {
+  savingSetting.value = true
+  await sleep(1000)
   const newFloorConfiguration = {
     rooms: rooms.value,
     tables: tables.value
@@ -118,6 +128,8 @@ function saveFloorConfiguration() {
   // Make api call to update the databe
   // Then update floor store with returned value from backend
   floor_store.setFloorSetting(newFloorConfiguration)
+  dataFromStore.value = floor_store.getFloorSetting()
+  savingSetting.value = false
 }
 
 // Code related to rooms
@@ -478,6 +490,62 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   max-height: 100vh;
+}
+.saveOVerlayContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  background-color: #00000030;
+  color: #fff;
+  font-size: 2rem;
+}
+.ball {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  animation: round 8s cubic-bezier(0.7, 0, 0.3, 1) infinite;
+  background-color: #0a03c6;
+}
+.ball:nth-child(1) {
+  background-color: #eb2020;
+  animation-delay: 0s;
+}
+@keyframes round {
+  0% {
+    transform: translate(-50%, -50%) translate(40px, 0);
+  }
+  12.5% {
+    transform: translate(-50%, -50%) translate(30px, 30px);
+  }
+  25% {
+    transform: translate(-50%, -50%) translate(0, 40px);
+  }
+  37.5% {
+    transform: translate(-50%, -50%) translate(-30px, 30px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translate(-40px, 0);
+  }
+  62.5% {
+    transform: translate(-50%, -50%) translate(-30px, -30px);
+  }
+  75% {
+    transform: translate(-50%, -50%) translate(0, -40px);
+  }
+  87.5% {
+    transform: translate(-50%, -50%) translate(30px, -30px);
+  }
+  100% {
+    transform: translate(-50%, -50%) translate(40px, 0);
+  }
 }
 .topBar {
   display: flex;
