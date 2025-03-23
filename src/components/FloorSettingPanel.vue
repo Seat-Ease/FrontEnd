@@ -320,7 +320,7 @@ function createTable(stage, newTableData) {
     const text = new Konva.Text({
       text: newTable.attrs.name,
       fontSize: 14,
-      fill: 'white',
+      fill: '#252189',
       padding: 4,
       x: newTable.x() - 25,
       y: newTable.y() - 65,
@@ -375,7 +375,8 @@ function createTable(stage, newTableData) {
       draggable: newTableData.draggable,
       stroke: newTableData.stroke,
       strokeWidth: newTableData.strokeWidth,
-      name: newTableData.name
+      name: newTableData.name,
+      cornerRadius: 4
     })
 
     const label = new Konva.Label({
@@ -396,7 +397,7 @@ function createTable(stage, newTableData) {
     const text = new Konva.Text({
       text: newTable.attrs.name,
       fontSize: 14,
-      fill: 'white',
+      fill: '#252189',
       padding: 4,
       x: newTable.x() + 10,
       y: newTable.y() - 25,
@@ -833,6 +834,6 @@ onMounted(() => {
 .canvasContainer {
   height: 100%;
   flex: 1;
-  background-color: rgb(207, 207, 207);
+  background-color: rgb(241, 241, 241);
 }
 </style>
