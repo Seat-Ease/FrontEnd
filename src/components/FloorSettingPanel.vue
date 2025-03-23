@@ -20,12 +20,18 @@
     </div>
     <div class="mainFloor">
       <div class="sideBar">
-        <div class="optionsContainer">
-          <p class="optionLocalTitle">Options de table</p>
-          <p class="optionLocalText">
-            Cliquez ou faites glisser et déposez facilement vos tables, nommez-les et choisissez le
-            nombre minimum et maximum de couverts.
-          </p>
+        <div class="instructionsContainer">
+          <p class="instructionsTitle">Instructions</p>
+          <ul class="instructionsList">
+            <ol class="instructionText">1. Selectionner ou créer la salle</ol>
+            <ol class="instructionText">2. Créer vos tables</ol>
+            <ol class="instructionText"></ol>
+          </ul>
+          <ul class="importantPointsList">
+            <li><strong>Important</strong></li>
+            <li>Une table ne peut être créée sans sélectionner une salle</li>
+            <li>Enregistrer vos modifications avant de fermer la fenêtre. Sinon, vous perdez vos modifications.</li>
+          </ul>
         </div>
         <div class="detailsContainer">
           <form class="roomForm">
@@ -684,22 +690,43 @@ onMounted(() => {
   display: grid;
   grid-template-rows: 0.3fr 0.7fr;
 }
-.optionsContainer {
+.instructionsContainer {
   border-bottom: 0.1rem solid rgb(207, 207, 207);
   display: flex;
   flex-direction: column;
   padding: 2rem;
   gap: 1.5rem;
 }
-.optionLocalTitle,
 .detailLocalTitle {
   font-size: 2rem;
   font-weight: bold;
   letter-spacing: 0.2rem;
 }
-.optionLocalText {
+.instructionsTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.instructionsList {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.instructionText {
   font-size: 1.2rem;
   line-height: 1.5;
+}
+.importantPointsList {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  list-style: none;
+}
+.importantPointsList > :nth-child(1) {
+  font-size: 1.5rem;
+  color: #0a03c6;
+  text-decoration: underline;
 }
 .tableForm,
 .roomForm {
