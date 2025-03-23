@@ -1,11 +1,20 @@
 <template>
-  <div v-if="savingSetting" class="saveOVerlayContainer">
-    <p>Merci de patienter pendant que nous enregistrons vos modifications</p>
-    <div class="ball"></div>
-  </div>
-  <div v-else class="floorSettingContainer">
+  <div class="floorSettingContainer">
+    <div v-if="savingSetting" class="saveOVerlayContainer">
+      <p>Merci de patienter pendant que nous enregistrons vos modifications</p>
+      <div class="ball"></div>
+    </div>
+    <div v-if="showClosingDialogBox" class="closingDialogOverlay">
+      <div class="closingDialogBox">
+        <p>Voulez-vous quitter sans enregistrer les modifications faites?</p>
+        <div class="btnContainer">
+          <button @click="showClosingDialogBox = false" class="leftBtn">Non</button>
+          <button @click="closeWithoutSaving" class="rightBtn">Oui</button>
+        </div>
+      </div>
+    </div>
     <div class="topBar">
-      <button @click="main_store.floorSettingPanelShowing = false" class="closeBtn">Fermer</button>
+      <button @click="handleWindowClosing" class="closeBtn">Fermer</button>
       <p class="title">CONFIGURATIONS DU PLAN</p>
       <button @click="saveFloorConfiguration" class="saveBtn">Enregistrer</button>
     </div>
@@ -130,6 +139,61 @@ async function saveFloorConfiguration() {
   floor_store.setFloorSetting(newFloorConfiguration)
   dataFromStore.value = floor_store.getFloorSetting()
   savingSetting.value = false
+}
+
+function deepEqual(obj1, obj2) {
+    if (typeof obj1 !== "object" || typeof obj2 !== "object" || obj1 === null || obj2 === null) {
+        return obj1 === obj2;
+    }
+
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) return false;
+
+    return keys1.every(key => {
+        if (Array.isArray(obj1[key]) && Array.isArray(obj2[key])) {
+            return compareArrays(obj1[key], obj2[key]);
+        }
+        return deepEqual(obj1[key], obj2[key]);
+    });
+}
+
+function compareArrays(arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
+
+  const sortedArr1 = arr1.map(el => JSON.stringify(el)).sort();
+  const sortedArr2 = arr2.map(el => JSON.stringify(el)).sort();
+
+  return sortedArr1.every((val, index) => val === sortedArr2[index]);
+}
+
+const showClosingDialogBox = ref(false)
+
+function handleWindowClosing() {
+  const localFloorConfiguration = {
+    rooms: rooms.value,
+    tables: tables.value
+  }
+  if (!deepEqual(localFloorConfiguration, floor_store.getFloorSetting())) {
+    showClosingDialogBox.value = true
+  } else {
+    rooms.value = []
+    tables.value = []
+    showClosingDialogBox.value = false
+    main_store.floorSettingPanelShowing = false
+  }
+}
+
+function closeWithoutSaving() {
+  rooms.value = []
+  tables.value = []
+  const stage = stageRef.value.getNode()
+  if (stage) {
+    stage.children.forEach(room => room.destroy())
+    showClosingDialogBox.value = false
+    main_store.floorSettingPanelShowing = false
+  }
 }
 
 // Code related to rooms
@@ -295,7 +359,6 @@ function createTable(stage, newTableData) {
         tableShapeInput.value = tableToEdit.shape
       }
     })
-
   } else if (newTableData.shape === 'Rect') {
     const newTable = new Konva.Rect({
       id: String(newTableData.id),
@@ -374,10 +437,10 @@ function createTable(stage, newTableData) {
     })
   }
 }
-
 const handleTableCreation = (e) => {
   e.preventDefault()
   const stage = stageRef.value.getNode().children
+  console.log(stageRef.value.getNode().children)
   const targetRoom = stage.find((room) => room.attrs.id === selectedRoomId.value)
   if (!targetRoom) return
   const newTableData = {
@@ -395,14 +458,13 @@ const handleTableCreation = (e) => {
     shape: tableShapeInput.value,
     room_id: targetRoom.attrs.id,
   }
-  tables.value.push(newTableData)
   createTable(stage, newTableData)
+  tables.value.push(newTableData)
   tableNameInput.value = ''
   tableMaxCoverInput.value = ''
   tableMinCoverInput.value = ''
   tableShapeInput.value = ''
 }
-
 function updateTable(e) {
   e.preventDefault()
   const tableToEdit = tables.value.find(table => String(table.id) === String(selectedTableId.value))
@@ -419,7 +481,6 @@ function updateTable(e) {
   tableShapeInput.value = ''
   tableEditingActivated.value = false
 }
-
 function deleteTable(e) {
   e.preventDefault()
   const stage = stageRef.value.getNode().children
@@ -432,7 +493,6 @@ function deleteTable(e) {
   tableShapeInput.value = ''
   tableEditingActivated.value = false
 }
-
 function cancelTableEditing(e) {
   e.preventDefault()
   tableEditingActivated.value = false
@@ -447,10 +507,10 @@ function cancelTableEditing(e) {
 // Set up code
 
 onBeforeMount(() => {
-  dataFromStore.value = floor_store.getFloorSetting()
+  dataFromStore.value = JSON.parse(JSON.stringify(floor_store.getFloorSetting()))
   if (dataFromStore.value !== null) {
-    rooms.value = dataFromStore.value.rooms
-    tables.value = dataFromStore.value.tables
+    rooms.value = JSON.parse(JSON.stringify(dataFromStore.value.rooms))
+    tables.value = JSON.parse(JSON.stringify(dataFromStore.value.tables))
   }
 })
 
@@ -467,7 +527,6 @@ onMounted(() => {
       stage.add(layer)
     })
     // Makes the first one in the list visible
-    console.log()
     selectedRoomId.value = rooms.value[0].id
     stage.children.forEach((room) => {
       if (room.attrs.id !== selectedRoomId.value) {
@@ -490,6 +549,57 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   max-height: 100vh;
+}
+.floorSettingContainer {
+  position: relative;
+}
+.closingDialogOverlay {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  top: 1;
+  background-color: rgba(0, 0, 0, 0.419);
+}
+.closingDialogBox {
+  display: grid;
+  grid-template-rows: 3fr 2fr;
+  height: 20%;
+  width: 30%;
+  background-color: #fff;
+  border-radius: 2rem;
+  justify-content: center;
+  color: #0a03c6;
+  font-size: 1.6rem;
+  text-align: center;
+  padding-top: 1.5rem;
+}
+.closingDialogBox > .btnContainer {
+  width:100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 0 0 2rem 2rem;
+  overflow: hidden;
+  align-items: center
+}
+.btnContainer > button {
+  padding: 2rem 0;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: .1rem;
+  font-size: 1.3rem;
+}
+.leftBtn {
+  background-color: #666;
+  color: #fff
+}
+.rightBtn {
+  background-color: #252189;
+  color: #fff;
 }
 .saveOVerlayContainer {
   width: 100%;
