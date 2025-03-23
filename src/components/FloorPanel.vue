@@ -1,7 +1,7 @@
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
-import { ref, onBeforeMount, reactive } from 'vue'
+import { ref, onBeforeMount, reactive, nextTick } from 'vue'
 import Konva from 'konva'
 import { onMounted } from 'vue'
 
@@ -37,7 +37,7 @@ function createTable(stage, newTableData) {
       y: newTableData.y,
       width: newTableData.width,
       height: newTableData.height,
-      draggable: newTableData.draggable,
+      draggable: false,
       stroke: newTableData.stroke,
       strokeWidth: newTableData.strokeWidth,
       name: newTableData.name,
@@ -71,43 +71,8 @@ function createTable(stage, newTableData) {
     targetRoom.add(tag)
     targetRoom.add(text)
 
-    newTable.on('dragmove', function () {
-      label.x(newTable.x() - 25)
-      label.y(newTable.y() - 65)
-      tag.x(newTable.x() - 25)
-      tag.y(newTable.y() - 65)
-      text.x(newTable.x() - 25)
-      text.y(newTable.y() - 65)
-    })
-
-    newTable.on('dragend', function () {
-      const tableToEdit = tables.value.find((table) => String(table.id) === String(newTableData.id))
-      tableToEdit.x = newTable.x()
-      tableToEdit.y = newTable.y()
-    })
-
     targetRoom.add(newTable)
     targetRoom.add(label)
-
-    newTable.on('click tap', function (e) {
-      e.cancelBubble = true
-      tableEditingActivated.value = true
-      selectedTableId.value = newTableData.id
-      const tableToEdit = tables.value.find(
-        (table) => String(table.id) === String(selectedTableId.value),
-      )
-      const stage = stageRef.value.getNode().children
-      const room = stage.find((room) => String(room.attrs.id) === String(selectedRoomId.value))
-      const table = room.find(`#${selectedTableId.value}`)[2] // Gets all the elements with the id passed and the circle element is at positon 2 in the array
-      table.fill('#252189')
-      room.batchDraw()
-      if (tableToEdit) {
-        tableNameInput.value = tableToEdit.name
-        tableMinCoverInput.value = tableToEdit.minCovers
-        tableMaxCoverInput.value = tableToEdit.maxCovers
-        tableShapeInput.value = tableToEdit.shape
-      }
-    })
   } else if (newTableData.shape === 'Rect') {
     const newTable = new Konva.Rect({
       id: String(newTableData.id),
@@ -115,7 +80,7 @@ function createTable(stage, newTableData) {
       y: newTableData.y,
       width: newTableData.width,
       height: newTableData.height,
-      draggable: newTableData.draggable,
+      draggable: false,
       stroke: newTableData.stroke,
       strokeWidth: newTableData.strokeWidth,
       name: newTableData.name,
@@ -150,44 +115,25 @@ function createTable(stage, newTableData) {
     targetRoom.add(tag)
     targetRoom.add(text)
 
-    newTable.on('dragmove', function () {
-      label.x(newTable.x() + 10)
-      label.y(newTable.y() - 25)
-      tag.x(newTable.x() + 10)
-      tag.y(newTable.y() - 25)
-      text.x(newTable.x() + 10)
-      text.y(newTable.y() - 25)
-    })
-
-    newTable.on('dragend', function () {
-      const tableToEdit = tables.value.find((table) => String(table.id) === String(newTableData.id))
-      tableToEdit.x = newTable.x()
-      tableToEdit.y = newTable.y()
-    })
-
     targetRoom.add(newTable)
     targetRoom.add(label)
+  }
+}
 
-    newTable.on('click tap', function (e) {
-      e.cancelBubble = true
-      tableEditingActivated.value = true
-      selectedTableId.value = newTableData.id
-      const tableToEdit = tables.value.find(
-        (table) => String(table.id) === String(selectedTableId.value),
-      )
-      const stage = stageRef.value.getNode().children
-      const room = stage.find((room) => String(room.attrs.id) === String(selectedRoomId.value))
-      const table = room.find(`#${selectedTableId.value}`)[2] // Gets all the elements with the id passed and the circle element is at positon 2 in the array
-      table.fill('#252189')
-      room.batchDraw()
-      if (tableToEdit) {
-        tableNameInput.value = tableToEdit.name
-        tableMinCoverInput.value = tableToEdit.minCovers
-        tableMaxCoverInput.value = tableToEdit.maxCovers
-        tableShapeInput.value = tableToEdit.shape
+function toggleRoomVisibility(e) {
+  const roomId = e.target.id
+  selectedRoomId.value = roomId
+  nextTick(() => {
+    const stage = stageRef.value.getNode().children
+    stage.forEach((room) => {
+      if (room.attrs.id !== selectedRoomId.value) {
+        room.visible(false)
+      } else {
+        room.visible(true)
       }
     })
-  }
+    stageRef.value.getNode().batchDraw()
+  })
 }
 
 onMounted(() => {
@@ -226,7 +172,7 @@ onMounted(() => {
       <div class="roomsList">
         <p
           v-if="floorData"
-          @click="selectedRoomId = room.id"
+          @click="toggleRoomVisibility"
           :class="{ selectedRoom: selectedRoomId === room.id }"
           v-for="room in floorData.rooms"
           :ref="room.id"
