@@ -22,7 +22,7 @@ const date = new Date()
       </div>
       <div v-else class="homePanelContainer">
         <div v-if="showCalendar" class="calendarContainer">
-          <VDatePicker v-model="date" />
+          <VDatePicker v-model="store.appDate" mode="date" />
         </div>
         <Sidebar />
         <ReservationPanel />

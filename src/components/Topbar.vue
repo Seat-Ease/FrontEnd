@@ -11,15 +11,24 @@
         class="calendar"
         :icon="['fas', 'calendar']"
       />
-      <p class="date">Thu, 13 Jan</p>
+      <p class="date">{{ formattedDate }}</p>
       <font-awesome-icon class="forwardDate" :icon="['fas', 'chevron-right']" />
     </div>
   </div>
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
+import { computed } from 'vue'
 
 const main_store = mainStore()
+
+const formattedDate = computed(() => {
+  return main_store.appDate.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  })
+})
 </script>
 <style>
 .top-bar {
