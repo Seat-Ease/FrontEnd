@@ -6,12 +6,21 @@
     </div>
     <div class="dateContainer">
       <font-awesome-icon class="backwardDate" :icon="['fas', 'chevron-left']" />
-      <font-awesome-icon class="calendar" :icon="['fas', 'calendar']" />
+      <font-awesome-icon
+        @click="main_store.toggleCalendar"
+        class="calendar"
+        :icon="['fas', 'calendar']"
+      />
       <p class="date">Thu, 13 Jan</p>
       <font-awesome-icon class="forwardDate" :icon="['fas', 'chevron-right']" />
     </div>
   </div>
 </template>
+<script setup>
+import { mainStore } from '@/stores/mainStore'
+
+const main_store = mainStore()
+</script>
 <style>
 .top-bar {
   width: 100%;
