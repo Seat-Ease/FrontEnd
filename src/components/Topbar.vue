@@ -5,14 +5,22 @@
       <font-awesome-icon class="chevronDown" :icon="['fas', 'angle-down']" />
     </div>
     <div class="dateContainer">
-      <font-awesome-icon class="backwardDate" :icon="['fas', 'chevron-left']" />
+      <font-awesome-icon
+        @click="main_store.goToPreviousDay"
+        class="backwardDate"
+        :icon="['fas', 'chevron-left']"
+      />
       <font-awesome-icon
         @click="main_store.toggleCalendar"
         class="calendar"
         :icon="['fas', 'calendar']"
       />
       <p class="date">{{ formattedDate }}</p>
-      <font-awesome-icon class="forwardDate" :icon="['fas', 'chevron-right']" />
+      <font-awesome-icon
+        @click="main_store.goToNextDay"
+        class="forwardDate"
+        :icon="['fas', 'chevron-right']"
+      />
     </div>
   </div>
 </template>
