@@ -29,6 +29,7 @@
   max-height: 100vh;
   flex: 1;
   overflow: hidden;
+  position: relative;
 }
 .reserveBtnContainer {
   display: flex;
@@ -69,10 +70,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: end;
   color: #fff;
   font-size: 1rem;
   padding: 1rem;
+  padding-bottom: 5rem;
   margin-top: auto;
+  position: absolute;
+  height: 100%;
 }
 </style>
