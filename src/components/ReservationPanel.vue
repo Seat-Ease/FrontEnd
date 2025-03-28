@@ -1,39 +1,66 @@
 <script setup>
-import ReservationShower from './ReservationShower.vue'
+import ReservationSection from '@/components/ReservationSection.vue'
+import WaitLisSection from '@/components/WaitList.vue'
+import ServerSection from '@/components/ServerSection.vue'
+import { ref } from 'vue'
+
+const reservationsShowing = ref(true)
+const waitListShowing = ref(false)
+const serversShowing = ref(false)
+
+function toggleSection(e) {
+  const el_id = e.target.id
+  if (el_id === 'reservation') {
+    reservationsShowing.value = true
+    waitListShowing.value = false
+    serversShowing.value = false
+  } else if (el_id === 'waitList') {
+    reservationsShowing.value = false
+    waitListShowing.value = true
+    serversShowing.value = false
+  } else if (el_id === 'servers') {
+    reservationsShowing.value = false
+    waitListShowing.value = false
+    serversShowing.value = true
+  }
+}
 </script>
 <template>
   <div class="reservationPanel">
     <div class="topSection">
-      <p class="reservation active">RESERVATIONS</p>
-      <p class="waitlist">WAITLIST</p>
-      <p class="serveurs">SERVEURS</p>
+      <p
+        @click="toggleSection"
+        id="reservation"
+        :class="{ active: reservationsShowing === true }"
+        class="reservation"
+      >
+        RESERVATIONS
+      </p>
+      <p
+        @click="toggleSection"
+        id="waitList"
+        :class="{ active: waitListShowing === true }"
+        class="waitlist"
+      >
+        WAITLIST
+      </p>
+      <p
+        @click="toggleSection"
+        id="servers"
+        :class="{ active: serversShowing === true }"
+        class="serveurs"
+      >
+        SERVEURS
+      </p>
     </div>
-    <div class="searchSection">
-      <font-awesome-icon class="search" :icon="['fas', 'search']" />
-      <input class="searchInput" type="text" placeholder="Chercher un client" />
+    <div v-if="reservationsShowing">
+      <ReservationSection />
     </div>
-    <div class="upcomingSection">
-      <div class="upcomingSectionTopSectionContainer">
-        <p class="sectionTitle">Upcoming</p>
-        <font-awesome-icon :icon="['fas', 'chevron-down']" />
-      </div>
-      <ReservationShower />
+    <div v-else-if="waitListShowing">
+      <WaitLisSection />
     </div>
-    <div class="seatedSection">
-      <div class="seatedSectionTopSectionContainer">
-        <p class="sectionTitle">Seated</p>
-        <font-awesome-icon :icon="['fas', 'chevron-down']" />
-      </div>
-      <div class="seatedSectionList">
-        <ReservationShower />
-        <ReservationShower />
-        <ReservationShower />
-        <ReservationShower />
-        <ReservationShower />
-        <ReservationShower />
-        <ReservationShower />
-        <ReservationShower />
-      </div>
+    <div v-else-if="serversShowing">
+      <ServerSection />
     </div>
   </div>
 </template>
@@ -60,60 +87,5 @@ import ReservationShower from './ReservationShower.vue'
 .active {
   color: #252189;
   font-weight: bold;
-}
-.searchSection {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  padding: 1rem;
-}
-.search {
-  height: 2rem !important;
-  width: 2rem !important;
-  color: #121123dd !important;
-}
-.searchInput {
-  border: none;
-  padding: 1rem;
-  width: 100%;
-  font-size: 1.6rem;
-}
-.searchInput:focus {
-  font-size: 1.6rem;
-  outline: none;
-}
-.searchInput::placeholder {
-  font-size: 1.6rem;
-}
-.upcomingSection,
-.seatedSection {
-  display: flex;
-  flex-direction: column;
-}
-.upcomingSectionTopSectionContainer,
-.seatedSectionTopSectionContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  font-size: 1.5rem;
-  border-bottom: 0.2rem solid #444;
-  background-color: rgb(230, 230, 230);
-}
-.upcomingSection {
-  flex-shrink: 0;
-}
-.seatedSection {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow-y: scroll;
-}
-.seatedSectionList {
-  flex-grow: 1;
-  overflow-y: scroll;
-  min-height: 0;
 }
 </style>
