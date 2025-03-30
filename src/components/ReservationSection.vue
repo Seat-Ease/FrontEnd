@@ -13,16 +13,11 @@
       </div>
       <transition name="slide" mode="out-in">
         <div v-if="isUpcomingOpen" class="upcomingSectionList">
-          <ReservationShower />
-          <ReservationShower />
-          <ReservationShower />
-          <ReservationShower />
-          <ReservationShower />
-          <ReservationShower />
-          <ReservationShower />
-          <ReservationShower />
-          <ReservationShower />
-          <ReservationShower />
+          <ReservationCard
+            v-for="reservation in reservations"
+            :key="reservation.id"
+            :reservation="reservation"
+          />
         </div>
       </transition>
     </div>
@@ -50,9 +45,13 @@
   </div>
 </template>
 <script setup>
-import ReservationShower from './ReservationShower.vue'
+import ReservationCard from './ReservationShower.vue'
 import SeatedShower from './SeatedShower.vue'
+import { reservationStore } from '@/stores/reservationStore'
 import { ref } from 'vue'
+
+const reservation_store = reservationStore()
+const reservations = reservation_store.getReservations()
 
 const isUpcomingOpen = ref(true)
 const isSeatedOpen = ref(false)

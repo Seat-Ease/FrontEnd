@@ -1,12 +1,12 @@
 <template>
   <div class="reservationShowingContainer">
-    <p class="time">23:00</p>
+    <p class="time">{{ reservation.time }}</p>
     <div class="rightContainer">
       <div class="reservationDetailsContainer">
-        <p class="clientName">Huguesse Assande</p>
+        <p class="clientName">{{ reservation.client_name }}</p>
         <div class="peopleCountContainer">
           <font-awesome-icon :icon="['fas', 'user']" />
-          <p>4</p>
+          <p>{{ reservation.party_size }}</p>
         </div>
       </div>
       <div class="btnContainer">
@@ -16,6 +16,17 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  name: 'ReservationCard',
+  props: {
+    reservation: {
+      type: Object,
+      required: true,
+    },
+  },
+}
+</script>
 <style scoped>
 .reservationShowingContainer {
   display: grid;
@@ -35,12 +46,12 @@
   flex-direction: column;
   gap: 1.5rem;
   border-left: 0.1rem solid rgb(207, 207, 207);
-  padding: 2rem;
+  padding: 2rem 1.5rem;
 }
 .reservationDetailsContainer {
   display: flex;
-  gap: 1rem;
   align-items: center;
+  justify-content: space-between;
 }
 .clientName {
   font-weight: bold;
@@ -48,19 +59,14 @@
 }
 .peopleCountContainer {
   display: flex;
-  gap: 2.5rem;
-  align-items: center;
-  color: #444;
-}
-.peopleCountContainer {
-  display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #444;
 }
 .btnContainer {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
 }
 .assignBtn,
 .cancelBtn {
