@@ -48,10 +48,20 @@
 import ReservationCard from './ReservationShower.vue'
 import SeatedShower from './SeatedShower.vue'
 import { reservationStore } from '@/stores/reservationStore'
-import { ref } from 'vue'
+import { mainStore } from '@/stores/mainStore'
+import { ref, computed, onBeforeMount } from 'vue'
+
+const main_store = mainStore()
 
 const reservation_store = reservationStore()
-const reservations = reservation_store.getReservations()
+const reservations = computed(() => {
+  return reservation_store.getReservations().filter((reservation) => {
+    const [year, month, day] = reservation.date.split('-').map(Number)
+    const reservationDate = new Date(year, month - 1, day).toDateString()
+    const selectedDate = new Date(main_store.appDate).toDateString()
+    return reservationDate === selectedDate
+  })
+})
 
 const isUpcomingOpen = ref(true)
 const isSeatedOpen = ref(false)
