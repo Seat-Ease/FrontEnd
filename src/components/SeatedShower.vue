@@ -1,15 +1,15 @@
 <template>
   <div class="seatedShowingContainer">
-    <p class="time">23:00</p>
+    <p class="time">{{ reservation.service_start_time }}</p>
     <div class="details">
-      <p class="clientName">Huguesse Assande</p>
+      <p class="clientName">{{ reservation.client_name }}</p>
       <div class="stats">
         <div class="statsPeople">
           <font-awesome-icon :icon="['fas', 'user']" />
-          <p>4</p>
+          <p>{{ reservation.party_size }}</p>
         </div>
         <div class="statsTable">
-          <p>Table(s) : 4</p>
+          <p>Table(s) : {{ reservation.tables_occupied.join() }}</p>
         </div>
       </div>
       <p class="serviceEndBtn">Debarasser</p>

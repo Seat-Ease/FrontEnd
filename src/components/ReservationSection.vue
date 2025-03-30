@@ -30,7 +30,11 @@
       </div>
       <transition name="slide" mode="out-in">
         <div v-if="isSeatedOpen" class="seatedSectionList">
-          <SeatedCard />
+          <SeatedCard
+            v-for="reservation in seatedReservations"
+            :key="reservation.id"
+            :reservation="reservation"
+          />
         </div>
       </transition>
     </div>
@@ -63,13 +67,21 @@ const reservations = computed(() => {
       const isSameDate = reservationDateObj.toDateString() === selectedDateStr
 
       if (selectedDateStr === todayStr) {
-        return isSameDate && reservationDateTime >= new Date(now.getTime())
+        return (
+          isSameDate &&
+          reservationDateTime >= new Date(now.getTime()) &&
+          reservation.seated === false
+        )
       }
 
       return isSameDate
     })
     .sort((a, b) => a.time.localeCompare(b.time))
 })
+
+const seatedReservations = computed(() =>
+  reservation_store.getSeatedReservations(main_store.appDate),
+)
 
 const isUpcomingOpen = ref(true)
 const isSeatedOpen = ref(false)
@@ -162,7 +174,7 @@ const toggleSeated = () => {
   max-height: 77.6%;
 }
 .expanded-100 {
-  max-height: 100%;
+  max-height: 90%;
 }
 .slide-enter-active,
 .slide-leave-active {
