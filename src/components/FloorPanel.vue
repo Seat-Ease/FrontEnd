@@ -38,9 +38,10 @@ function createTable(stage, newTableData) {
       width: newTableData.width,
       height: newTableData.height,
       draggable: false,
-      stroke: newTableData.stroke,
+      stroke: newTableData.occupied ? 'red' : 'green',
       strokeWidth: newTableData.strokeWidth,
       name: newTableData.name,
+      fill: newTableData.occupied ? 'red' : 'green',
     })
 
     const label = new Konva.Label({
@@ -81,10 +82,11 @@ function createTable(stage, newTableData) {
       width: newTableData.width,
       height: newTableData.height,
       draggable: false,
-      stroke: newTableData.stroke,
+      stroke: newTableData.occupied ? 'red' : 'green',
       strokeWidth: newTableData.strokeWidth,
       name: newTableData.name,
       cornerRadius: 4,
+      fill: newTableData.occupied ? 'red' : 'green',
     })
 
     const label = new Konva.Label({
@@ -145,7 +147,11 @@ onMounted(() => {
   if (stage && floorData.value !== null) {
     // Create layers
     floorData.value.rooms.forEach((room) => {
-      const layer = new Konva.Layer({ ...room, opacity: 1, visible: true })
+      const layer = new Konva.Layer({
+        ...room,
+        opacity: 1,
+        visible: true,
+      })
       stage.add(layer)
     })
     // Makes the first one in the list visible
@@ -223,6 +229,7 @@ onMounted(() => {
 }
 .floorContainer {
   flex: 1;
+  height: 100%;
   background-color: rgb(241, 241, 241);
 }
 </style>

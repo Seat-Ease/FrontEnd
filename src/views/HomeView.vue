@@ -17,17 +17,19 @@ const date = new Date()
   <main>
     <Topbar />
     <div class="mainContainer">
-      <div class="floorSettingPanelContainer" v-if="editingFloorPlan">
-        <FloorSettingPanel />
-      </div>
-      <div v-else class="homePanelContainer">
-        <div v-if="showCalendar" class="calendarContainer">
-          <VDatePicker v-model="store.appDate" mode="date" />
+      <transition name="slide" mode="out-in">
+        <div class="floorSettingPanelContainer" v-if="editingFloorPlan">
+          <FloorSettingPanel />
         </div>
-        <Sidebar />
-        <ReservationPanel />
-        <FloorPanel />
-      </div>
+        <div v-else class="homePanelContainer">
+          <div v-if="showCalendar" class="calendarContainer">
+            <VDatePicker v-model="store.appDate" mode="date" />
+          </div>
+          <Sidebar />
+          <ReservationPanel />
+          <FloorPanel />
+        </div>
+      </transition>
     </div>
   </main>
 </template>
@@ -80,5 +82,24 @@ main {
   width: 100%;
   height: 100%;
   max-height: 100vh;
+}
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+.slide-enter-from,
+.slide-leave-to {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.slide-enter-to,
+.slide-leave-from {
+  max-height: 100vh;
+  opacity: 1;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="ReservationShowingContainer">
+  <div class="seatedShowingContainer">
     <p class="time">
       11:00 <br />
       PM
@@ -12,14 +12,14 @@
           <p>4</p>
         </div>
         <div class="statsTable">
-          <p class="assignBtn">Assoir</p>
+          <p>Table(s) : 4</p>
         </div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
-.ReservationShowingContainer {
+.seatedShowingContainer {
   display: grid;
   grid-template-columns: 1fr 3fr;
   font-size: 1.5rem;
@@ -42,21 +42,10 @@
 }
 .stats {
   display: flex;
-  gap: 2.5rem;
-  align-items: center;
+  gap: 2rem;
 }
 .statsPeople {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.assignBtn {
-  font-size: 1.2rem;
-  color: #fff;
-  font-weight: bold;
-  background-color: #252189;
-  padding: 1rem 3rem;
-  border-radius: 2rem;
-  cursor: pointer;
+  gap: 1rem;
 }
 </style>

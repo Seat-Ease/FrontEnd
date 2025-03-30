@@ -123,8 +123,8 @@ const canvasContainer = ref(null)
 const stageRef = ref(null)
 
 const stageConfig = reactive({
-  width: 800,
-  height: 600,
+  width: 1000,
+  height: 1000,
   draggable: false,
 })
 
@@ -213,16 +213,18 @@ function createNewRoom(e) {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
   if (!stageRef.value) return
+  const stage = stageRef.value.getNode()
   const newRoomConfig = {
     id: String(uuidv4()),
-    name: roomNameInput.value,
+    name: roomNameInput.value
   }
   rooms.value.push(newRoomConfig)
-  const stage = stageRef.value.getNode()
-  const layer = new Konva.Layer({ ...newRoomConfig, opacity: 1, visible: true })
+  const layer = new Konva.Layer({
+    ...newRoomConfig, opacity: 1,
+    visible: true,
+  })
   if (selectedRoomId.value !== '') {
-    const stage = stageRef.value.getNode().children
-    const roomToHide = stage.find((room) => room.attrs.id === String(selectedRoomId.value))
+    const roomToHide = stage.children.find((room) => room.attrs.id === String(selectedRoomId.value))
     roomToHide.visible(false)
   }
   selectedRoomId.value = String(newRoomConfig.id)
@@ -447,7 +449,6 @@ function createTable(stage, newTableData) {
 const handleTableCreation = (e) => {
   e.preventDefault()
   const stage = stageRef.value.getNode().children
-  console.log(stageRef.value.getNode().children)
   const targetRoom = stage.find((room) => room.attrs.id === selectedRoomId.value)
   if (!targetRoom) return
   const newTableData = {
@@ -464,6 +465,7 @@ const handleTableCreation = (e) => {
     maxCovers: tableMaxCoverInput.value,
     shape: tableShapeInput.value,
     room_id: targetRoom.attrs.id,
+    occupied: false
   }
   createTable(stage, newTableData)
   tables.value.push(newTableData)
@@ -530,7 +532,11 @@ onMounted(() => {
   if (stage  && dataFromStore.value !== null) {
     // Create layers
     rooms.value.forEach(room => {
-      const layer = new Konva.Layer({ ...room, opacity: 1, visible: true })
+      const layer = new Konva.Layer({
+        ...room,
+        opacity: 1,
+        visible: true
+      })
       stage.add(layer)
     })
     // Makes the first one in the list visible
@@ -546,7 +552,7 @@ onMounted(() => {
     tables.value.forEach(table => {
       createTable(stage.children, table)
     })
-    stageRef.value.getNode().batchDraw()
+    // stageRef.value.getNode().batchDraw()
   }
 })
 </script>
