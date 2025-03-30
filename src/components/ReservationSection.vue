@@ -55,12 +55,28 @@ const main_store = mainStore()
 
 const reservation_store = reservationStore()
 const reservations = computed(() => {
-  return reservation_store.getReservations().filter((reservation) => {
-    const [year, month, day] = reservation.date.split('-').map(Number)
-    const reservationDate = new Date(year, month - 1, day).toDateString()
-    const selectedDate = new Date(main_store.appDate).toDateString()
-    return reservationDate === selectedDate
-  })
+  const now = new Date()
+  const todayStr = now.toDateString()
+  const selectedDateObj = new Date(main_store.appDate)
+  const selectedDateStr = selectedDateObj.toDateString()
+
+  return reservation_store
+    .getReservations()
+    .filter((reservation) => {
+      const [year, month, day] = reservation.date.split('-').map(Number)
+      const [hour, minute] = reservation.time.split(':').map(Number)
+      const reservationDateObj = new Date(year, month - 1, day)
+      const reservationDateTime = new Date(year, month - 1, day, hour, minute)
+
+      const isSameDate = reservationDateObj.toDateString() === selectedDateStr
+
+      if (selectedDateStr === todayStr) {
+        return isSameDate && reservationDateTime >= new Date(now.getTime())
+      }
+
+      return isSameDate
+    })
+    .sort((a, b) => a.time.localeCompare(b.time))
 })
 
 const isUpcomingOpen = ref(true)
