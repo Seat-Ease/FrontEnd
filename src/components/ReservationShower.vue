@@ -71,7 +71,7 @@ export default {
 .assignBtn,
 .cancelBtn {
   padding: 1rem 2rem;
-  border-radius: 2rem;
+  border-radius: 1.5rem;
   cursor: pointer;
   letter-spacing: 0.1rem;
   font-size: 1.2rem;

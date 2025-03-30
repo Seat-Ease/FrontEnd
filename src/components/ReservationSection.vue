@@ -30,15 +30,7 @@
       </div>
       <transition name="slide" mode="out-in">
         <div v-if="isSeatedOpen" class="seatedSectionList">
-          <SeatedShower />
-          <SeatedShower />
-          <SeatedShower />
-          <SeatedShower />
-          <SeatedShower />
-          <SeatedShower />
-          <SeatedShower />
-          <SeatedShower />
-          <SeatedShower />
+          <SeatedCard />
         </div>
       </transition>
     </div>
@@ -46,7 +38,7 @@
 </template>
 <script setup>
 import ReservationCard from './ReservationShower.vue'
-import SeatedShower from './SeatedShower.vue'
+import SeatedCard from './SeatedShower.vue'
 import { reservationStore } from '@/stores/reservationStore'
 import { mainStore } from '@/stores/mainStore'
 import { ref, computed, onBeforeMount } from 'vue'
@@ -149,7 +141,6 @@ const toggleSeated = () => {
 }
 .seatedSection,
 .upcomingSection {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
   overflow-y: scroll;

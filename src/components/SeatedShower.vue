@@ -1,9 +1,6 @@
 <template>
   <div class="seatedShowingContainer">
-    <p class="time">
-      11:00 <br />
-      PM
-    </p>
+    <p class="time">23:00</p>
     <div class="details">
       <p class="clientName">Huguesse Assande</p>
       <div class="stats">
@@ -15,9 +12,21 @@
           <p>Table(s) : 4</p>
         </div>
       </div>
+      <p class="serviceEndBtn">Debarasser</p>
     </div>
   </div>
 </template>
+<script>
+export default {
+  name: 'SeatedCard',
+  props: {
+    reservation: {
+      type: Object,
+      required: true,
+    },
+  },
+}
+</script>
 <style scoped>
 .seatedShowingContainer {
   display: grid;
@@ -33,7 +42,8 @@
 .details {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 1rem;
   border-left: 0.1rem solid rgb(207, 207, 207);
   padding: 2rem;
 }
@@ -42,10 +52,22 @@
 }
 .stats {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
 }
 .statsPeople {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
+}
+.serviceEndBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #252189;
+  padding: 1rem 2rem;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  border-radius: 1.5rem;
+  align-self: flex-start;
 }
 </style>
