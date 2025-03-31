@@ -1,27 +1,19 @@
 <script setup>
 import ReservationSection from '@/components/ReservationSection.vue'
 import WaitLisSection from '@/components/WaitList.vue'
-import ServerSection from '@/components/ServerSection.vue'
 import { ref } from 'vue'
 
 const reservationsShowing = ref(true)
 const waitListShowing = ref(false)
-const serversShowing = ref(false)
 
 function toggleSection(e) {
   const el_id = e.target.id
   if (el_id === 'reservation') {
     reservationsShowing.value = true
     waitListShowing.value = false
-    serversShowing.value = false
   } else if (el_id === 'waitList') {
     reservationsShowing.value = false
     waitListShowing.value = true
-    serversShowing.value = false
-  } else if (el_id === 'servers') {
-    reservationsShowing.value = false
-    waitListShowing.value = false
-    serversShowing.value = true
   }
 }
 </script>
@@ -44,23 +36,12 @@ function toggleSection(e) {
       >
         WAITLIST
       </p>
-      <p
-        @click="toggleSection"
-        id="servers"
-        :class="{ active: serversShowing === true }"
-        class="serveurs"
-      >
-        SERVEURS
-      </p>
     </div>
     <div v-if="reservationsShowing">
       <ReservationSection />
     </div>
     <div v-else-if="waitListShowing">
       <WaitLisSection />
-    </div>
-    <div v-else-if="serversShowing">
-      <ServerSection />
     </div>
   </div>
 </template>
@@ -75,7 +56,7 @@ function toggleSection(e) {
 }
 .topSection {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   gap: 1rem;
   font-size: 1.2rem;
   padding: 1rem;

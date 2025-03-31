@@ -44,9 +44,8 @@ html,
 body,
 #app {
   font-size: 62.5%;
-  display: flex;
-  height: 100%;
-  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
   font-family: 'Hepta Slab', serif;
   font-optical-sizing: auto;
   font-style: normal;
