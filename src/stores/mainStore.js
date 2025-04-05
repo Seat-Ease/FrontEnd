@@ -4,6 +4,8 @@ import { defineStore } from 'pinia'
 export const mainStore = defineStore('mainStore', () => {
   const floorSettingPanelShowing = ref(false)
   const calendarShowing = ref(false)
+  const selectedReservation = ref(null)
+  const freeTablesListShowing = ref(false)
   const appDate = ref(new Date())
 
   function toggleCalendar() {
@@ -27,5 +29,7 @@ export const mainStore = defineStore('mainStore', () => {
     appDate,
     goToNextDay,
     goToPreviousDay,
+    selectedReservation,
+    freeTablesListShowing,
   }
 })

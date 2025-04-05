@@ -1,5 +1,10 @@
 <template>
   <div class="reservationSectionContainer">
+    <transition name="slide-fade-x">
+      <div v-if="main_store.freeTablesListShowing" class="tablesListContainer">
+        <FreeTables />
+      </div>
+    </transition>
     <div class="searchSection">
       <font-awesome-icon class="search" :icon="['fas', 'search']" />
       <input class="searchInput" type="text" placeholder="Chercher un client" />
@@ -43,6 +48,7 @@
 <script setup>
 import ReservationCard from './ReservationShower.vue'
 import SeatedCard from './SeatedShower.vue'
+import FreeTables from './FreeTables.vue'
 import { reservationStore } from '@/stores/reservationStore'
 import { mainStore } from '@/stores/mainStore'
 import { ref, computed } from 'vue'
@@ -108,6 +114,15 @@ const toggleSeated = () => {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  position: relative;
+}
+.tablesListContainer {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  overflow-y: hidden;
 }
 .searchSection {
   display: flex;
@@ -193,5 +208,32 @@ const toggleSeated = () => {
   opacity: 1;
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+.slide-fade-x-enter-active,
+.slide-fade-x-leave-active {
+  transition: all 0.4s ease;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-fade-x-enter-from {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.slide-fade-x-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-fade-x-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-fade-x-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
 }
 </style>

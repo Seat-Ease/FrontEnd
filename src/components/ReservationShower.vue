@@ -10,19 +10,27 @@
         </div>
       </div>
       <div class="btnContainer">
-        <p class="assignBtn">Assoir</p>
+        <p @click="showFreeTablesList" class="assignBtn">Assoir</p>
         <!-- <p class="cancelBtn">Annuler</p> -->
       </div>
     </div>
   </div>
 </template>
 <script>
+import { mainStore } from '@/stores/mainStore'
 export default {
   name: 'ReservationCard',
   props: {
     reservation: {
       type: Object,
       required: true,
+    },
+  },
+  methods: {
+    showFreeTablesList() {
+      const main_store = mainStore()
+      main_store.selectedReservation = this.reservation.id
+      main_store.freeTablesListShowing = true
     },
   },
 }
