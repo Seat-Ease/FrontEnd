@@ -180,7 +180,6 @@ watch(
       stage.add(layer)
     })
 
-    selectedRoomId.value = newVal.rooms[0].id
     stage.children.forEach((room) => {
       room.visible(room.attrs.id === selectedRoomId.value)
     })

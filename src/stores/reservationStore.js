@@ -424,7 +424,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: '1df3c65b-a6bf-47f6-a175-dde07c01b7c0',
           name: 'Table 3',
           room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
           room_name: 'Main Hall',
@@ -444,7 +444,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: 'b7f7691e-2641-42a7-8e5b-1f6e7cfd4c10',
           name: 'Table 6',
           room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
           room_name: 'Main Hall',
@@ -464,8 +464,8 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
-          name: 'Table 2',
+          id: '05092a1b-a095-49a1-a47f-2ecbe0e6e3ff',
+          name: 'Table 7',
           room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
           room_name: 'Main Hall',
         },
@@ -484,7 +484,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: 'a753000c-3564-4b10-b9c1-db69240abb4c',
           name: 'Table 13',
           room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
           room_name: 'Main Hall',
@@ -504,7 +504,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: 'dcd10dec-9209-4f9f-b41a-2290111eaebf',
           name: 'Table 14',
           room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
           room_name: 'Main Hall',
@@ -524,7 +524,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: '71b17652-583b-4e81-9651-9b4048a9c19f',
           name: 'Table 15',
           room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
           room_name: 'Main Hall',
@@ -544,7 +544,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: '43f18015-aa00-40a2-bad0-7785ed80dcf5',
           name: 'Table 4',
           room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
           room_name: 'Terrace',
@@ -564,7 +564,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: 'ec47dd44-64b1-4631-b86e-7a4a68152711',
           name: 'Table 5',
           room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
           room_name: 'Terrace',
@@ -584,7 +584,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: '53235234-0886-45df-85cd-328567343964',
           name: 'Table 6',
           room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
           room_name: 'Terrace',
@@ -604,7 +604,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: 'c1ba8962-96f9-43dc-8498-c709bdc45aa0',
           name: 'Table 7',
           room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
           room_name: 'Terrace',
@@ -624,7 +624,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: 'f50cb7f7-3abe-486a-a071-2bf32cf4b9fa',
           name: 'Table 11',
           room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
           room_name: 'Terrace',
@@ -644,7 +644,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       seated: true,
       tables_occupied: [
         {
-          id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
+          id: '9583cedc-404b-4b29-8e15-454ae1673fdd',
           name: 'Table 15',
           room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
           room_name: 'Terrace',
@@ -681,5 +681,18 @@ export const reservationStore = defineStore('reservationStore', () => {
       .sort((a, b) => a.time.localeCompare(b.time))
   }
 
-  return { getReservations, getSeatedReservations }
+  function endServiceForReservation(reservationId) {
+    const now = new Date()
+    const formattedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+
+    const reservation = reservations.value.find((res) => res.id === reservationId)
+    if (reservation) {
+      reservation.service_end_time = formattedTime
+      reservation.seated = false
+    } else {
+      console.warn(`Reservation with ID ${reservationId} not found.`)
+    }
+  }
+
+  return { getReservations, getSeatedReservations, endServiceForReservation }
 })

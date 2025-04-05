@@ -20,6 +20,7 @@
 </template>
 <script>
 import { floorStore } from '@/stores/floorStore'
+import { reservationStore } from '@/stores/reservationStore'
 export default {
   name: 'SeatedCard',
   props: {
@@ -38,6 +39,7 @@ export default {
     },
     freeTables() {
       this.reservation.tables_occupied.forEach((table) => floorStore().updateTableState(table.id))
+      reservationStore().endServiceForReservation(this.reservation.id)
     },
   },
 }

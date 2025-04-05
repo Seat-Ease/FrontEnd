@@ -45,8 +45,7 @@ import ReservationCard from './ReservationShower.vue'
 import SeatedCard from './SeatedShower.vue'
 import { reservationStore } from '@/stores/reservationStore'
 import { mainStore } from '@/stores/mainStore'
-import { ref, computed, onBeforeMount } from 'vue'
-import { onMounted } from 'vue'
+import { ref, computed } from 'vue'
 
 const main_store = mainStore()
 
