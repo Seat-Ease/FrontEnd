@@ -7,7 +7,12 @@
     </transition>
     <div class="searchSection">
       <font-awesome-icon class="search" :icon="['fas', 'search']" />
-      <input class="searchInput" type="text" placeholder="Chercher un client" />
+      <input
+        v-model="searchInput"
+        class="searchInput"
+        type="text"
+        placeholder="Chercher un client"
+      />
     </div>
     <div class="upcomingSection" :class="{ 'expanded-80': isUpcomingOpen }">
       <div class="upcomingSectionTopSectionContainer">
@@ -19,7 +24,7 @@
       <transition name="slide" mode="out-in">
         <div v-if="isUpcomingOpen" class="upcomingSectionList">
           <ReservationCard
-            v-for="reservation in reservations"
+            v-for="reservation in getReservations(reservations)"
             :key="reservation.id"
             :reservation="reservation"
           />
@@ -36,7 +41,7 @@
       <transition name="slide" mode="out-in">
         <div v-if="isSeatedOpen" class="seatedSectionList">
           <SeatedCard
-            v-for="reservation in seatedReservations"
+            v-for="reservation in getReservations(seatedReservations)"
             :key="reservation.id"
             :reservation="reservation"
           />
@@ -54,6 +59,7 @@ import { mainStore } from '@/stores/mainStore'
 import { ref, computed } from 'vue'
 
 const main_store = mainStore()
+const searchInput = ref('')
 
 const reservation_store = reservationStore()
 const reservations = computed(() => {
@@ -88,6 +94,17 @@ const reservations = computed(() => {
 const seatedReservations = computed(() => {
   return reservation_store.getSeatedReservations(main_store.appDate)
 })
+
+function getReservations(reservationArr) {
+  if (searchInput.value.length === 0) return reservationArr
+  else {
+    isSeatedOpen.value = true
+    isUpcomingOpen.value = true
+    return reservationArr.filter((reservation) =>
+      reservation.client_name.includes(searchInput.value),
+    )
+  }
+}
 
 const isUpcomingOpen = ref(true)
 const isSeatedOpen = ref(false)
