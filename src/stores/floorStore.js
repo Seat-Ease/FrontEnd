@@ -38,7 +38,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 7,
         shape: 'Rect',
         room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
-        occupied: true,
+        occupied: false,
       },
       {
         id: '1df3c65b-a6bf-47f6-a175-dde07c01b7c0',
@@ -54,7 +54,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 4,
         shape: 'Rect',
         room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
-        occupied: true,
+        occupied: false,
       },
       {
         id: 'c8c6fcee-0904-47a3-a02d-e61c46220ad0',
@@ -102,7 +102,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 7,
         shape: 'Rect',
         room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
-        occupied: true,
+        occupied: false,
       },
       {
         id: '05092a1b-a095-49a1-a47f-2ecbe0e6e3ff',
@@ -118,7 +118,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 5,
         shape: 'Rect',
         room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
-        occupied: true,
+        occupied: false,
       },
       {
         id: '71fb47df-06f0-4fbf-8e8d-5c687a93b665',
@@ -214,7 +214,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 6,
         shape: 'Circle',
         room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
-        occupied: true,
+        occupied: false,
       },
       {
         id: 'dcd10dec-9209-4f9f-b41a-2290111eaebf',
@@ -230,7 +230,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 7,
         shape: 'Circle',
         room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
-        occupied: true,
+        occupied: false,
       },
       {
         id: '71b17652-583b-4e81-9651-9b4048a9c19f',
@@ -246,7 +246,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 6,
         shape: 'Rect',
         room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
-        occupied: true,
+        occupied: false,
       },
       {
         id: 'cbffe662-9d13-4dae-9ce2-5a182b8fd5d4',
@@ -310,7 +310,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 4,
         shape: 'Rect',
         room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
-        occupied: true,
+        occupied: false,
       },
       {
         id: 'ec47dd44-64b1-4631-b86e-7a4a68152711',
@@ -326,7 +326,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 7,
         shape: 'Rect',
         room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
-        occupied: true,
+        occupied: false,
       },
       {
         id: '53235234-0886-45df-85cd-328567343964',
@@ -342,7 +342,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 5,
         shape: 'Circle',
         room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
-        occupied: true,
+        occupied: false,
       },
       {
         id: 'c1ba8962-96f9-43dc-8498-c709bdc45aa0',
@@ -358,7 +358,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 4,
         shape: 'Circle',
         room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
-        occupied: true,
+        occupied: false,
       },
       {
         id: 'a9f6a304-327b-41e5-bf27-4f2a02199c79',
@@ -422,7 +422,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 7,
         shape: 'Circle',
         room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
-        occupied: true,
+        occupied: false,
       },
       {
         id: 'd23754df-b4af-43c1-b0f7-00ef11a06235',
@@ -486,7 +486,7 @@ export const floorStore = defineStore('floorStore', () => {
         maxCovers: 7,
         shape: 'Circle',
         room_id: '20c97f29-5cc0-466a-9b9e-e395538fa890',
-        occupied: true,
+        occupied: false,
       },
     ],
   })
