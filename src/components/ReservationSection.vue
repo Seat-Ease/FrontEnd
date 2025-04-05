@@ -46,6 +46,7 @@ import SeatedCard from './SeatedShower.vue'
 import { reservationStore } from '@/stores/reservationStore'
 import { mainStore } from '@/stores/mainStore'
 import { ref, computed, onBeforeMount } from 'vue'
+import { onMounted } from 'vue'
 
 const main_store = mainStore()
 
@@ -79,15 +80,14 @@ const reservations = computed(() => {
     .sort((a, b) => a.time.localeCompare(b.time))
 })
 
-const seatedReservations = computed(() =>
-  reservation_store.getSeatedReservations(main_store.appDate),
-)
+const seatedReservations = computed(() => {
+  return reservation_store.getSeatedReservations(main_store.appDate)
+})
 
 const isUpcomingOpen = ref(true)
 const isSeatedOpen = ref(false)
 
 const toggleUpcoming = () => {
-  console.log(isSeatedOpen.value)
   isUpcomingOpen.value = !isUpcomingOpen.value
   if (isSeatedOpen.value) {
     isSeatedOpen.value = false

@@ -496,5 +496,13 @@ export const floorStore = defineStore('floorStore', () => {
   function setFloorSetting(newFloorSetting) {
     floorSetting.value = newFloorSetting
   }
-  return { getFloorSetting, setFloorSetting }
+  function updateTableState(id) {
+    const tableIndex = floorSetting.value.tables.findIndex((table) => table.id === id)
+    if (tableIndex === -1) return
+    else {
+      floorSetting.value.tables[tableIndex].occupied =
+        !floorSetting.value.tables[tableIndex].occupied
+    }
+  }
+  return { getFloorSetting, setFloorSetting, updateTableState }
 })

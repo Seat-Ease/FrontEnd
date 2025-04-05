@@ -11,7 +11,7 @@
       </div>
       <div class="btnContainer">
         <p class="assignBtn">Assoir</p>
-        <p class="cancelBtn">Annuler</p>
+        <!-- <p class="cancelBtn">Annuler</p> -->
       </div>
     </div>
   </div>

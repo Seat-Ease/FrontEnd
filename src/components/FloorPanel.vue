@@ -1,13 +1,12 @@
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
-import { ref, onBeforeMount, reactive, nextTick } from 'vue'
+import { ref, onMounted, computed, watch, reactive, nextTick } from 'vue'
 import Konva from 'konva'
-import { onMounted } from 'vue'
 
 const main_store = mainStore()
 const floor_store = floorStore()
-const floorData = ref(null)
+const floorData = computed(() => floor_store.getFloorSetting())
 
 const stageRef = ref(null)
 const canvasContainer = ref(null)
@@ -18,12 +17,6 @@ const stageConfig = reactive({
   width: 800,
   height: 600,
   draggable: false,
-})
-
-onBeforeMount(() => {
-  if (floor_store.getFloorSetting() !== null) {
-    floorData.value = JSON.parse(JSON.stringify(floor_store.getFloorSetting()))
-  }
 })
 
 function createTable(stage, newTableData) {
@@ -170,6 +163,36 @@ onMounted(() => {
     stageRef.value.getNode().batchDraw()
   }
 })
+watch(
+  floorData,
+  (newVal) => {
+    if (!stageRef.value || !newVal) return
+
+    const stage = stageRef.value.getNode()
+    stage.destroyChildren()
+
+    newVal.rooms.forEach((room) => {
+      const layer = new Konva.Layer({
+        ...room,
+        opacity: 1,
+        visible: true,
+      })
+      stage.add(layer)
+    })
+
+    selectedRoomId.value = newVal.rooms[0].id
+    stage.children.forEach((room) => {
+      room.visible(room.attrs.id === selectedRoomId.value)
+    })
+
+    newVal.tables.forEach((table) => {
+      createTable(stage.children, table)
+    })
+
+    stage.batchDraw()
+  },
+  { deep: true, immediate: true },
+)
 </script>
 
 <template>

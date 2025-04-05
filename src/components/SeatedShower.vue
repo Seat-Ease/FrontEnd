@@ -9,20 +9,35 @@
           <p>{{ reservation.party_size }}</p>
         </div>
         <div class="statsTable">
-          <p>Table(s) : {{ reservation.tables_occupied.join() }}</p>
+          <p>
+            {{ formatTableList().join() }}
+          </p>
         </div>
       </div>
-      <p class="serviceEndBtn">Debarasser</p>
+      <p @click="freeTables" class="serviceEndBtn">Debarasser</p>
     </div>
   </div>
 </template>
 <script>
+import { floorStore } from '@/stores/floorStore'
 export default {
   name: 'SeatedCard',
   props: {
     reservation: {
       type: Object,
       required: true,
+    },
+  },
+  methods: {
+    formatTableList() {
+      const tableNamesFormatted = []
+      this.reservation.tables_occupied.forEach((table) =>
+        tableNamesFormatted.push(`${table.name} (${table.room_name})`),
+      )
+      return tableNamesFormatted
+    },
+    freeTables() {
+      this.reservation.tables_occupied.forEach((table) => floorStore().updateTableState(table.id))
     },
   },
 }
@@ -69,5 +84,6 @@ export default {
   letter-spacing: 0.1rem;
   border-radius: 1.5rem;
   align-self: flex-start;
+  cursor: pointer;
 }
 </style>
