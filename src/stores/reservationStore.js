@@ -7,7 +7,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       id: 'dc4761f3-cffa-41af-b5e4-001aefe501a9',
       client_name: 'Todd Ross',
       client_email: 'jeffrey12@johnston.com',
-      client_phone: '+1-776-180-7970x21419',
+      client_phone: '+1-776-180-7970',
       party_size: 4,
       date: '2025-04-05',
       time: '13:30',
@@ -15,12 +15,13 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '742c393b-e5ae-4d95-b0b4-204a7dd4853c',
       client_name: 'Brittany Flores',
       client_email: 'vschroeder@yahoo.com',
-      client_phone: '001-390-650-8326x9977',
+      client_phone: '001-390-650-8326',
       party_size: 2,
       date: '2025-04-08',
       time: '12:00',
@@ -28,6 +29,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '9b93fb7d-a3f3-46fa-a061-be052b40b549',
@@ -41,6 +43,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'f1c2402c-b1dc-4cef-856c-50d4ee236586',
@@ -54,6 +57,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '4329a02f-be23-4d64-9ce8-af2d214b22eb',
@@ -67,6 +71,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '629afdcc-8c11-4c24-b864-e7da21aa9d31',
@@ -80,6 +85,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '8b6ab4b1-f993-4167-b1b7-7e4b13b08658',
@@ -93,6 +99,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '61a67713-e44a-40cf-8e25-e032a0324d5f',
@@ -106,6 +113,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'c18a8199-7fe2-4c67-817d-a48b1ff6e02d',
@@ -119,6 +127,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '11d4f2cc-6632-43a1-8e76-82ec08f76a9c',
@@ -132,6 +141,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'f403486f-5535-4097-8bb3-73fc70872065',
@@ -145,6 +155,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'e3912676-331b-4638-88e5-29d62c17f571',
@@ -158,6 +169,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '3437c581-d3a2-49bf-b879-b1195635ad6a',
@@ -171,6 +183,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'afe393fe-bed0-435d-aef3-c0a93882bc54',
@@ -184,6 +197,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '792397b7-8922-43c8-a909-505aa38d1c36',
@@ -197,6 +211,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '5f589705-edc6-493c-bead-f21f1a7644bf',
@@ -210,6 +225,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '527bfc2f-af68-4391-9558-2c048e09a678',
@@ -223,6 +239,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '5958733c-a7af-41c5-a6f1-3bcaaf894e1b',
@@ -236,6 +253,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '59a81a11-14f7-44b5-8927-ed282f4eb2ca',
@@ -249,6 +267,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '2b633273-7019-4400-889b-4ffb97601e28',
@@ -262,6 +281,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '0519afd6-190e-4dc4-910f-c2868c688fbb',
@@ -275,6 +295,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '69f9e1e8-ff56-47ab-abca-7fdbd7fdfa69',
@@ -288,6 +309,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '82b50ca8-7a36-4b74-8db0-91e8085973fe',
@@ -301,6 +323,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'f018d0b7-1011-4f32-9a47-e9ba40586e5c',
@@ -314,6 +337,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'c89313da-d2e0-46de-9911-ada821358e00',
@@ -327,6 +351,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'b9bf554f-bb69-455a-a53d-c25bee43f77d',
@@ -340,6 +365,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '35f227a7-8cd1-43a9-b4f8-7baa3439f5e5',
@@ -353,6 +379,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: '18e71a10-df5f-4b46-934a-14bd04725246',
@@ -366,6 +393,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'd087fa70-cfa3-40c8-ac72-5f485ae7731f',
@@ -379,6 +407,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
     {
       id: 'b7025247-306e-4a9e-9e4c-637518f75b5f',
@@ -392,6 +421,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       tables_occupied: [],
       service_start_time: '',
       service_end_time: '',
+      walk_in: false,
     },
   ])
 
@@ -415,8 +445,6 @@ export const reservationStore = defineStore('reservationStore', () => {
         if (selectedDateStr === todayStr) {
           return isSameDate && reservation.seated === true && reservation.service_end_time === ''
         }
-
-        return isSameDate
       })
       .sort((a, b) => a.time.localeCompare(b.time))
   }
@@ -450,15 +478,43 @@ export const reservationStore = defineStore('reservationStore', () => {
       reservation.service_start_time = formattedTime
       reservation.seated = true
       reservation.tables_occupied = [...selectedTables]
-    } else {
-      console.warn(`Reservation with ID ${reservationId} not found.`)
     }
+  }
+
+  function addReservation(newReservation) {
+    reservations.value.push(newReservation)
+    return reservations.value[reservations.value.length - 1]
+  }
+
+  function getWalkinReservations(appDate) {
+    console.log(reservations.value)
+    const now = new Date()
+    const todayStr = now.toDateString()
+    const selectedDateObj = new Date(appDate)
+    const selectedDateStr = selectedDateObj.toDateString()
+
+    return reservations.value
+      .filter((reservation) => {
+        const [year, month, day] = reservation.date.split('-').map(Number)
+        const reservationDateObj = new Date(year, month - 1, day)
+
+        const isSameDate = reservationDateObj.toDateString() === selectedDateStr
+
+        if (selectedDateStr === todayStr) {
+          return isSameDate && reservation.seated === false && reservation.walk_in === true
+        }
+
+        return isSameDate && reservation.walk_in === true
+      })
+      .sort((a, b) => a.time.localeCompare(b.time))
   }
 
   return {
     getReservations,
+    addReservation,
     getSeatedReservations,
     endServiceForReservation,
     startServiceForReservation,
+    getWalkinReservations,
   }
 })

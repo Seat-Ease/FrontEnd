@@ -26,7 +26,7 @@ function toggleSection(e) {
         :class="{ active: reservationsShowing === true }"
         class="reservation"
       >
-        RESERVATIONS
+        RÉSERVATIONS
       </p>
       <p
         @click="toggleSection"
@@ -34,7 +34,7 @@ function toggleSection(e) {
         :class="{ active: waitListShowing === true }"
         class="waitlist"
       >
-        WAITLIST
+        SANS RÉSERVATIONS
       </p>
     </div>
     <div v-if="reservationsShowing">

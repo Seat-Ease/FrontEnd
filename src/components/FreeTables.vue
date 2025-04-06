@@ -28,10 +28,17 @@ import { mainStore } from '@/stores/mainStore'
 import { reservationStore } from '@/stores/reservationStore'
 import { ref, computed } from 'vue'
 
+const emit = defineEmits(['close'])
+
 const selectedTables = ref([])
+
 const floor_store = floorStore()
 const main_store = mainStore()
 const reservation_store = reservationStore()
+
+const freeTables = computed(() =>
+  floor_store.getFloorSetting().tables.filter((table) => table.occupied === false),
+)
 
 function isSelected(tableId) {
   return selectedTables.value.findIndex((table) => table.id === tableId) !== -1
@@ -55,12 +62,12 @@ function updateSelectedTables(tableId) {
 
 function closeComponent() {
   selectedTables.value = []
-  main_store.freeTablesListShowing = false
+  emit('close')
 }
 
 function assignTables() {
   if (selectedTables.value.length === 0) {
-    main_store.freeTablesListShowing = false
+    emit('close')
     return
   }
 
@@ -68,7 +75,7 @@ function assignTables() {
     .getReservations()
     .find((reservation) => reservation.id === main_store.selectedReservation)
 
-  if (!reservationToSit) console.log('reservation not found')
+  if (!reservationToSit) return
 
   let selectedTablesCapacity = 0
 
@@ -93,13 +100,9 @@ function assignTables() {
   reservation_store.startServiceForReservation(reservationToSit.id, selectedTables.value)
 
   selectedTables.value = []
-  main_store.freeTablesListShowing = false
+  emit('close')
   return
 }
-
-const freeTables = computed(() =>
-  floor_store.getFloorSetting().tables.filter((table) => table.occupied === false),
-)
 </script>
 <style scoped>
 .listTopSection {

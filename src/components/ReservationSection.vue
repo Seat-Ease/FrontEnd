@@ -1,8 +1,8 @@
 <template>
   <div class="reservationSectionContainer">
     <transition name="slide-fade-x">
-      <div v-if="main_store.freeTablesListShowing" class="tablesListContainer">
-        <FreeTables />
+      <div v-if="main_store.freeTablesListShowingReservation" class="tablesListContainer">
+        <FreeTables @close="main_store.freeTablesListShowingReservation = false" />
       </div>
     </transition>
     <div class="searchSection">
@@ -27,6 +27,7 @@
             v-for="reservation in getReservations(reservations)"
             :key="reservation.id"
             :reservation="reservation"
+            @showing="showFreeTablesList"
           />
         </div>
       </transition>
@@ -82,7 +83,8 @@ const reservations = computed(() => {
         return (
           isSameDate &&
           reservationDateTime >= new Date(now.getTime()) &&
-          reservation.seated === false
+          reservation.seated === false &&
+          reservation.walk_in === false
         )
       }
 
@@ -92,7 +94,9 @@ const reservations = computed(() => {
 })
 
 const seatedReservations = computed(() => {
-  return reservation_store.getSeatedReservations(main_store.appDate)
+  const appDateStr = new Date(main_store.appDate).toISOString().split('T')[0]
+  console.log(reservation_store.getSeatedReservations(appDateStr))
+  return reservation_store.getSeatedReservations(appDateStr)
 })
 
 function getReservations(reservationArr) {
@@ -125,6 +129,10 @@ const toggleSeated = () => {
     isUpcomingOpen.value = true
   }
 }
+function showFreeTablesList(reservationId) {
+  main_store.selectedReservation = reservationId
+  main_store.freeTablesListShowingReservation = true
+}
 </script>
 <style scoped>
 .reservationSectionContainer {
@@ -150,8 +158,7 @@ const toggleSeated = () => {
   border-bottom: 0.1rem solid #d2d2d2;
 }
 .search {
-  height: 2rem !important;
-  width: 2rem !important;
+  font-size: 2rem;
   color: #121123dd !important;
 }
 .searchInput {
@@ -205,7 +212,7 @@ const toggleSeated = () => {
   max-height: 77.6%;
 }
 .expanded-100 {
-  max-height: 90%;
+  max-height: 80%;
 }
 .slide-enter-active,
 .slide-leave-active {

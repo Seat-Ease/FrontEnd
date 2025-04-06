@@ -5,7 +5,9 @@ export const mainStore = defineStore('mainStore', () => {
   const floorSettingPanelShowing = ref(false)
   const calendarShowing = ref(false)
   const selectedReservation = ref(null)
-  const freeTablesListShowing = ref(false)
+  const freeTablesListShowingReservation = ref(false)
+  const freeTablesListShowingWaitList = ref(false)
+  const now = new Date()
   const appDate = ref(new Date())
 
   function toggleCalendar() {
@@ -30,6 +32,7 @@ export const mainStore = defineStore('mainStore', () => {
     goToNextDay,
     goToPreviousDay,
     selectedReservation,
-    freeTablesListShowing,
+    freeTablesListShowingReservation,
+    freeTablesListShowingWaitList,
   }
 })

@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="btnContainer">
-        <p @click="showFreeTablesList" class="assignBtn">Assoir</p>
+        <p @click="emitShowing" class="assignBtn">Assoir</p>
         <!-- <p class="cancelBtn">Annuler</p> -->
       </div>
     </div>
@@ -20,6 +20,7 @@
 import { mainStore } from '@/stores/mainStore'
 export default {
   name: 'ReservationCard',
+  emits: ['showing'],
   props: {
     reservation: {
       type: Object,
@@ -27,10 +28,8 @@ export default {
     },
   },
   methods: {
-    showFreeTablesList() {
-      const main_store = mainStore()
-      main_store.selectedReservation = this.reservation.id
-      main_store.freeTablesListShowing = true
+    emitShowing() {
+      this.$emit('showing', this.reservation.id)
     },
   },
 }
