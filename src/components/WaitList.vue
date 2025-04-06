@@ -37,7 +37,12 @@
     </div>
     <div class="searchSection">
       <font-awesome-icon class="search" :icon="['fas', 'search']" />
-      <input class="searchInput" type="text" placeholder="Chercher un client" />
+      <input
+        v-model="searchInput"
+        class="searchInput"
+        type="text"
+        placeholder="Chercher un client"
+      />
     </div>
     <div class="topBar">
       <p>Liste d'attente</p>
