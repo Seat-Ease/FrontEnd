@@ -10,7 +10,14 @@
         </div>
       </div>
       <div class="btnContainer">
-        <p @click="emitShowing" class="assignBtn">Assoir</p>
+        <button
+          :disabled="lockActivated"
+          :class="{ locked: lockActivated }"
+          @click="emitShowing"
+          class="assignBtn"
+        >
+          Assoir
+        </button>
         <!-- <p class="cancelBtn">Annuler</p> -->
       </div>
     </div>
@@ -18,6 +25,7 @@
 </template>
 <script>
 import { mainStore } from '@/stores/mainStore'
+
 export default {
   name: 'ReservationCard',
   emits: ['showing'],
@@ -25,6 +33,17 @@ export default {
     reservation: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    lockActivated() {
+      const formatDate = (dateObj) =>
+        `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`
+
+      const now = new Date()
+      const appDate = mainStore().appDate
+
+      return formatDate(appDate) !== formatDate(now)
     },
   },
   methods: {
@@ -91,5 +110,10 @@ export default {
 }
 .cancelBtn {
   color: #252189;
+}
+.locked {
+  background-color: #888 !important;
+  border-color: #888;
+  cursor: not-allowed;
 }
 </style>

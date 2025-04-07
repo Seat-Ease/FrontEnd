@@ -487,7 +487,6 @@ export const reservationStore = defineStore('reservationStore', () => {
   }
 
   function getWalkinReservations(appDate) {
-    console.log(reservations.value)
     const now = new Date()
     const todayStr = now.toDateString()
     const selectedDateObj = new Date(appDate)
