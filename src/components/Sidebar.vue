@@ -2,10 +2,18 @@
   <div class="side-bar">
     <div>
       <div class="reserveBtnContainer">
-        <button class="reserveBtn">
+        <button
+          class="reserveBtn"
+          @click="
+            () => {
+              console.log('clicked')
+              mainStore().reservationFormShowing = true
+            }
+          "
+        >
           <font-awesome-icon :icon="['fas', 'plus']" />
         </button>
-        <p>RESERVER</p>
+        <p @click="mainStore().reservationFormShowing = true">RESERVER</p>
       </div>
       <div class="floorBtnContainer">
         <p class="floorBtn">PLAN</p>
@@ -19,6 +27,9 @@
     </div>
   </div>
 </template>
+<script setup>
+import { mainStore } from '@/stores/mainStore'
+</script>
 <style>
 .side-bar {
   display: flex;
@@ -46,6 +57,7 @@
   font-size: 1.5rem;
   color: #fff;
   font-weight: bold;
+  z-index: 1000000;
 }
 .reserveBtn {
   padding: 1rem;
@@ -55,6 +67,7 @@
   width: 35%;
   color: #d86004;
   cursor: pointer;
+  z-index: 1000000;
 }
 .floorBtnContainer {
   color: #fff;

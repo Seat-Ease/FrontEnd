@@ -1,6 +1,7 @@
 <script setup>
 import ReservationSection from '@/components/ReservationSection.vue'
 import WaitLisSection from '@/components/WaitList.vue'
+import { mainStore } from '@/stores/mainStore'
 import { ref } from 'vue'
 
 const reservationsShowing = ref(true)
@@ -19,6 +20,11 @@ function toggleSection(e) {
 </script>
 <template>
   <div class="reservationPanel">
+    <div v-if="mainStore().reservationFormShowing" class="reservationFormContainer">
+      <form class="reservationForm">
+        <button @click="mainStore().reservationFormShowing = false">close</button>
+      </form>
+    </div>
     <div class="topSection">
       <p
         @click="toggleSection"
@@ -50,9 +56,16 @@ function toggleSection(e) {
   border-right: 0.1rem solid rgb(207, 207, 207);
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  max-height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow: scroll;
+  position: relative;
+}
+.reservationFormContainer {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: #fff;
+  z-index: 10000;
 }
 .topSection {
   display: flex;
