@@ -25,9 +25,15 @@ const date = new Date()
           <div v-if="showCalendar" class="calendarContainer">
             <VDatePicker v-model="store.appDate" mode="date" />
           </div>
-          <Sidebar />
-          <ReservationPanel />
-          <FloorPanel />
+          <div class="sidebarContainer">
+            <Sidebar />
+          </div>
+          <div class="reservationPanelContainer">
+            <ReservationPanel />
+          </div>
+          <div class="floorPanelContainer">
+            <FloorPanel />
+          </div>
         </div>
       </transition>
     </div>
@@ -62,11 +68,23 @@ main {
   flex: 1;
 }
 .homePanelContainer {
-  display: grid;
-  grid-template-columns: 0.65fr 2fr 6fr;
+  display: flex;
   width: 100%;
   max-height: 100vh;
   position: relative;
+}
+.sidebarContainer {
+  width: 10%;
+  flex-shrink: 0;
+}
+.reservationPanelContainer {
+  width: 30%;
+  flex-shrink: 0;
+}
+.floorPanelContainer {
+  width: 30%;
+  flex: 1;
+  flex-shrink: 1;
 }
 .calendarContainer {
   position: absolute;
