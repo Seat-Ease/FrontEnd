@@ -6,7 +6,6 @@
           class="reserveBtn"
           @click="
             () => {
-              console.log('clicked')
               mainStore().reservationFormShowing = true
             }
           "

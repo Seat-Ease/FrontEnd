@@ -1,6 +1,7 @@
 <script setup>
 import ReservationSection from '@/components/ReservationSection.vue'
 import WaitLisSection from '@/components/WaitList.vue'
+import ReservationForm from './ReservationForm.vue'
 import { mainStore } from '@/stores/mainStore'
 import { ref } from 'vue'
 
@@ -21,9 +22,7 @@ function toggleSection(e) {
 <template>
   <div class="reservationPanel">
     <div v-if="mainStore().reservationFormShowing" class="reservationFormContainer">
-      <form class="reservationForm">
-        <button @click="mainStore().reservationFormShowing = false">close</button>
-      </form>
+      <ReservationForm @close="mainStore().reservationFormShowing = false" />
     </div>
     <div class="topSection">
       <p
