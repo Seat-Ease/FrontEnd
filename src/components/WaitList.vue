@@ -48,8 +48,7 @@ const searchInput = ref('')
 const showForm = ref(false)
 
 const walkinReservations = computed(() => {
-  const appDateStr = new Date(main_store.appDate).toISOString().split('T')[0]
-  return reservation_store.getWalkinReservations(appDateStr)
+  return reservation_store.getWalkinReservations(main_store.appDate)
 })
 
 function getReservations(reservationArr) {

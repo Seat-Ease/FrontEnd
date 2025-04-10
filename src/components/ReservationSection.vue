@@ -1,8 +1,8 @@
 <template>
   <div class="reservationSectionContainer">
     <transition name="slide-fade-x">
-      <div v-if="main_store.freeTablesListShowingReservation" class="tablesListContainer">
-        <FreeTables @close="main_store.freeTablesListShowingReservation = false" />
+      <div v-if="mainStore().freeTablesListShowingReservation" class="tablesListContainer">
+        <FreeTables @close="mainStore().freeTablesListShowingReservation = false" />
       </div>
     </transition>
     <div class="searchSection">
@@ -64,39 +64,11 @@ const searchInput = ref('')
 
 const reservation_store = reservationStore()
 const reservations = computed(() => {
-  const now = new Date()
-  const todayStr = now.toDateString()
-  const selectedDateObj = new Date(main_store.appDate)
-  const selectedDateStr = selectedDateObj.toDateString()
-
-  return reservation_store
-    .getReservations()
-    .filter((reservation) => {
-      const [year, month, day] = reservation.date.split('-').map(Number)
-      const [hour, minute] = reservation.time.split(':').map(Number)
-      const reservationDateObj = new Date(year, month - 1, day)
-      const reservationDateTime = new Date(year, month - 1, day, hour, minute)
-
-      const isSameDate = reservationDateObj.toDateString() === selectedDateStr
-
-      if (selectedDateStr === todayStr) {
-        return (
-          isSameDate &&
-          reservationDateTime >= new Date(now.getTime()) &&
-          reservation.seated === false &&
-          reservation.walk_in === false
-        )
-      }
-
-      return isSameDate
-    })
-    .sort((a, b) => a.time.localeCompare(b.time))
+  return reservationStore().getDailyReservations(mainStore().appDate)
 })
 
 const seatedReservations = computed(() => {
-  const appDateStr = new Date(main_store.appDate).toISOString().split('T')[0]
-  console.log(reservation_store.getSeatedReservations(appDateStr))
-  return reservation_store.getSeatedReservations(appDateStr)
+  return reservation_store.getSeatedReservations(mainStore().appDate)
 })
 
 function getReservations(reservationArr) {
@@ -130,8 +102,8 @@ const toggleSeated = () => {
   }
 }
 function showFreeTablesList(reservationId) {
-  main_store.selectedReservation = reservationId
-  main_store.freeTablesListShowingReservation = true
+  mainStore().selectedReservation = reservationId
+  mainStore().freeTablesListShowingReservation = true
 }
 </script>
 <style scoped>

@@ -9,7 +9,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'jeffrey12@johnston.com',
       client_phone: '+1-776-180-7970',
       party_size: 4,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '13:30',
       seated: false,
       tables_occupied: [],
@@ -23,7 +23,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'vschroeder@yahoo.com',
       client_phone: '001-390-650-8326',
       party_size: 2,
-      date: '2025-04-08',
+      date: '2025-04-13',
       time: '12:00',
       seated: false,
       tables_occupied: [],
@@ -37,7 +37,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'jonesalexander@alvarez.com',
       client_phone: '7093690292',
       party_size: 4,
-      date: '2025-04-07',
+      date: '2025-04-12',
       time: '12:00',
       seated: false,
       tables_occupied: [],
@@ -51,7 +51,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'rodriguezcarl@young-johnston.net',
       client_phone: '616.503.0196x19559',
       party_size: 4,
-      date: '2025-04-07',
+      date: '2025-04-12',
       time: '19:30',
       seated: false,
       tables_occupied: [],
@@ -65,7 +65,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'clarkmonica@chambers.com',
       client_phone: '001-653-684-3758',
       party_size: 4,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '11:15',
       seated: false,
       tables_occupied: [],
@@ -79,7 +79,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'aaronsmith@brown.com',
       client_phone: '(715)323-3023x1018',
       party_size: 5,
-      date: '2025-04-07',
+      date: '2025-04-12',
       time: '20:00',
       seated: false,
       tables_occupied: [],
@@ -93,7 +93,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'kelseyperry@gmail.com',
       client_phone: '+1-469-027-4216x248',
       party_size: 4,
-      date: '2025-04-06',
+      date: '2025-04-11',
       time: '12:00',
       seated: false,
       tables_occupied: [],
@@ -107,7 +107,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'danielle09@hotmail.com',
       client_phone: '562-750-4773',
       party_size: 4,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '20:30',
       seated: false,
       tables_occupied: [],
@@ -121,7 +121,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'kelsey88@bennett.com',
       client_phone: '551.932.3074',
       party_size: 4,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '19:45',
       seated: false,
       tables_occupied: [],
@@ -135,7 +135,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'harveynicole@hotmail.com',
       client_phone: '774.610.0366',
       party_size: 5,
-      date: '2025-04-07',
+      date: '2025-04-12',
       time: '17:00',
       seated: false,
       tables_occupied: [],
@@ -149,7 +149,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'sbarnett@yahoo.com',
       client_phone: '398-562-2999x808',
       party_size: 6,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '13:30',
       seated: false,
       tables_occupied: [],
@@ -163,7 +163,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'cohenkristine@baker-campos.com',
       client_phone: '001-680-289-7935x2686',
       party_size: 5,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '19:45',
       seated: false,
       tables_occupied: [],
@@ -177,7 +177,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'jameshill@yahoo.com',
       client_phone: '+1-325-213-0508x037',
       party_size: 6,
-      date: '2025-04-06',
+      date: '2025-04-11',
       time: '19:45',
       seated: false,
       tables_occupied: [],
@@ -191,7 +191,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'terryhale@gmail.com',
       client_phone: '4035132791',
       party_size: 3,
-      date: '2025-04-06',
+      date: '2025-04-11',
       time: '13:15',
       seated: false,
       tables_occupied: [],
@@ -205,7 +205,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'walshlaurie@gmail.com',
       client_phone: '(099)383-1499x2887',
       party_size: 2,
-      date: '2025-04-06',
+      date: '2025-04-11',
       time: '19:30',
       seated: false,
       tables_occupied: [],
@@ -219,7 +219,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'thudson@villarreal-wright.com',
       client_phone: '+1-609-904-1749',
       party_size: 10,
-      date: '2025-04-08',
+      date: '2025-04-13',
       time: '14:45',
       seated: false,
       tables_occupied: [],
@@ -233,7 +233,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'allison94@wang.org',
       client_phone: '6968405564',
       party_size: 12,
-      date: '2025-04-07',
+      date: '2025-04-12',
       time: '12:15',
       seated: false,
       tables_occupied: [],
@@ -247,7 +247,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'sarah99@gmail.com',
       client_phone: '387.279.3154',
       party_size: 2,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '17:45',
       seated: false,
       tables_occupied: [],
@@ -261,7 +261,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'brooksmark@hill.org',
       client_phone: '849-858-1797x9529',
       party_size: 6,
-      date: '2025-04-08',
+      date: '2025-04-13',
       time: '14:30',
       seated: false,
       tables_occupied: [],
@@ -275,7 +275,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'lopezkristina@little-murphy.com',
       client_phone: '928-466-5163x7767',
       party_size: 6,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '17:15',
       seated: false,
       tables_occupied: [],
@@ -289,7 +289,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'erica44@jensen.com',
       client_phone: '(700)587-8914x9145',
       party_size: 4,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '17:15',
       seated: false,
       tables_occupied: [],
@@ -303,7 +303,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'martinezjames@gmail.com',
       client_phone: '001-870-758-6004x6288',
       party_size: 3,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '12:45',
       seated: false,
       tables_occupied: [],
@@ -317,7 +317,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'zdavis@barnett-day.com',
       client_phone: '938-554-2554',
       party_size: 4,
-      date: '2025-04-06',
+      date: '2025-04-11',
       time: '15:15',
       seated: false,
       tables_occupied: [],
@@ -331,7 +331,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'wesley54@wilson.info',
       client_phone: '(494)104-3974',
       party_size: 2,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '16:15',
       seated: false,
       tables_occupied: [],
@@ -345,7 +345,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'stephenwatkins@parker.info',
       client_phone: '846-679-1585x3797',
       party_size: 3,
-      date: '2025-04-08',
+      date: '2025-04-13',
       time: '15:45',
       seated: false,
       tables_occupied: [],
@@ -359,7 +359,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'allenjulie@cardenas-rangel.com',
       client_phone: '671.685.6348x5567',
       party_size: 10,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '12:30',
       seated: false,
       tables_occupied: [],
@@ -373,7 +373,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'randallwhite@gmail.com',
       client_phone: '736-381-3301x137',
       party_size: 6,
-      date: '2025-04-08',
+      date: '2025-04-13',
       time: '18:45',
       seated: false,
       tables_occupied: [],
@@ -387,7 +387,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'harveysarah@wall.org',
       client_phone: '+1-774-397-2707x47600',
       party_size: 2,
-      date: '2025-04-08',
+      date: '2025-04-13',
       time: '15:45',
       seated: false,
       tables_occupied: [],
@@ -401,7 +401,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'kroberts@yahoo.com',
       client_phone: '1077265064',
       party_size: 6,
-      date: '2025-04-05',
+      date: '2025-04-10',
       time: '12:15',
       seated: false,
       tables_occupied: [],
@@ -415,7 +415,7 @@ export const reservationStore = defineStore('reservationStore', () => {
       client_email: 'eduardo50@yahoo.com',
       client_phone: '772-865-5366',
       party_size: 2,
-      date: '2025-04-06',
+      date: '2025-04-11',
       time: '14:15',
       seated: false,
       tables_occupied: [],
@@ -427,6 +427,35 @@ export const reservationStore = defineStore('reservationStore', () => {
 
   function getReservations() {
     return reservations.value
+  }
+
+  function getDailyReservations(appDate) {
+    const now = new Date()
+    const todayStr = now.toDateString()
+    const selectedDateObj = new Date(appDate)
+    const selectedDateStr = selectedDateObj.toDateString()
+
+    return reservations.value
+      .filter((reservation) => {
+        const [year, month, day] = reservation.date.split('-').map(Number)
+        const [hour, minute] = reservation.time.split(':').map(Number)
+        const reservationDateObj = new Date(year, month - 1, day)
+        const reservationDateTime = new Date(year, month - 1, day, hour, minute)
+
+        const isSameDate = reservationDateObj.toDateString() === selectedDateStr
+
+        if (selectedDateStr === todayStr) {
+          return (
+            isSameDate &&
+            reservationDateTime >= new Date(now.getTime()) &&
+            reservation.seated === false &&
+            reservation.walk_in === false
+          )
+        }
+
+        return isSameDate
+      })
+      .sort((a, b) => a.time.localeCompare(b.time))
   }
 
   function getSeatedReservations(appDate) {
@@ -515,5 +544,6 @@ export const reservationStore = defineStore('reservationStore', () => {
     endServiceForReservation,
     startServiceForReservation,
     getWalkinReservations,
+    getDailyReservations,
   }
 })
