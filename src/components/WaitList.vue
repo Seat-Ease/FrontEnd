@@ -141,22 +141,18 @@ function showFreeTablesList(reservationId) {
   width: 100%;
   height: 100%;
 }
-
 .slide-fade-x-enter-from {
   transform: translateX(-100%);
   opacity: 0;
 }
-
 .slide-fade-x-enter-to {
   transform: translateX(0);
   opacity: 1;
 }
-
 .slide-fade-x-leave-from {
   transform: translateX(0);
   opacity: 1;
 }
-
 .slide-fade-x-leave-to {
   transform: translateX(100%);
   opacity: 0;

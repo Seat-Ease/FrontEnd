@@ -21,9 +21,11 @@ function toggleSection(e) {
 </script>
 <template>
   <div class="reservationPanel">
-    <div v-if="mainStore().reservationFormShowing" class="reservationFormContainer">
-      <ReservationForm @close="mainStore().reservationFormShowing = false" />
-    </div>
+    <transition name="slide-fade-x">
+      <div v-if="mainStore().reservationFormShowing" class="reservationFormContainer">
+        <ReservationForm @close="mainStore().reservationFormShowing = false" />
+      </div>
+    </transition>
     <div class="topSection">
       <p
         @click="toggleSection"
@@ -80,5 +82,27 @@ function toggleSection(e) {
 .active {
   color: #252189;
   font-weight: bold;
+}
+.slide-fade-x-enter-active,
+.slide-fade-x-leave-active {
+  transition: all 0.4s ease;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.slide-fade-x-enter-from {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+.slide-fade-x-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+.slide-fade-x-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+.slide-fade-x-leave-to {
+  transform: translateX(100%);
 }
 </style>
