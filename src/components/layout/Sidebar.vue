@@ -1,6 +1,6 @@
 <template>
   <div class="side-bar-container">
-    <h3 class="restaurant-name">Demo Restaurant</h3>
+    <h3 class="brand-container">Seat Ease</h3>
     <div class="options-container">
       <button>Tableau de bord</button>
       <button>Plan de salle</button>
@@ -19,10 +19,11 @@ import { mainStore } from '@/stores/mainStore'
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  background-color: #1a365d;
+  background-color: #0f172a;
   height: 100%;
   border-right: 0.1rem solid #f1f5f9;
   flex-shrink: 0;
+  min-width: 15%;
 }
 .options-container {
   display: flex;
@@ -30,7 +31,7 @@ import { mainStore } from '@/stores/mainStore'
   gap: 1rem;
   width: 100%;
 }
-.restaurant-name {
+.brand-container {
   font-size: 2rem;
   color: #0d9488;
   font-weight: bold;
@@ -38,7 +39,7 @@ import { mainStore } from '@/stores/mainStore'
 }
 button {
   color: #f1f5f9;
-  background-color: #1a365d;
+  background-color: #0f172a;
   border: none;
   font-size: 1.5rem;
   letter-spacing: 0.1rem;
