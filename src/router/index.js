@@ -30,8 +30,8 @@ const router = createRouter({
       component: Settings,
     },
     {
-      path: '/reservation',
-      name: 'reservation',
+      path: '/reservations',
+      name: 'reservations',
       component: Reservation,
     },
     {
