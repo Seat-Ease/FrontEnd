@@ -18,10 +18,11 @@ import { mainStore } from '@/stores/mainStore'
 .side-bar-container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
   background-color: #1a365d;
   height: 100%;
   border-right: 0.1rem solid #f1f5f9;
+  flex-shrink: 0;
 }
 .options-container {
   display: flex;
@@ -33,17 +34,16 @@ import { mainStore } from '@/stores/mainStore'
   font-size: 2rem;
   color: #0d9488;
   font-weight: bold;
-  padding: 1rem;
+  padding: 2rem;
 }
 button {
   color: #f1f5f9;
   background-color: #1a365d;
   border: none;
   font-size: 1.5rem;
-  font-weight: 600;
   letter-spacing: 0.1rem;
   cursor: pointer;
-  padding: 1rem;
+  padding: 2rem;
   width: 100%;
   display: flex;
 }
