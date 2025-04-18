@@ -2,12 +2,18 @@
   <div class="side-bar-container">
     <h3 class="brand-container">Seat Ease</h3>
     <div class="options-container">
-      <button>Tableau de bord</button>
+      <RouterLink to="/">Tableau de bord</RouterLink>
+      <RouterLink to="/floorplan">Plan de salle</RouterLink>
+      <RouterLink to="/reservations">Réservation</RouterLink>
+      <RouterLink to="/tables">Tables</RouterLink>
+      <RouterLink to="/waitlist">Liste d'attente</RouterLink>
+      <RouterLink to="/settings">Paramètres</RouterLink>
+      <!-- <button>Tableau de bord</button>
       <button>Plan de salle</button>
       <button>Réservation</button>
       <button>Tables</button>
       <button>Liste d'attente</button>
-      <button>Paramètres</button>
+      <button>Paramètres</button> -->
     </div>
   </div>
 </template>
@@ -37,7 +43,10 @@ import { mainStore } from '@/stores/mainStore'
   font-weight: bold;
   padding: 2rem;
 }
-button {
+a:link,
+a:visited,
+a:active {
+  text-decoration: none;
   color: #f1f5f9;
   background-color: #0f172a;
   border: none;
