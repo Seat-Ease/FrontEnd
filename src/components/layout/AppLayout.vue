@@ -26,4 +26,7 @@ import Header from './Header.vue'
   flex-direction: column;
   flex-grow: 1;
 }
+main {
+  flex: 1;
+}
 </style>

@@ -49,7 +49,7 @@ const currentRoute = useRoute()
   gap: 1.5rem;
   background-color: #0f172a;
   height: 100%;
-  border-right: 0.1rem solid #f1f5f9;
+  border-right: 0.15rem solid #1a365d;
   flex-shrink: 0;
   min-width: 17%;
   padding: 0 1rem;
@@ -64,7 +64,7 @@ const currentRoute = useRoute()
   font-size: 2rem;
   color: #0d9488;
   font-weight: bold;
-  padding: 2rem;
+  padding: 2rem 0;
 }
 .link {
   text-decoration: none;

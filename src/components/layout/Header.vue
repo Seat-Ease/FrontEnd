@@ -31,7 +31,7 @@ const formattedDate = computed(() => {
   justify-content: space-between;
   padding: 1.5rem;
   background-color: #0f172a;
-  border-bottom: 0.1rem solid #222041;
+  border-bottom: 0.15rem solid #1a365d;
 }
 .dateContainer {
   display: flex;
