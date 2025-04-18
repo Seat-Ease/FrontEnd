@@ -688,14 +688,14 @@ onMounted(() => {
   cursor: pointer;
 }
 .mainFloor {
-  display: grid;
-  grid-template-columns: 2.65fr 6fr;
+  display: flex;
 }
 .sideBar {
-  height: 100%;
+  min-height: 100%;
+  width: 25%;
   border-right: 0.1rem solid rgb(207, 207, 207);
-  display: grid;
-  grid-template-rows: 0.3fr 0.7fr;
+  display: flex;
+  flex-direction: column;
 }
 .instructionsContainer {
   border-bottom: 0.1rem solid rgb(207, 207, 207);
@@ -703,6 +703,7 @@ onMounted(() => {
   flex-direction: column;
   padding: 2rem;
   gap: 1.5rem;
+  height: 30%;
 }
 .detailLocalTitle {
   font-size: 2rem;
@@ -747,6 +748,7 @@ onMounted(() => {
   flex-direction: column;
   gap: 5rem;
   padding: 2rem;
+  overflow: scroll;
 }
 .btnsContainer {
   display: flex;
@@ -813,6 +815,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 75%;
   flex: 1;
 }
 .roomsListContainer {

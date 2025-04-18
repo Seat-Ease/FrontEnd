@@ -1,6 +1,6 @@
 <script setup>
 import Topbar from '@/components/Topbar.vue'
-import Sidebar from '@/components/Sidebar.vue'
+import Sidebar from '@/components/layout/Sidebar.vue'
 import ReservationPanel from '@/components/ReservationPanel.vue'
 import FloorPanel from '@/components/FloorPanel.vue'
 import FloorSettingPanel from '@/components/FloorSettingPanel.vue'
