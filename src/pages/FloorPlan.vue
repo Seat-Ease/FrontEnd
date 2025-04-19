@@ -41,7 +41,18 @@
         </button>
       </div>
       <div v-else class="room-floor-plan">
-        <p class="room-name">{{ selectedRoom.name }}</p>
+        <div class="container-header">
+          <div class="name-stat-container">
+            <p class="room-name">{{ selectedRoom.name }}</p>
+            <div class="room-stats-container">
+              <p class="tables-count">0 tables</p>
+              <hr />
+              <p class="places-count">0 places au total</p>
+            </div>
+          </div>
+          <button class="edit-floor-plan-btn">Modifier la disposition</button>
+        </div>
+        <div class="canvas-container"></div>
       </div>
     </div>
   </div>
@@ -116,7 +127,8 @@ onBeforeMount(() => {
 .selectedRoom {
   background-color: #1e293b;
 }
-.edit-room-btn {
+.edit-room-btn,
+.edit-floor-plan-btn {
   border: 0.2rem solid #1a365d;
   background-color: #1e293b;
   font-size: 1.4rem;
@@ -136,6 +148,39 @@ onBeforeMount(() => {
   border-radius: 0.75rem;
   display: flex;
   flex-direction: column;
+  padding: 3rem;
+}
+.room-floor-plan {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  flex-grow: 1;
+}
+.container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.room-stats-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.room-name {
+  font-size: 2rem;
+  color: #fff;
+  font-weight: bold;
+}
+.tables-count,
+.places-count {
+  color: #f1f5f9;
+  font-size: 1.2rem;
+}
+.canvas-container {
+  flex-grow: 1;
+  background-color: #0f172a;
+  border: 0.1rem solid #1a365d;
+  border-radius: 0.75rem;
 }
 .no-rooms-message-container {
   display: flex;
