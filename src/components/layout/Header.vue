@@ -44,7 +44,7 @@ const formattedDate = computed(() => {
 }
 .restaurant-name {
   font-size: 1.6rem;
-  color: #f1f5f9;
+  color: #fff;
   font-weight: 500;
 }
 </style>
