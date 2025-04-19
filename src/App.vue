@@ -18,7 +18,6 @@ body,
   font-size: 62.5%;
   min-height: 100vh;
   min-width: 100vw;
-  overflow: hidden;
   font-family: 'Hepta Slab', serif;
   font-optical-sizing: auto;
   font-style: normal;

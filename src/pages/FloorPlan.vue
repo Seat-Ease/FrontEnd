@@ -185,6 +185,7 @@ onBeforeMount(() => {
   background-color: #0f172a;
   border: 0.1rem solid #1a365d;
   border-radius: 0.75rem;
+  min-height: 50rem;
 }
 .no-rooms-message-container {
   display: flex;

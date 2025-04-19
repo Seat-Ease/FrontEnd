@@ -30,13 +30,18 @@ import EditDeleteForm from '@/components/floor plan/EditDeleteForm.vue'
   flex-grow: 1;
   width: 100%;
   position: relative;
+  height: 100vh;
+  overflow: hidden;
 }
 .header-page-container {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  height: 100vh;
+  overflow: hidden;
 }
 main {
   flex: 1;
+  overflow-y: scroll;
 }
 </style>
