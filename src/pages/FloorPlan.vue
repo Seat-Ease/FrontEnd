@@ -9,13 +9,13 @@
         Ajouter une salle
       </button>
     </div>
-    <div v-if="rooms.length > 0" class="room-list-btns-container">
+    <div v-if="floorStore().getRooms().length > 0" class="room-list-btns-container">
       <div class="room-list-container">
         <p
-          @click="handleRoomSelection"
+          @click="toggleRoomVisibility"
           class="room"
-          :class="{ selectedRoom: selectedRoom.id === String(room.id) }"
-          v-for="room in rooms"
+          :class="{ selectedRoom: mainStore().selectedRoom.id === String(room.id) }"
+          v-for="room in floorStore().getRooms()"
           :ref="room.id"
           :id="room.id"
         >
@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="room-plan-container">
-      <div v-if="rooms.length === 0" class="no-rooms-message-container">
+      <div v-if="floorStore().getRooms().length === 0" class="no-rooms-message-container">
         <p class="first-line">Aucune salle créée</p>
         <p class="second-line">
           Commencez par créer des salles pour votre restaurant, <br />
@@ -43,7 +43,7 @@
       <div v-else class="room-floor-plan">
         <div class="container-header">
           <div class="name-stat-container">
-            <p class="room-name">{{ selectedRoom.name }}</p>
+            <p class="room-name">{{ mainStore().selectedRoom.name }}</p>
             <div class="room-stats-container">
               <p class="tables-count">
                 {{ floorStore().getTablesCount(mainStore().selectedRoom.id) }} tables
@@ -56,25 +56,170 @@
           </div>
           <button class="edit-floor-plan-btn">Modifier la disposition</button>
         </div>
-        <div class="canvas-container"></div>
+        <div ref="canvasContainer" class="canvas-container">
+          <v-stage ref="stageRef" :config="stageConfig"></v-stage>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref, computed, onBeforeMount } from 'vue'
+import { ref, computed, onBeforeMount, onMounted, nextTick, watch, reactive } from 'vue'
+import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 
-const rooms = computed(() => floorStore().getRooms())
-const selectedRoom = computed(() => mainStore().selectedRoom)
-function handleRoomSelection(e) {
-  selectedRoom.value = rooms.value.find((room) => room.id === String(e.target.id))
-  mainStore().selectedRoom = rooms.value.find((room) => room.id === String(e.target.id))
+const stageRef = ref(null)
+const canvasContainer = ref(null)
+
+const stageConfig = reactive({
+  width: 800,
+  height: 650,
+  draggable: false,
+})
+
+function createTable(stage, newTableData) {
+  const targetRoom = stage.find((room) => room.attrs.id === newTableData.room_id)
+  if (!targetRoom) return
+
+  if (newTableData.shape === 'Circle') {
+    const radius = newTableData.width / 2
+    const newTable = new Konva.Circle({
+      id: String(newTableData.id),
+      x: newTableData.x,
+      y: newTableData.y,
+      radius,
+      draggable: false,
+      stroke: '#1a365d',
+      strokeWidth: newTableData.strokeWidth,
+      name: newTableData.name,
+      fill: '#516d99',
+    })
+
+    const tableName = new Konva.Text({
+      text: newTable.attrs.name,
+      fontSize: 12,
+      fill: '#fff',
+    })
+
+    const tableCapacity = new Konva.Text({
+      text: newTableData.maxCovers + ' places',
+      fontSize: 12,
+      fill: '#fff',
+    })
+
+    tableName.offsetX(tableName.width() / 2)
+    tableName.offsetY(tableName.height() / 2 + 55)
+    tableName.x(newTable.x())
+    tableName.y(newTable.y())
+
+    tableCapacity.offsetX(tableCapacity.width() / 2)
+    tableCapacity.offsetY(tableCapacity.height() / 2 + 35)
+    tableCapacity.x(newTable.x())
+    tableCapacity.y(newTable.y())
+
+    targetRoom.add(newTable)
+    targetRoom.add(tableName)
+    targetRoom.add(tableCapacity)
+  } else if (newTableData.shape === 'Rect') {
+    const newTable = new Konva.Rect({
+      id: String(newTableData.id),
+      x: newTableData.x,
+      y: newTableData.y,
+      width: newTableData.width,
+      height: newTableData.height,
+      draggable: false,
+      stroke: '#1a365d',
+      strokeWidth: newTableData.strokeWidth,
+      name: newTableData.name,
+      cornerRadius: 4,
+      fill: '#516d99',
+    })
+
+    const tableName = new Konva.Text({
+      text: newTable.attrs.name,
+      fontSize: 12,
+      fill: '#fff',
+    })
+
+    const tableCapacity = new Konva.Text({
+      text: newTableData.maxCovers + ' places',
+      fontSize: 12,
+      fill: '#fff',
+    })
+
+    tableName.offsetX(tableName.width() / 2)
+    tableName.offsetY(tableName.height() / 2 + 55)
+    tableName.x(newTable.x() + newTable.width() / 2)
+    tableName.y(newTable.y() + newTable.height() / 2)
+
+    tableCapacity.offsetX(tableCapacity.width() / 2)
+    tableCapacity.offsetY(tableCapacity.height() / 2 + 35)
+    tableCapacity.x(newTable.x() + newTable.width() / 2)
+    tableCapacity.y(newTable.y() + newTable.height() / 2)
+
+    targetRoom.add(newTable)
+    targetRoom.add(tableName)
+    targetRoom.add(tableCapacity)
+  }
 }
+
+function toggleRoomVisibility(e) {
+  mainStore().selectedRoom = floorStore()
+    .getRooms()
+    .find((room) => room.id === e.target.id)
+  nextTick(() => {
+    const stage = stageRef.value.getNode().children
+    stage.forEach((room) => {
+      if (room.attrs.id !== mainStore().selectedRoom.id) {
+        room.visible(false)
+      } else {
+        room.visible(true)
+      }
+    })
+    stageRef.value.getNode().batchDraw()
+  })
+}
+
 onBeforeMount(() => {
   if (floorStore().getRooms().length > 0) {
     mainStore().selectedRoom = floorStore().getRooms()[0]
+  }
+})
+onMounted(() => {
+  if (canvasContainer.value) {
+    stageConfig.width = canvasContainer.value.clientWidth
+    stageConfig.height = canvasContainer.value.clientHeight
+  }
+  const stage = stageRef.value.getNode()
+  if (stage && floorStore().getRooms() !== null) {
+    // Create layers
+    floorStore()
+      .getRooms()
+      .forEach((room) => {
+        const layer = new Konva.Layer({
+          ...room,
+          opacity: 1,
+          visible: true,
+        })
+        stage.add(layer)
+      })
+    // Makes the first one in the list visible
+    mainStore().selectedRoom = floorStore().getRooms()[0]
+    stage.children.forEach((room) => {
+      if (room.attrs.id !== mainStore().selectedRoom.id) {
+        room.visible(false)
+      } else {
+        room.visible(true)
+      }
+    })
+    // Create tables in respective rooms
+    floorStore()
+      .getTables()
+      .forEach((table) => {
+        createTable(stage.children, table)
+      })
+    stageRef.value.getNode().batchDraw()
   }
 })
 </script>
