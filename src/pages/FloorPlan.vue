@@ -89,7 +89,7 @@ function createTable(stage, newTableData) {
       x: newTableData.x,
       y: newTableData.y,
       radius,
-      draggable: false,
+      draggable: true,
       stroke: '#1a365d',
       strokeWidth: newTableData.strokeWidth,
       name: newTableData.name,
@@ -118,6 +118,21 @@ function createTable(stage, newTableData) {
     tableCapacity.x(newTable.x())
     tableCapacity.y(newTable.y())
 
+    newTable.on('dragmove', function () {
+      tableName.x(newTable.x())
+      tableName.y(newTable.y())
+      tableCapacity.x(newTable.x())
+      tableCapacity.y(newTable.y())
+    })
+
+    newTable.on('dragend', function () {
+      const tableIndex = floorStore()
+        .getTables()
+        .findIndex((table) => String(table.id) === String(newTableData.id))
+      floorStore().getTables()[tableIndex].x = newTable.x()
+      floorStore().getTables()[tableIndex].y = newTable.y()
+    })
+
     targetRoom.add(newTable)
     targetRoom.add(tableName)
     targetRoom.add(tableCapacity)
@@ -128,7 +143,7 @@ function createTable(stage, newTableData) {
       y: newTableData.y,
       width: newTableData.width,
       height: newTableData.height,
-      draggable: false,
+      draggable: true,
       stroke: '#1a365d',
       strokeWidth: newTableData.strokeWidth,
       name: newTableData.name,
@@ -157,6 +172,21 @@ function createTable(stage, newTableData) {
     tableCapacity.offsetY(tableCapacity.height() / 2 + 35)
     tableCapacity.x(newTable.x() + newTable.width() / 2)
     tableCapacity.y(newTable.y() + newTable.height() / 2)
+
+    newTable.on('dragmove', function () {
+      tableName.x(newTable.x() + newTable.width() / 2)
+      tableName.y(newTable.y() + newTable.height() / 2)
+      tableCapacity.x(newTable.x() + newTable.width() / 2)
+      tableCapacity.y(newTable.y() + newTable.height() / 2)
+    })
+
+    newTable.on('dragend', function () {
+      const tableIndex = floorStore()
+        .getTables()
+        .findIndex((table) => String(table.id) === String(newTableData.id))
+      floorStore().getTables()[tableIndex].x = newTable.x()
+      floorStore().getTables()[tableIndex].y = newTable.y()
+    })
 
     targetRoom.add(newTable)
     targetRoom.add(tableName)
