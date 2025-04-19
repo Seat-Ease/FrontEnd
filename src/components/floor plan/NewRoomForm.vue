@@ -10,14 +10,35 @@
       </div>
       <div class="input-container">
         <label for="nom-salle">Nom de la salle</label>
-        <input id="nom-salle" type="text" placeholder="ex: Salle principale, Terrasse" />
+        <input
+          v-model="roomNameInput"
+          id="nom-salle"
+          type="text"
+          placeholder="ex: Salle principale, Terrasse"
+        />
       </div>
-      <button class="submit-btn">Créer la salle</button>
+      <button @click="submitForm" class="submit-btn">Créer la salle</button>
     </form>
   </div>
 </template>
 <script setup>
+import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
+import { v4 as uuidv4 } from 'uuid'
+import { ref } from 'vue'
+
+const roomNameInput = ref('')
+function submitForm(e) {
+  e.preventDefault()
+  if (roomNameInput.value.length === 0) return
+  const newRoom = {
+    id: String(uuidv4()),
+    name: roomNameInput.value,
+  }
+  floorStore().addRoom(newRoom)
+  roomNameInput.value = ''
+  mainStore().newRoomFormShowing = false
+}
 </script>
 <style scoped>
 .form-container {

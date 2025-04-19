@@ -45,14 +45,15 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { mainStore } from '@/stores/mainStore'
+import { floorStore } from '@/stores/floorStore'
 
-const selectedRoom = ref(null)
-const rooms = ref([])
+const rooms = computed(() => floorStore().getRooms())
+const selectedRoom = ref(rooms.value[0])
 function handleRoomSelection(e) {
-  selectedRoomId.value = rooms.find((room) => room.id === String(e.target.id))
+  selectedRoom.value = rooms.value.find((room) => room.id === String(e.target.id))
 }
 </script>
 <style scoped>
