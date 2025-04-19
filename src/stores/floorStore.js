@@ -494,6 +494,13 @@ export const floorStore = defineStore('floorStore', () => {
   function addRoom(newRoom) {
     rooms.value.push(newRoom)
   }
+  function editRoomName(room_id, newName) {
+    const roomIndex = rooms.value.find((room) => room.id === room_id)
+    rooms.value[roomIndex].name = newName
+  }
+  function deleteRoom(room_id) {
+    rooms.value = rooms.value.filter((room) => room.id !== room_id)
+  }
   function getTables() {
     return tables.value
   }
@@ -507,5 +514,13 @@ export const floorStore = defineStore('floorStore', () => {
       tables.value[tableIndex].occupied = !tables.value[tableIndex].occupied
     }
   }
-  return { getRooms, addRoom, getTables, addTable, updateTableState }
+  return {
+    getRooms,
+    addRoom,
+    editRoomName,
+    deleteRoom,
+    getTables,
+    addTable,
+    updateTableState,
+  }
 })
