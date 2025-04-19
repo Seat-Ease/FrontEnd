@@ -31,7 +31,6 @@ import InformationBox from '@/components/dashboard/InformationBox.vue'
 </script>
 <style>
 .dashboard-page-container {
-  flex: 1;
   background-color: #1e293b;
   min-height: 100%;
   display: flex;
