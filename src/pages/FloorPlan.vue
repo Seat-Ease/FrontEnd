@@ -5,14 +5,16 @@
         <h1 class="page-title">Plan de salle</h1>
         <p class="page-description">Créez et gérez la disposition de votre restaurant</p>
       </div>
-      <button class="add-room-btn">Ajouter une salle</button>
+      <button @click="mainStore().newRoomFormShowing = true" class="add-room-btn">
+        Ajouter une salle
+      </button>
     </div>
-    <div class="room-list-btns-container">
+    <div v-if="rooms.length > 0" class="room-list-btns-container">
       <div class="room-list-container">
         <p
           @click="handleRoomSelection"
           class="room"
-          :class="{ selectedRoom: selectedRoomId === String(room.id) }"
+          :class="{ selectedRoom: selectedRoom.id === String(room.id) }"
           v-for="room in rooms"
           :ref="room.id"
           :id="room.id"
@@ -26,13 +28,18 @@
       </div>
     </div>
     <div class="room-plan-container">
-      <div class="no-rooms-message-container">
+      <div v-if="rooms.length === 0" class="no-rooms-message-container">
         <p class="first-line">Aucune salle créée</p>
         <p class="second-line">
           Commencez par créer des salles pour votre restaurant, <br />
           comme "Salle Principale", "Terrasse", ou "Salon Privé".
         </p>
-        <button class="add-room-btn">Créer votre première salle</button>
+        <button @click="mainStore().newRoomFormShowing = true" class="add-room-btn">
+          Créer votre première salle
+        </button>
+      </div>
+      <div v-else class="room-floor-plan">
+        <p class="room-name">{{ selectedRoom.name }}</p>
       </div>
     </div>
   </div>
@@ -40,14 +47,12 @@
 <script setup>
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
+import { mainStore } from '@/stores/mainStore'
 
-const selectedRoomId = ref('1')
-const rooms = ref([
-  { id: '1', name: 'Salle Principale' },
-  { id: '2', name: 'Terasse' },
-])
+const selectedRoom = ref(null)
+const rooms = ref([])
 function handleRoomSelection(e) {
-  selectedRoomId.value = e.target.id
+  selectedRoomId.value = rooms.find((room) => room.id === String(e.target.id))
 }
 </script>
 <style scoped>

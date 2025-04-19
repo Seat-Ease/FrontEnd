@@ -1,5 +1,8 @@
 <template>
   <div class="app-container">
+    <div v-if="mainStore().newRoomFormShowing">
+      <NewRoomForm />
+    </div>
     <Sidebar />
     <div class="header-page-container">
       <Header />
@@ -13,6 +16,8 @@
 <script setup>
 import Sidebar from './Sidebar.vue'
 import Header from './Header.vue'
+import { mainStore } from '@/stores/mainStore'
+import NewRoomForm from '@/components/floor plan/NewRoomForm.vue'
 </script>
 
 <style scoped>
@@ -20,6 +25,7 @@ import Header from './Header.vue'
   display: flex;
   flex-grow: 1;
   width: 100%;
+  position: relative;
 }
 .header-page-container {
   display: flex;

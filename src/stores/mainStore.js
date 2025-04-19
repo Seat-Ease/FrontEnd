@@ -8,6 +8,7 @@ export const mainStore = defineStore('mainStore', () => {
   const freeTablesListShowingReservation = ref(false)
   const freeTablesListShowingWaitList = ref(false)
   const reservationFormShowing = ref(false)
+  const newRoomFormShowing = ref(false)
   const now = new Date()
   const appDate = ref(new Date())
 
@@ -36,5 +37,6 @@ export const mainStore = defineStore('mainStore', () => {
     freeTablesListShowingReservation,
     freeTablesListShowingWaitList,
     reservationFormShowing,
+    newRoomFormShowing,
   }
 })
