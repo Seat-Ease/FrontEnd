@@ -45,9 +45,13 @@
           <div class="name-stat-container">
             <p class="room-name">{{ selectedRoom.name }}</p>
             <div class="room-stats-container">
-              <p class="tables-count">0 tables</p>
+              <p class="tables-count">
+                {{ floorStore().getTablesCount(mainStore().selectedRoom.id) }} tables
+              </p>
               <hr />
-              <p class="places-count">0 places au total</p>
+              <p class="places-count">
+                {{ floorStore().getPlacesCount(mainStore().selectedRoom.id) }} places au total
+              </p>
             </div>
           </div>
           <button class="edit-floor-plan-btn">Modifier la disposition</button>

@@ -501,6 +501,17 @@ export const floorStore = defineStore('floorStore', () => {
   function deleteRoom(room_id) {
     rooms.value = rooms.value.filter((room) => room.id !== room_id)
   }
+  function getTablesCount(id) {
+    return tables.value.filter((table) => table.room_id === id).length
+  }
+  function getPlacesCount(id) {
+    const roomsTables = tables.value.filter((table) => table.room_id === id)
+    const totalCount = roomsTables.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.maxCovers,
+      0,
+    )
+    return totalCount
+  }
   function getTables() {
     return tables.value
   }
@@ -519,6 +530,8 @@ export const floorStore = defineStore('floorStore', () => {
     addRoom,
     editRoomName,
     deleteRoom,
+    getTablesCount,
+    getPlacesCount,
     getTables,
     addTable,
     updateTableState,
