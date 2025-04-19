@@ -23,7 +23,9 @@
         </p>
       </div>
       <div class="btns-container">
-        <button class="edit-room-btn">Modifier la salle</button>
+        <button @click="mainStore().editRoomFormShowing = true" class="edit-room-btn">
+          Modifier la salle
+        </button>
         <button class="add-table-btn">Ajouter une table</button>
       </div>
     </div>
@@ -45,16 +47,21 @@
   </div>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
-import { v4 as uuidv4 } from 'uuid'
+import { ref, computed, onBeforeMount } from 'vue'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 
 const rooms = computed(() => floorStore().getRooms())
-const selectedRoom = ref(rooms.value[0])
+const selectedRoom = computed(() => mainStore().selectedRoom)
 function handleRoomSelection(e) {
   selectedRoom.value = rooms.value.find((room) => room.id === String(e.target.id))
+  mainStore().selectedRoom = rooms.value.find((room) => room.id === String(e.target.id))
 }
+onBeforeMount(() => {
+  if (floorStore().getRooms().length > 0) {
+    mainStore().selectedRoom = floorStore().getRooms()[0]
+  }
+})
 </script>
 <style scoped>
 .floor-plan-page-container {

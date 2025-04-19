@@ -3,6 +3,9 @@
     <div v-if="mainStore().newRoomFormShowing">
       <NewRoomForm />
     </div>
+    <div v-if="mainStore().editRoomFormShowing">
+      <EditDeleteForm />
+    </div>
     <Sidebar />
     <div class="header-page-container">
       <Header />
@@ -18,6 +21,7 @@ import Sidebar from './Sidebar.vue'
 import Header from './Header.vue'
 import { mainStore } from '@/stores/mainStore'
 import NewRoomForm from '@/components/floor plan/NewRoomForm.vue'
+import EditDeleteForm from '@/components/floor plan/EditDeleteForm.vue'
 </script>
 
 <style scoped>

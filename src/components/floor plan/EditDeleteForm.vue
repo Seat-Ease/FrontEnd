@@ -3,42 +3,42 @@
     <form>
       <div class="header-container">
         <div class="title-description-container">
-          <p class="title">Ajouter une nouvelle salle</p>
-          <p class="description">Créer une nouvelle salle pour le plan de votre restaurant</p>
+          <p class="title">Modifier la salle</p>
+          <p class="description">Changer le nom de la salle</p>
         </div>
-        <button @click="mainStore().newRoomFormShowing = false" class="close-btn">X</button>
+        <button @click="mainStore().editRoomFormShowing = false" class="close-btn">X</button>
       </div>
       <div class="input-container">
         <label for="nom-salle">Nom de la salle</label>
-        <input
-          v-model="roomNameInput"
-          id="nom-salle"
-          type="text"
-          placeholder="ex: Salle principale, Terrasse"
-        />
+        <input v-model="roomNameInput" id="nom-salle" type="text" placeholder="Nom de la salle" />
       </div>
-      <button @click="submitForm" class="submit-btn">Créer la salle</button>
+      <div class="btns-container">
+        <button @click="deleteRoom" class="delete-btn">Supprimer</button>
+        <button @click="editName" class="submit-btn">Enregistrer</button>
+      </div>
     </form>
   </div>
 </template>
 <script setup>
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
-import { v4 as uuidv4 } from 'uuid'
 import { ref } from 'vue'
 
 const roomNameInput = ref('')
-function submitForm(e) {
+function editName(e) {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
-  const newRoom = {
-    id: String(uuidv4()),
-    name: roomNameInput.value,
-  }
-  floorStore().addRoom(newRoom)
-  mainStore().selectedRoom = floorStore().getRooms()[0]
+  floorStore().editRoomName(mainStore().selectedRoom.id, roomNameInput.value)
   roomNameInput.value = ''
-  mainStore().newRoomFormShowing = false
+  mainStore().editRoomFormShowing = false
+}
+function deleteRoom(e) {
+  e.preventDefault()
+  floorStore().deleteRoom(mainStore().selectedRoom.id)
+  if (floorStore().getRooms().length > 0) {
+    mainStore().selectedRoom = floorStore().getRooms()[0]
+  }
+  mainStore().editRoomFormShowing = false
 }
 </script>
 <style scoped>
@@ -114,15 +114,25 @@ form {
 .input-container > input::placeholder {
   color: #d7d7d7;
 }
-.submit-btn {
-  align-self: flex-end;
+.btns-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.submit-btn,
+.delete-btn {
   border: none;
-  background-color: rgb(0, 74, 177);
   color: #fff;
   font-size: 1.6rem;
   padding: 1rem 2rem;
   cursor: pointer;
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
+}
+.submit-btn {
+  background-color: rgb(0, 74, 177);
+}
+.delete-btn {
+  background-color: red;
 }
 </style>

@@ -495,7 +495,7 @@ export const floorStore = defineStore('floorStore', () => {
     rooms.value.push(newRoom)
   }
   function editRoomName(room_id, newName) {
-    const roomIndex = rooms.value.find((room) => room.id === room_id)
+    const roomIndex = rooms.value.findIndex((room) => room.id === room_id)
     rooms.value[roomIndex].name = newName
   }
   function deleteRoom(room_id) {
