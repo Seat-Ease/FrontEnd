@@ -17,7 +17,7 @@
         <button v-if="mainStore().selectedTable.occupied" class="free-table btn">
           Libérer la table
         </button>
-        <button class="delete-table btn">Supprimer la table</button>
+        <button @click="destroyTable" class="delete-table btn">Supprimer la table</button>
         <button @click="mainStore().editTableFormShowing = true" class="edit-table btn">
           Modifier la table
         </button>
@@ -123,12 +123,14 @@ function createTable(stage, newTableData) {
     })
 
     const tableName = new Konva.Text({
+      id: newTableData.id + '-label-name',
       text: newTable.attrs.name,
       fontSize: 12,
       fill: '#fff',
     })
 
     const tableCapacity = new Konva.Text({
+      id: newTableData.id + '-label-capacity',
       text: newTableData.maxCovers + ' places',
       fontSize: 12,
       fill: '#fff',
@@ -159,6 +161,11 @@ function createTable(stage, newTableData) {
       floorStore().getTables()[tableIndex].y = newTable.y()
     })
 
+    newTable.on('click tap', function () {
+      mainStore().tableEditingActivated = true
+      mainStore().selectedTable = newTableData
+    })
+
     targetRoom.add(newTable)
     targetRoom.add(tableName)
     targetRoom.add(tableCapacity)
@@ -176,6 +183,28 @@ function toggleRoomVisibility(selectedRoom) {
     })
     stageRef.value.getNode().batchDraw()
   })
+}
+function destroyTable() {
+  const stage = stageRef.value.getNode()
+  if (!stage || !mainStore().selectedTable?.id || !mainStore().selectedTable?.room_id) return
+
+  const layer = stage.children.find((room) => room.attrs.id === mainStore().selectedRoom.id)
+  if (!layer) return
+
+  const shape = layer.findOne(`#${mainStore().selectedTable.id}`)
+  if (shape) shape.destroy()
+
+  const nameText = layer.findOne(`#${mainStore().selectedTable.id}-label-name`)
+  if (nameText) nameText.destroy()
+
+  const capacityText = layer.findOne(`#${mainStore().selectedTable.id}-label-capacity`)
+  if (capacityText) capacityText.destroy()
+
+  // 🎨 Redraw layer
+  layer.batchDraw()
+  floorStore().deleteTable(mainStore().selectedTable.id)
+  mainStore().selectedTable = null
+  mainStore().tableEditingActivated = false
 }
 onMounted(() => {
   if (canvasContainer.value) {
@@ -250,7 +279,6 @@ watch(
       const oldShape = layer.findOne(`#${changedTable.id}`)
       if (oldShape) oldShape.destroy()
 
-      // 💣 DESTROY existing label(s) by specific ID
       const oldNameLabel = layer.findOne(`#${changedTable.id}-label-name`)
       if (oldNameLabel) oldNameLabel.destroy()
 

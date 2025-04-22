@@ -526,6 +526,9 @@ export const floorStore = defineStore('floorStore', () => {
       tables.value[tableIndex] = { ...p_table }
     }
   }
+  function deleteTable(table_id) {
+    tables.value = tables.value.filter((table) => table.id !== table_id)
+  }
   function updateTableState(id) {
     const tableIndex = tables.value.findIndex((table) => table.id === id)
     if (tableIndex === -1) return
@@ -544,5 +547,6 @@ export const floorStore = defineStore('floorStore', () => {
     addTable,
     updateTableState,
     editTable,
+    deleteTable,
   }
 })
