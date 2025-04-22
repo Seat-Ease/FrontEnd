@@ -519,6 +519,7 @@ export const floorStore = defineStore('floorStore', () => {
     tables.value.push(newTable)
   }
   function editTable(p_table) {
+    console.log(p_table)
     const tableIndex = tables.value.findIndex((table) => table.id === p_table.id)
     if (tableIndex === -1) return
     else {

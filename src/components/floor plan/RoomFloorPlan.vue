@@ -13,12 +13,14 @@
           </p>
         </div>
       </div>
-      <div v-if="tableEditingActivated" class="tables-btns-container">
+      <div v-if="mainStore().tableEditingActivated" class="tables-btns-container">
         <button v-if="mainStore().selectedTable.occupied" class="free-table btn">
           Libérer la table
         </button>
         <button class="delete-table btn">Supprimer la table</button>
-        <button class="edit-table btn">Modifier la table</button>
+        <button @click="mainStore().editTableFormShowing = true" class="edit-table btn">
+          Modifier la table
+        </button>
       </div>
     </div>
     <div ref="canvasContainer" class="canvas-container">
@@ -32,8 +34,6 @@ import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 
-const tableEditingActivated = ref(false)
-
 const stageRef = ref(null)
 const canvasContainer = ref(null)
 
@@ -42,7 +42,6 @@ const stageConfig = reactive({
   height: 650,
   draggable: false,
 })
-
 function createTable(stage, newTableData) {
   const targetRoom = stage.find((room) => room.attrs.id === newTableData.room_id)
   if (!targetRoom) return
@@ -62,12 +61,14 @@ function createTable(stage, newTableData) {
     })
 
     const tableName = new Konva.Text({
+      id: newTableData.id + '-label-name',
       text: newTable.attrs.name,
       fontSize: 12,
       fill: '#fff',
     })
 
     const tableCapacity = new Konva.Text({
+      id: newTableData.id + '-label-capacity',
       text: newTableData.maxCovers + ' places',
       fontSize: 12,
       fill: '#fff',
@@ -99,7 +100,7 @@ function createTable(stage, newTableData) {
     })
 
     newTable.on('click tap', function () {
-      tableEditingActivated.value = true
+      mainStore().tableEditingActivated = true
       mainStore().selectedTable = newTableData
     })
 
@@ -111,8 +112,8 @@ function createTable(stage, newTableData) {
       id: String(newTableData.id),
       x: newTableData.x,
       y: newTableData.y,
-      width: 50,
-      height: 50,
+      width: newTableData.width,
+      height: newTableData.height,
       draggable: true,
       stroke: '#1a365d',
       strokeWidth: 3,
@@ -163,7 +164,6 @@ function createTable(stage, newTableData) {
     targetRoom.add(tableCapacity)
   }
 }
-
 function toggleRoomVisibility(selectedRoom) {
   nextTick(() => {
     const stage = stageRef.value.getNode().children
@@ -177,7 +177,6 @@ function toggleRoomVisibility(selectedRoom) {
     stageRef.value.getNode().batchDraw()
   })
 }
-
 onMounted(() => {
   if (canvasContainer.value) {
     stageConfig.width = canvasContainer.value.clientWidth
@@ -231,6 +230,38 @@ watch(
 watch(
   () => mainStore().selectedRoom,
   (newValue) => toggleRoomVisibility(newValue),
+)
+watch(
+  () =>
+    floorStore()
+      .getTables()
+      .map((t) => ({ ...t })), // shallow copy
+  (newTables, oldTables) => {
+    const changedTable = newTables.find((newT, idx) => {
+      const oldT = oldTables[idx]
+      return JSON.stringify(newT) !== JSON.stringify(oldT)
+    })
+
+    if (changedTable) {
+      const stage = stageRef.value.getNode()
+      const layer = stage.children.find((room) => room.attrs.id === changedTable.room_id)
+      if (!layer) return
+
+      const oldShape = layer.findOne(`#${changedTable.id}`)
+      if (oldShape) oldShape.destroy()
+
+      // 💣 DESTROY existing label(s) by specific ID
+      const oldNameLabel = layer.findOne(`#${changedTable.id}-label-name`)
+      if (oldNameLabel) oldNameLabel.destroy()
+
+      const oldCapacityLabel = layer.findOne(`#${changedTable.id}-label-capacity`)
+      if (oldCapacityLabel) oldCapacityLabel.destroy()
+
+      createTable(stage.children, changedTable)
+      stage.batchDraw()
+    }
+  },
+  { deep: true },
 )
 </script>
 <style scoped>

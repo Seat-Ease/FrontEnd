@@ -11,8 +11,10 @@ export const mainStore = defineStore('mainStore', () => {
   const newRoomFormShowing = ref(false)
   const editRoomFormShowing = ref(false)
   const newTableFormShowing = ref(false)
+  const editTableFormShowing = ref(false)
   const selectedRoom = ref(null)
   const selectedTable = ref(null)
+  const tableEditingActivated = ref(false)
   const now = new Date()
   const appDate = ref(new Date())
 
@@ -46,5 +48,7 @@ export const mainStore = defineStore('mainStore', () => {
     selectedRoom,
     newTableFormShowing,
     selectedTable,
+    tableEditingActivated,
+    editTableFormShowing,
   }
 })
