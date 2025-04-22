@@ -181,7 +181,7 @@ export const floorStore = defineStore('floorStore', () => {
       maxCovers: 7,
       shape: 'Circle',
       room_id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719',
-      occupied: false,
+      occupied: true,
     },
     {
       id: 'b39c1459-074c-4ce4-8cd6-d40159d7c692',

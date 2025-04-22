@@ -117,10 +117,10 @@ onBeforeMount(() => {
 .edit-floor-plan-btn {
   border: 0.2rem solid #1a365d;
   background-color: #1e293b;
+  border-radius: 0.75rem;
   font-size: 1.4rem;
   color: #fff;
   padding: 1rem 2.5rem;
-  border-radius: 0.75rem;
   cursor: pointer;
 }
 .btns-container {

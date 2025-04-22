@@ -13,6 +13,13 @@
           </p>
         </div>
       </div>
+      <div v-if="tableEditingActivated" class="tables-btns-container">
+        <button v-if="mainStore().selectedTable.occupied" class="free-table btn">
+          Libérer la table
+        </button>
+        <button class="delete-table btn">Supprimer la table</button>
+        <button class="edit-table btn">Modifier la table</button>
+      </div>
     </div>
     <div ref="canvasContainer" class="canvas-container">
       <v-stage ref="stageRef" :config="stageConfig"></v-stage>
@@ -20,10 +27,12 @@
   </div>
 </template>
 <script setup>
-import { ref, onBeforeMount, onMounted, nextTick, reactive, watch } from 'vue'
+import { ref, onMounted, nextTick, reactive, watch } from 'vue'
 import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
+
+const tableEditingActivated = ref(false)
 
 const stageRef = ref(null)
 const canvasContainer = ref(null)
@@ -87,6 +96,11 @@ function createTable(stage, newTableData) {
         .findIndex((table) => String(table.id) === String(newTableData.id))
       floorStore().getTables()[tableIndex].x = newTable.x()
       floorStore().getTables()[tableIndex].y = newTable.y()
+    })
+
+    newTable.on('click tap', function () {
+      tableEditingActivated.value = true
+      mainStore().selectedTable = newTableData
     })
 
     targetRoom.add(newTable)
@@ -164,11 +178,6 @@ function toggleRoomVisibility(selectedRoom) {
   })
 }
 
-onBeforeMount(() => {
-  if (floorStore().getRooms().length > 0) {
-    mainStore().selectedRoom = floorStore().getRooms()[0]
-  }
-})
 onMounted(() => {
   if (canvasContainer.value) {
     stageConfig.width = canvasContainer.value.clientWidth
@@ -257,5 +266,30 @@ watch(
   border: 0.1rem solid #1a365d;
   border-radius: 0.75rem;
   min-height: 50rem;
+}
+.tables-btns-container {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn {
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  letter-spacing: 0.05rem;
+}
+.delete-table {
+  background-color: red;
+}
+.edit-table {
+  border: 0.2rem solid #1a365d;
+  background-color: #1e293b;
+  border-radius: 0.75rem;
+}
+.free-table {
+  background-color: #516d99;
 }
 </style>
