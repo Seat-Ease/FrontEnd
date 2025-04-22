@@ -25,8 +25,8 @@ export const floorStore = defineStore('floorStore', () => {
     },
     {
       id: 'ec056551-41ef-4844-ab8a-7d5384ca7ae8',
-      x: 30,
-      y: 170,
+      x: 45,
+      y: 160,
       width: 50,
       height: 50,
       draggable: true,
@@ -41,8 +41,8 @@ export const floorStore = defineStore('floorStore', () => {
     },
     {
       id: '1df3c65b-a6bf-47f6-a175-dde07c01b7c0',
-      x: 30,
-      y: 300,
+      x: 45,
+      y: 270,
       width: 50,
       height: 50,
       draggable: true,
@@ -58,7 +58,7 @@ export const floorStore = defineStore('floorStore', () => {
     {
       id: 'c8c6fcee-0904-47a3-a02d-e61c46220ad0',
       x: 70,
-      y: 470,
+      y: 400,
       width: 50,
       height: 50,
       draggable: true,

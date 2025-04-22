@@ -12,9 +12,23 @@
             {{ floorStore().getPlacesCount(mainStore().selectedRoom.id) }} places au total
           </p>
         </div>
+        <div class="table-state-legend-container">
+          <div>
+            <font-awesome-icon class="point available" :icon="['fas', 'circle']" />
+            <p class="text">Disponible</p>
+          </div>
+          <div>
+            <font-awesome-icon class="point occupied" :icon="['fas', 'circle']" />
+            <p class="text">Occupée</p>
+          </div>
+        </div>
       </div>
       <div v-if="mainStore().tableEditingActivated" class="tables-btns-container">
-        <button v-if="mainStore().selectedTable.occupied" class="free-table btn">
+        <button
+          @click="handleFreeingTable"
+          v-if="mainStore().selectedTable.occupied"
+          class="free-table btn"
+        >
           Libérer la table
         </button>
         <button
@@ -63,7 +77,7 @@ function createTable(stage, newTableData) {
       stroke: '#1a365d',
       strokeWidth: 3,
       name: newTableData.name,
-      fill: '#516d99',
+      fill: newTableData.occupied ? '#516d99' : '#0d9488',
     })
 
     const tableName = new Konva.Text({
@@ -125,7 +139,7 @@ function createTable(stage, newTableData) {
       strokeWidth: 3,
       name: newTableData.name,
       cornerRadius: 4,
-      fill: '#516d99',
+      fill: newTableData.occupied ? '#516d99' : '#0d9488',
     })
 
     const tableName = new Konva.Text({
@@ -212,6 +226,10 @@ function destroyTable() {
   mainStore().selectedTable = null
   mainStore().tableEditingActivated = false
 }
+function handleFreeingTable() {
+  floorStore().updateTableState(mainStore().selectedTable.id)
+  mainStore().tableEditingActivated = false
+}
 onMounted(() => {
   if (canvasContainer.value) {
     stageConfig.width = canvasContainer.value.clientWidth
@@ -270,7 +288,7 @@ watch(
   () =>
     floorStore()
       .getTables()
-      .map((t) => ({ ...t })), // shallow copy
+      .map((t) => ({ ...t })),
   (newTables, oldTables) => {
     const changedTable = newTables.find((newT, idx) => {
       const oldT = oldTables[idx]
@@ -356,5 +374,34 @@ watch(
 }
 .free-table {
   background-color: #516d99;
+}
+.table-state-legend-container {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+.table-state-legend-container > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.text {
+  font-size: 1.2rem;
+  color: #fff;
+}
+.point {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.available {
+  color: #0d9488;
+}
+.occupied {
+  color: #516d99;
+}
+.name-stat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 </style>
