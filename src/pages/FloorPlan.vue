@@ -32,15 +32,8 @@
       </div>
     </div>
     <div class="room-plan-container">
-      <div v-if="floorStore().getRooms().length === 0" class="no-rooms-message-container">
-        <p class="first-line">Aucune salle créée</p>
-        <p class="second-line">
-          Commencez par créer des salles pour votre restaurant, <br />
-          comme "Salle Principale", "Terrasse", ou "Salon Privé".
-        </p>
-        <button @click="mainStore().newRoomFormShowing = true" class="add-room-btn">
-          Créer votre première salle
-        </button>
+      <div v-if="floorStore().getRooms().length === 0">
+        <NoRoomComponent />
       </div>
       <div v-else class="room-floor-plan">
         <div class="container-header">
@@ -69,6 +62,7 @@ import { ref, onBeforeMount, onMounted, nextTick, reactive, watch } from 'vue'
 import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
+import NoRoomComponent from '@/components/floor plan/NoRoomComponent.vue'
 
 const stageRef = ref(null)
 const canvasContainer = ref(null)
@@ -377,24 +371,5 @@ watch(
   border: 0.1rem solid #1a365d;
   border-radius: 0.75rem;
   min-height: 50rem;
-}
-.no-rooms-message-container {
-  display: flex;
-  flex-direction: column;
-  align-self: center;
-  justify-self: center;
-  margin: auto;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  text-align: center;
-}
-.first-line {
-  font-size: 2.5rem;
-  color: #fff;
-}
-.second-line {
-  color: #f1f5f9;
-  font-size: 1.2rem;
 }
 </style>
