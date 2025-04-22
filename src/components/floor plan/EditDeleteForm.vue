@@ -51,6 +51,7 @@ function deleteRoom(e) {
   top: 0;
   min-height: 100%;
   min-width: 100%;
+  z-index: 1000000;
 }
 form {
   display: flex;
@@ -112,7 +113,7 @@ form {
   outline: 0.2rem solid #1a365d;
 }
 .input-container > input::placeholder {
-  color: #d7d7d7;
+  color: rgb(161, 161, 161) 7;
 }
 .btns-container {
   display: flex;

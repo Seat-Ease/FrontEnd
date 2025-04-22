@@ -3,42 +3,62 @@
     <form>
       <div class="header-container">
         <div class="title-description-container">
-          <p class="title">Ajouter une nouvelle salle</p>
-          <p class="description">Créer une nouvelle salle pour le plan de votre restaurant</p>
+          <p class="title">Ajouter une nouvelle table</p>
+          <p class="description">Créer une nouvelle pour {{ mainStore().selectedRoom.name }}</p>
         </div>
-        <button @click="mainStore().newRoomFormShowing = false" class="close-btn">X</button>
+        <button @click="mainStore().newTableFormShowing = false" class="close-btn">X</button>
       </div>
       <div class="input-container">
-        <label for="nom-salle">Nom de la salle</label>
+        <label for="nom-table">Nom de la table</label>
         <input
-          v-model="roomNameInput"
-          id="nom-salle"
+          v-model="newTableData.name"
+          id="nom-table"
           type="text"
-          placeholder="ex: Salle principale, Terrasse"
+          placeholder="ex: Table 1, Table VIP"
         />
       </div>
-      <button @click="submitForm" class="submit-btn">Créer la salle</button>
+      <div class="input-container">
+        <label for="min-covers">Capacité minimale</label>
+        <input v-model="newTableData.minCovers" id="min-covers" type="text" placeholder="ex: 1" />
+      </div>
+      <div class="input-container">
+        <label for="max-covers">Capacité maximale</label>
+        <input v-model="newTableData.maxCovers" id="max-covers" type="text" placeholder="ex: 3" />
+      </div>
+      <div class="input-container">
+        <label for="table-shape">Forme de la table</label>
+        <select v-model="newTableData.shape" id="table-shape">
+          <option value="Rect">Rectangle</option>
+          <option value="Circle">Cercle</option>
+        </select>
+      </div>
+      <button @click="submitForm" class="submit-btn">Enregistrer</button>
     </form>
   </div>
 </template>
 <script setup>
-import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
-import { v4 as uuidv4 } from 'uuid'
+import { floorStore } from '@/stores/floorStore'
 import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
-const roomNameInput = ref('')
+const newTableData = ref({
+  id: String(uuidv4()),
+  x: 600,
+  y: 100,
+  name: '',
+  minCovers: 1,
+  maxCovers: 1,
+  shape: 'Rect',
+  room_id: mainStore().selectedRoom.id,
+  occupied: false,
+})
+
 function submitForm(e) {
   e.preventDefault()
-  if (roomNameInput.value.length === 0) return
-  const newRoom = {
-    id: String(uuidv4()),
-    name: roomNameInput.value,
-  }
-  floorStore().addRoom(newRoom)
-  mainStore().selectedRoom = floorStore().getRooms()[0]
-  roomNameInput.value = ''
-  mainStore().newRoomFormShowing = false
+  if (newTableData.value.name.length === 0) return
+  floorStore().addTable({ ...newTableData.value })
+  mainStore().newTableFormShowing = false
 }
 </script>
 <style scoped>
@@ -51,7 +71,7 @@ function submitForm(e) {
   top: 0;
   min-height: 100%;
   min-width: 100%;
-  z-index: 100000000;
+  z-index: 1000000;
 }
 form {
   display: flex;
@@ -101,7 +121,8 @@ form {
   font-size: 1.4rem;
   color: #fff;
 }
-.input-container > input {
+.input-container > input,
+.input-container > select {
   background-color: #0f172a;
   padding: 1rem;
   border: 0.1rem solid #1a365d;
@@ -116,14 +137,14 @@ form {
   color: rgb(161, 161, 161) 7;
 }
 .submit-btn {
-  align-self: flex-end;
   border: none;
-  background-color: rgb(0, 74, 177);
   color: #fff;
   font-size: 1.6rem;
   padding: 1rem 2rem;
   cursor: pointer;
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
+  background-color: rgb(0, 74, 177);
+  align-self: flex-end;
 }
 </style>

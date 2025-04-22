@@ -26,7 +26,9 @@
         <button @click="mainStore().editRoomFormShowing = true" class="edit-room-btn">
           Modifier la salle
         </button>
-        <button class="add-table-btn">Ajouter une table</button>
+        <button @click="mainStore().newTableFormShowing = true" class="add-table-btn">
+          Ajouter une table
+        </button>
       </div>
     </div>
     <div class="room-plan-container">
@@ -54,7 +56,6 @@
               </p>
             </div>
           </div>
-          <button class="edit-floor-plan-btn">Modifier la disposition</button>
         </div>
         <div ref="canvasContainer" class="canvas-container">
           <v-stage ref="stageRef" :config="stageConfig"></v-stage>
@@ -64,7 +65,7 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, onBeforeMount, onMounted, nextTick, watch, reactive } from 'vue'
+import { ref, onBeforeMount, onMounted, nextTick, reactive, watch } from 'vue'
 import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
@@ -80,6 +81,7 @@ const stageConfig = reactive({
 
 function createTable(stage, newTableData) {
   const targetRoom = stage.find((room) => room.attrs.id === newTableData.room_id)
+  console.log(newTableData)
   if (!targetRoom) return
 
   if (newTableData.shape === 'Circle') {
@@ -91,7 +93,7 @@ function createTable(stage, newTableData) {
       radius,
       draggable: true,
       stroke: '#1a365d',
-      strokeWidth: newTableData.strokeWidth,
+      strokeWidth: 3,
       name: newTableData.name,
       fill: '#516d99',
     })
@@ -141,11 +143,11 @@ function createTable(stage, newTableData) {
       id: String(newTableData.id),
       x: newTableData.x,
       y: newTableData.y,
-      width: newTableData.width,
-      height: newTableData.height,
+      width: 50,
+      height: 50,
       draggable: true,
       stroke: '#1a365d',
-      strokeWidth: newTableData.strokeWidth,
+      strokeWidth: 3,
       name: newTableData.name,
       cornerRadius: 4,
       fill: '#516d99',
@@ -252,6 +254,20 @@ onMounted(() => {
     stageRef.value.getNode().batchDraw()
   }
 })
+watch(
+  () => floorStore().getTables().length,
+  (newLength, oldLength) => {
+    if (newLength > oldLength) {
+      const latestTable = floorStore().getTables()[newLength - 1]
+      const stage = stageRef.value.getNode()
+      createTable(stage.children, latestTable)
+
+      // Redraw the canvas
+      stage.batchDraw()
+    }
+  },
+  { deep: true, immediate: true },
+)
 </script>
 <style scoped>
 .floor-plan-page-container {
