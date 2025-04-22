@@ -17,7 +17,13 @@
         <button v-if="mainStore().selectedTable.occupied" class="free-table btn">
           Libérer la table
         </button>
-        <button @click="destroyTable" class="delete-table btn">Supprimer la table</button>
+        <button
+          v-if="!mainStore().selectedTable.occupied"
+          @click="destroyTable"
+          class="delete-table btn"
+        >
+          Supprimer la table
+        </button>
         <button @click="mainStore().editTableFormShowing = true" class="edit-table btn">
           Modifier la table
         </button>
