@@ -26,20 +26,25 @@
       </div>
     </div>
     <div class="action-btns-container">
-      <button v-if="!seated" class="seat-btn btn">Placer</button>
+      <button
+        @click="mainStore().freeTablesListShowingReservation = true"
+        v-if="!seated"
+        class="seat-btn btn"
+      >
+        Placer
+      </button>
       <button v-if="!seated" class="cancel-btn btn">Annuler</button>
       <button v-if="seated" class="end-btn btn">Terminé</button>
     </div>
   </div>
 </template>
-<script>
-export default {
-  name: 'ReservationCard',
-  props: {
-    reservation: { type: Object, required: true },
-    seated: { type: Boolean, required: true },
-  },
-}
+<script setup>
+import { mainStore } from '@/stores/mainStore'
+
+defineProps({
+  reservation: { type: Object, required: true },
+  seated: { type: Boolean, required: true },
+})
 </script>
 <style scoped>
 .reservation-card {

@@ -515,6 +515,12 @@ export const floorStore = defineStore('floorStore', () => {
   function getTables() {
     return tables.value
   }
+  function getTablesPerRoom(room_id) {
+    return getTables().filter((table) => table.room_id === room_id)
+  }
+  function getFreeTablesPerRoom(room_id) {
+    return getTablesPerRoom(room_id).filter((table) => table.occupied === false)
+  }
   function addTable(newTable) {
     tables.value.push(newTable)
   }
@@ -548,5 +554,6 @@ export const floorStore = defineStore('floorStore', () => {
     updateTableState,
     editTable,
     deleteTable,
+    getFreeTablesPerRoom,
   }
 })
