@@ -18,7 +18,12 @@
         <button class="confirm-btn">Confirmer</button>
       </div>
       <div class="list-container">
-        <div v-for="table in floorStore().getFreeTablesPerRoom(roomSelected)" class="table-card">
+        <div
+          v-for="table in floorStore().getFreeTablesPerRoom(roomSelected)"
+          @click="updateSelectedTables(table.id)"
+          class="table-card"
+          :class="{ selectedTables: isSelected(table.id) }"
+        >
           <p class="name">{{ table.name }}</p>
           <p class="capacity">{{ table.maxCovers }} places</p>
         </div>
@@ -31,8 +36,29 @@ import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
 import { ref } from 'vue'
 
-console.log(floorStore().getRooms()[0].id)
 const roomSelected = ref(floorStore().getRooms()[0].id)
+const selectedTables = ref([])
+function isSelected(tableId) {
+  return selectedTables.value.findIndex((table) => table.id === tableId) !== -1
+}
+function updateSelectedTables(tableId) {
+  const tableIndex = selectedTables.value.findIndex((table) => table.id === tableId)
+  if (tableIndex === -1) {
+    const tableToAdd = floorStore()
+      .getTables()
+      .find((table) => table.id === tableId)
+    selectedTables.value.push({
+      id: tableToAdd.id,
+      name: tableToAdd.name,
+      room_id: tableToAdd.room_id,
+      room_name: floorStore()
+        .getRooms()
+        .find((room) => room.id === tableToAdd.room_id).name,
+    })
+  } else {
+    selectedTables.value = selectedTables.value.filter((table) => table.id !== tableId)
+  }
+}
 </script>
 <style scoped>
 .overlay {
@@ -126,5 +152,9 @@ const roomSelected = ref(floorStore().getRooms()[0].id)
   flex-direction: column;
   gap: 1rem;
   overflow: scroll;
+}
+.selectedTables {
+  border-color: #0d9488;
+  color: #0d9488;
 }
 </style>
