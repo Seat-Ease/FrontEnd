@@ -17,6 +17,12 @@
           <font-awesome-icon :icon="['fas', 'phone-volume']" />
           <span>{{ reservation.client_phone }}</span>
         </p>
+        <font-awesome-icon class="point" :icon="['fas', 'circle']" />
+        <p class="time">
+          <font-awesome-icon :icon="['fas', 'clock']" />
+          {{ seated ? 'Placé à ' : '' }}
+          {{ seated ? reservation.service_start_time : reservation.time }}
+        </p>
       </div>
     </div>
     <div class="action-btns-container">
@@ -71,7 +77,8 @@ export default {
   border-radius: 3rem;
 }
 .phone,
-.party-size {
+.party-size,
+.time {
   display: flex;
   align-items: center;
   gap: 0.5rem;

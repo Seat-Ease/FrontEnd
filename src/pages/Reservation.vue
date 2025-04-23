@@ -12,14 +12,14 @@
     </div>
     <ReservationBox
       boxTitle="Réservations à venir"
-      boxDescription="Convives attendus aujourd'hui"
+      boxDescription="Nombres de réservations à venir"
       noReservationText="Aucune réservation à venir pour aujourd'hui"
       :reservationListEmpty="
         reservationStore().getUpcomingReservations(mainStore().appDate).length === 0
       "
       :totalCount="reservationStore().getUpcomingReservations(mainStore().appDate).length"
       :seated="false"
-      :reservationList="reservationStore().getDailyReservations(mainStore().appDate)"
+      :reservationList="reservationStore().getUpcomingReservations(mainStore().appDate)"
     />
     <ReservationBox
       boxTitle="Réservations placées"
