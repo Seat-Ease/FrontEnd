@@ -27,7 +27,12 @@
     </div>
     <div class="action-btns-container">
       <button
-        @click="mainStore().freeTablesListShowingReservation = true"
+        @click="
+          () => {
+            mainStore().freeTablesListShowingReservation = true
+            mainStore().selectedReservation = reservation
+          }
+        "
         v-if="!seated"
         class="seat-btn btn"
       >

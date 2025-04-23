@@ -15,12 +15,13 @@
             {{ room.name }}
           </option>
         </select>
-        <button class="confirm-btn">Confirmer</button>
+        <button @click="handleTableAssignation" class="confirm-btn">Confirmer</button>
       </div>
+      <p v-if="error" class="error">{{ error }}</p>
       <div class="list-container">
         <div
           v-for="table in floorStore().getFreeTablesPerRoom(roomSelected)"
-          @click="updateSelectedTables(table.id)"
+          @click="updateSelectedTables(table)"
           class="table-card"
           :class="{ selectedTables: isSelected(table.id) }"
         >
@@ -34,19 +35,24 @@
 <script setup>
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
+import { reservationStore } from '@/stores/reservationStore'
 import { ref } from 'vue'
+
+const error = ref('')
+const capacity = ref(0)
 
 const roomSelected = ref(floorStore().getRooms()[0].id)
 const selectedTables = ref([])
 function isSelected(tableId) {
   return selectedTables.value.findIndex((table) => table.id === tableId) !== -1
 }
-function updateSelectedTables(tableId) {
-  const tableIndex = selectedTables.value.findIndex((table) => table.id === tableId)
+function updateSelectedTables(p_table) {
+  const tableIndex = selectedTables.value.findIndex((table) => table.id === p_table.id)
+  capacity.value = p_table.maxCovers
   if (tableIndex === -1) {
     const tableToAdd = floorStore()
       .getTables()
-      .find((table) => table.id === tableId)
+      .find((table) => table.id === p_table.id)
     selectedTables.value.push({
       id: tableToAdd.id,
       name: tableToAdd.name,
@@ -56,11 +62,24 @@ function updateSelectedTables(tableId) {
         .find((room) => room.id === tableToAdd.room_id).name,
     })
   } else {
-    selectedTables.value = selectedTables.value.filter((table) => table.id !== tableId)
+    selectedTables.value = selectedTables.value.filter((table) => table.id !== p_table.id)
   }
+}
+function handleTableAssignation() {
+  if (selectedTables.value.length <= 0 || capacity < mainStore().selectedReservation.party_size) {
+    error.value = 'Capacité insuffisante pour le nombre de personnes'
+  } else error.value = ''
+  reservationStore().startServiceForReservation(mainStore().selectedReservation.id, [
+    ...selectedTables.value,
+  ])
+  mainStore().freeTablesListShowingReservation = false
 }
 </script>
 <style scoped>
+.error {
+  font-size: 1rem;
+  color: red;
+}
 .overlay {
   background-color: #00000077;
   display: flex;
