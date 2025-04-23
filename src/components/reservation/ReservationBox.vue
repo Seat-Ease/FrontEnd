@@ -45,6 +45,7 @@ export default {
   flex-direction: column;
   gap: 2rem;
   min-height: 20rem;
+  max-height: 45rem;
 }
 .no-reservation-text {
   font-size: 1.3rem;
@@ -67,5 +68,6 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  overflow: scroll;
 }
 </style>

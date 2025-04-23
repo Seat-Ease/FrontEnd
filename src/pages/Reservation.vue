@@ -19,7 +19,7 @@
       "
       :totalCount="reservationStore().getUpcomingReservations(mainStore().appDate).length"
       :seated="false"
-      :reservationList="reservationStore().getUpcomingReservations(mainStore().appDate)"
+      :reservationList="reservationStore().getDailyReservations(mainStore().appDate)"
     />
     <ReservationBox
       boxTitle="Réservations placées"
