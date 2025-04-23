@@ -18,6 +18,8 @@
         reservationStore().getUpcomingReservations(mainStore().appDate).length === 0
       "
       :totalCount="reservationStore().getUpcomingReservations(mainStore().appDate).length"
+      :seated="false"
+      :reservationList="reservationStore().getUpcomingReservations(mainStore().appDate)"
     />
     <ReservationBox
       boxTitle="Réservations placées"
@@ -27,6 +29,8 @@
         reservationStore().getSeatedReservations(mainStore().appDate).length === 0
       "
       :totalCount="reservationStore().getSeatedReservations(mainStore().appDate).length"
+      :seated="true"
+      :reservationList="reservationStore().getSeatedReservations(mainStore().appDate)"
     />
   </div>
 </template>

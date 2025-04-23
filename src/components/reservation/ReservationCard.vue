@@ -1,0 +1,106 @@
+<template>
+  <div class="reservation-card">
+    <div class="reservation-details">
+      <div class="name-status-container">
+        <p class="customer-name">{{ reservation.client_name }}</p>
+        <p :class="{ seated: seated }" class="reservation-status">
+          {{ seated ? 'placé' : 'confirmée' }}
+        </p>
+      </div>
+      <div class="phone-party-size-container">
+        <p class="party-size">
+          <font-awesome-icon :icon="['fas', 'user']" />
+          <span>{{ reservation.party_size }}</span>
+        </p>
+        <font-awesome-icon class="point" :icon="['fas', 'circle']" />
+        <p class="phone">
+          <font-awesome-icon :icon="['fas', 'phone-volume']" />
+          <span>{{ reservation.client_phone }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="action-btns-container">
+      <button v-if="!seated" class="seat-btn btn">Placer</button>
+      <button v-if="!seated" class="cancel-btn btn">Annuler</button>
+      <button v-if="seated" class="end-btn btn">Terminé</button>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  name: 'ReservationCard',
+  props: {
+    reservation: { type: Object, required: true },
+    seated: { type: Boolean, required: true },
+  },
+}
+</script>
+<style scoped>
+.reservation-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #0f172a;
+  border: 0.1rem solid #1a365d;
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+.reservation-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.name-status-container,
+.phone-party-size-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 1.2rem;
+  color: #f6f6f6;
+}
+.reservation-status {
+  border: 0.1rem solid #0d9488;
+  color: #0d9488;
+  padding: 0.5rem 0.75rem;
+  border-radius: 3rem;
+}
+.seated {
+  border: 0.1rem solid rgb(0, 74, 177);
+  color: rgb(0, 74, 177);
+  padding: 0.5rem 0.75rem;
+  border-radius: 3rem;
+}
+.phone,
+.party-size {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.action-btns-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.btn {
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  letter-spacing: 0.05rem;
+}
+.seat-btn {
+  background-color: #0d9488;
+}
+.end-btn {
+  background-color: rgb(0, 74, 177);
+}
+.cancel-btn {
+  border: 0.2rem solid #1a365d;
+  background-color: #1e293b;
+}
+.point {
+  font-size: 0.5rem;
+}
+</style>

@@ -7,17 +7,31 @@
     <p v-if="reservationListEmpty" class="no-reservation-text">
       {{ noReservationText }}
     </p>
+    <div class="list-reservation">
+      <ReservationCard
+        v-for="reservation in reservationList"
+        :id="reservation"
+        :reservation="reservation"
+        :seated="seated"
+      />
+    </div>
   </div>
 </template>
 <script>
+import ReservationCard from './ReservationCard.vue'
 export default {
   name: 'ReservationBox',
+  components: {
+    ReservationCard,
+  },
   props: {
     boxTitle: { type: String, required: true },
     boxDescription: { type: String, required: true },
     noReservationText: { type: String, required: true },
     reservationListEmpty: { type: Boolean, required: true },
     totalCount: { type: Number, required: true },
+    seated: { type: Boolean, required: true },
+    reservationList: { type: Array, required: true },
   },
 }
 </script>
@@ -48,5 +62,10 @@ export default {
 .box-description {
   color: #f1f5f9;
   font-size: 1.1rem;
+}
+.list-reservation {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 </style>
