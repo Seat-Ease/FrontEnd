@@ -12,17 +12,27 @@
     </div>
     <ReservationBox
       boxTitle="Réservations à venir"
-      boxDescription="Convives attendus aujourd'hui (0)"
+      boxDescription="Convives attendus aujourd'hui"
       noReservationText="Aucune réservation à venir pour aujourd'hui"
+      :reservationListEmpty="
+        reservationStore().getUpcomingReservations(mainStore().appDate).length === 0
+      "
+      :totalCount="reservationStore().getUpcomingReservations(mainStore().appDate).length"
     />
     <ReservationBox
       boxTitle="Réservations placées"
-      boxDescription="Clients actuellement dans votre restaurant (0)"
+      boxDescription="Clients actuellement dans votre restaurant"
       noReservationText="Aucun client n'est actuellement à table"
+      :reservationListEmpty="
+        reservationStore().getSeatedReservations(mainStore().appDate).length === 0
+      "
+      :totalCount="reservationStore().getSeatedReservations(mainStore().appDate).length"
     />
   </div>
 </template>
 <script setup>
+import { reservationStore } from '@/stores/reservationStore'
+import { mainStore } from '@/stores/mainStore'
 import ReservationBox from '@/components/reservation/ReservationBox.vue'
 </script>
 <style scoped>

@@ -2,9 +2,11 @@
   <div class="reservations-box">
     <div class="title-description-container">
       <h1 class="box-title">{{ boxTitle }}</h1>
-      <p class="box-description">{{ boxDescription }}</p>
+      <p class="box-description">{{ boxDescription }} ({{ totalCount || 0 }})</p>
     </div>
-    <p class="no-reservation-text">{{ noReservationText }}</p>
+    <p v-if="reservationListEmpty" class="no-reservation-text">
+      {{ noReservationText }}
+    </p>
   </div>
 </template>
 <script>
@@ -14,6 +16,8 @@ export default {
     boxTitle: { type: String, required: true },
     boxDescription: { type: String, required: true },
     noReservationText: { type: String, required: true },
+    reservationListEmpty: { type: Boolean, required: true },
+    totalCount: { type: Number, required: true },
   },
 }
 </script>
