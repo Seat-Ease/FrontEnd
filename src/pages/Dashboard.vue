@@ -7,11 +7,19 @@
     <div class="informations-box-container">
       <InformationBox
         title="Réservation du jour"
-        stat="0"
+        :stat="String(reservationStore().getDailyReservations(mainStore().appDate).length)"
         description="Réservations totales pour aujourd'hui"
       />
-      <InformationBox title="Clients assis" stat="0" description="Convives actuellement à table" />
-      <InformationBox title="Réservation à venir" stat="0" description="Arrivées attendues" />
+      <InformationBox
+        title="Clients assis"
+        :stat="String(reservationStore().getSeatedReservations(mainStore().appDate).length)"
+        description="Convives actuellement à table"
+      />
+      <InformationBox
+        title="Réservation à venir"
+        :stat="String(reservationStore().getUpcomingReservations(mainStore().appDate).length)"
+        description="Arrivées attendues"
+      />
       <InformationBox
         title="Liste d'attente"
         stat="0"
@@ -28,6 +36,8 @@
 </template>
 <script setup>
 import InformationBox from '@/components/dashboard/InformationBox.vue'
+import { reservationStore } from '@/stores/reservationStore'
+import { mainStore } from '@/stores/mainStore'
 </script>
 <style>
 .dashboard-page-container {
