@@ -10,26 +10,81 @@
       <p class="error-message">{{ errorMessage }}</p>
       <div class="input-container">
         <label for="nom-client">Nom du client</label>
-        <input id="nom-client" type="text" placeholder="ex: Jean-Claude Wemba" />
+        <input
+          v-model="newReservation.client_name"
+          id="nom-client"
+          type="text"
+          placeholder="ex: Jean-Claude Wemba"
+        />
       </div>
       <div class="input-container">
         <label for="telephone">Téléphone</label>
-        <input id="telephone" type="number" placeholder="ex: 0894568902" />
+        <input
+          v-model="newReservation.client_phone"
+          id="telephone"
+          type="number"
+          placeholder="ex: 0894568902"
+        />
       </div>
       <div class="input-container">
         <label for="party-size">Nombre de personnes</label>
-        <input id="party-size" type="number" placeholder="ex: 3" />
+        <input
+          v-model="newReservation.party_size"
+          id="party-size"
+          type="number"
+          placeholder="ex: 3"
+        />
       </div>
-      <div class="input-container">
-        <label for="notes">Notes</label>
-        <textarea id="notes" cols="30" rows="10"></textarea>
-      </div>
-      <button class="submit-btn">Enregistrer</button>
+      <button @click="addToWaitlist" class="submit-btn">Enregistrer</button>
     </form>
   </div>
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
+import { reservationStore } from '@/stores/reservationStore'
+import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
+
+const now = new Date()
+const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+const currentTime = now.toLocaleTimeString([], {
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+})
+
+const errorMessage = ref('')
+
+const newReservation = ref({
+  id: String(uuidv4()),
+  client_name: '',
+  client_email: '',
+  client_phone: undefined,
+  party_size: 1,
+  date: todayStr,
+  time: currentTime,
+  seated: false,
+  tables_occupied: [],
+  service_start_time: '',
+  service_end_time: '',
+  walk_in: true,
+  cancelled: false,
+})
+
+function addToWaitlist(e) {
+  e.preventDefault()
+  if (newReservation.value.client_name === '') {
+    errorMessage.value = 'Nom du client obligatoire'
+  } else if (newReservation.value.client_phone === undefined) {
+    errorMessage.value = 'Numéro de téléphone obligatoire'
+  } else errorMessage.value = ''
+  console.log(newReservation.value)
+  reservationStore().addReservation({ ...newReservation.value })
+  newReservation.value.client_name = ''
+  newReservation.value.client_phone = undefined
+  newReservation.value.party_size = 1
+  mainStore().waitlistedFormShowing = false
+}
 </script>
 <style scoped>
 .form-container {

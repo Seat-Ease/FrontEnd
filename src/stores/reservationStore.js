@@ -558,8 +558,8 @@ export const reservationStore = defineStore('reservationStore', () => {
   }
 
   function addReservation(newReservation) {
+    console.log(newReservation)
     reservations.value.push(newReservation)
-    return reservations.value[reservations.value.length - 1]
   }
 
   function getWalkinReservations(appDate) {

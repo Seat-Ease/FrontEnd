@@ -9,25 +9,22 @@
         Ajouter
       </button>
     </div>
-    <div class="list-header">
-      <p>Nom</p>
-      <p>Téléphone</p>
-      <p>Personnes</p>
-      <p>Heure d'arrivée</p>
-      <p>Actions</p>
-    </div>
-    <div class="list-container">
-      <p
-        v-if="reservationStore().getWalkinReservations(mainStore().appDate).length === 0"
-        class="empty-list"
-      >
-        Aucun client en attente
-      </p>
-      <WaitlistedCard
-        v-for="reservation in reservationStore().getWalkinReservations(mainStore().appDate)"
-        :id="reservation.id"
-        :reservation="reservation"
-      />
+    <div class="list-header-wrapper">
+      <div class="list-header">
+        <p>Nom</p>
+        <p>Téléphone</p>
+        <p>Personnes</p>
+        <p>Heure d'arrivée</p>
+        <p>Actions</p>
+      </div>
+      <div class="list-container">
+        <p v-if="waitlist.length === 0" class="empty-list">Aucun client en attente</p>
+        <WaitlistedCard
+          v-for="reservation in waitlist"
+          :id="reservation.id"
+          :reservation="reservation"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -35,6 +32,9 @@
 import { mainStore } from '@/stores/mainStore'
 import { reservationStore } from '@/stores/reservationStore'
 import WaitlistedCard from '@/components/waitlist/WaitlistedCard.vue'
+import { computed } from 'vue'
+
+const waitlist = computed(() => reservationStore().getWalkinReservations(mainStore().appDate))
 </script>
 <style scoped>
 .waitlist-page-container {
@@ -63,6 +63,8 @@ import WaitlistedCard from '@/components/waitlist/WaitlistedCard.vue'
 .list-container {
   display: flex;
   flex-direction: column;
+  max-height: 50rem;
+  overflow: scroll;
 }
 .list-header {
   display: grid;
