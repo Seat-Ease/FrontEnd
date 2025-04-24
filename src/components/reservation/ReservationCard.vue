@@ -23,6 +23,8 @@
           {{ seated ? 'Placé à ' : '' }}
           {{ seated ? reservation.service_start_time : reservation.time }}
         </p>
+        <font-awesome-icon v-if="seated" class="point" :icon="['fas', 'circle']" />
+        <p v-if="seated">{{ formatTableList().join() }}</p>
       </div>
     </div>
     <div class="action-btns-container">
@@ -46,10 +48,18 @@
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 
-defineProps({
+const props = defineProps({
   reservation: { type: Object, required: true },
   seated: { type: Boolean, required: true },
 })
+
+function formatTableList() {
+  const tableNamesFormatted = []
+  props.reservation.tables_occupied.forEach((table) =>
+    tableNamesFormatted.push(`${table.name} (${table.room_name})`),
+  )
+  return tableNamesFormatted
+}
 </script>
 <style scoped>
 .reservation-card {
