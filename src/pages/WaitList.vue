@@ -21,13 +21,18 @@
       >
         Aucun client en attente
       </p>
+      <WaitlistedCard
+        v-for="reservation in reservationStore().getWalkinReservations(mainStore().appDate)"
+        :id="reservation.id"
+        :reservation="reservation"
+      />
     </div>
   </div>
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { reservationStore } from '@/stores/reservationStore'
-// import
+import WaitlistedCard from '@/components/waitlist/WaitlistedCard.vue'
 </script>
 <style scoped>
 .waitlist-page-container {
