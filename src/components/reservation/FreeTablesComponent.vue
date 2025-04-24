@@ -75,6 +75,7 @@ function handleTableAssignation() {
   selectedTables.value.forEach((table) => floorStore().updateTableState(table.id))
   selectedTables.value = []
   mainStore().freeTablesListShowingReservation = false
+  mainStore().freeTablesListShowingWaitList = false
 }
 </script>
 <style scoped>

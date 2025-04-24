@@ -12,7 +12,11 @@
     <div v-if="mainStore().editTableFormShowing">
       <EditTableForm />
     </div>
-    <div v-if="mainStore().freeTablesListShowingReservation">
+    <div
+      v-if="
+        mainStore().freeTablesListShowingReservation || mainStore().freeTablesListShowingWaitList
+      "
+    >
       <FreeTablesComponent />
     </div>
     <div v-if="mainStore().waitlistedFormShowing">

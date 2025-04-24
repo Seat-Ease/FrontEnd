@@ -5,12 +5,23 @@
     <p class="party_size">{{ reservation.party_size }}</p>
     <p class="arrived-time">{{ reservation.time }}</p>
     <div class="action-btns-container">
-      <button class="seat-btn btn">Placer</button>
+      <button
+        @click="
+          () => {
+            mainStore().freeTablesListShowingWaitList = true
+            mainStore().selectedReservation = reservation
+          }
+        "
+        class="seat-btn btn"
+      >
+        Placer
+      </button>
       <button class="cancel-btn btn">Annuler</button>
     </div>
   </div>
 </template>
 <script setup>
+import { mainStore } from '@/stores/mainStore'
 const props = defineProps({
   reservation: { type: Object, required: true },
 })
