@@ -22,7 +22,7 @@
       />
       <InformationBox
         title="Liste d'attente"
-        stat="0"
+        :stat="String(reservationStore().getWalkinReservations(mainStore().appDate).length)"
         description="Clients en attente d'une table"
       />
       <InformationBox title="Teminées" stat="0" description="Services complétés" />
