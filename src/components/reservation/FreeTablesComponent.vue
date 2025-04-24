@@ -72,6 +72,8 @@ function handleTableAssignation() {
   reservationStore().startServiceForReservation(mainStore().selectedReservation.id, [
     ...selectedTables.value,
   ])
+  selectedTables.value.forEach((table) => floorStore().updateTableState(table.id))
+  selectedTables.value = []
   mainStore().freeTablesListShowingReservation = false
 }
 </script>
