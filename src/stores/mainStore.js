@@ -15,7 +15,7 @@ export const mainStore = defineStore('mainStore', () => {
   const selectedRoom = ref(null)
   const selectedTable = ref(null)
   const tableEditingActivated = ref(false)
-  const now = new Date()
+  const waitlistedFormShowing = ref(false)
   const appDate = ref(new Date())
 
   function toggleCalendar() {
@@ -50,5 +50,6 @@ export const mainStore = defineStore('mainStore', () => {
     selectedTable,
     tableEditingActivated,
     editTableFormShowing,
+    waitlistedFormShowing,
   }
 })

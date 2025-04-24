@@ -5,7 +5,9 @@
         <h1 class="page-title">Liste d'attente</h1>
         <p class="page-description">Gérez les clients sans réservations avec la liste d'attente</p>
       </div>
-      <button @click="" class="add-client-btn">Ajouter</button>
+      <button @click="mainStore().waitlistedFormShowing = true" class="add-client-btn">
+        Ajouter
+      </button>
     </div>
     <div class="list-header">
       <p>Nom</p>
