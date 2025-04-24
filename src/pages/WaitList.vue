@@ -15,10 +15,20 @@
       <p>Actions</p>
     </div>
     <div class="list-container">
-      <p class="empty-list">Aucun client en attente</p>
+      <p
+        v-if="reservationStore().getWalkinReservations(mainStore().appDate).length === 0"
+        class="empty-list"
+      >
+        Aucun client en attente
+      </p>
     </div>
   </div>
 </template>
+<script setup>
+import { mainStore } from '@/stores/mainStore'
+import { reservationStore } from '@/stores/reservationStore'
+// import
+</script>
 <style scoped>
 .waitlist-page-container {
   background-color: #1e293b;
@@ -48,8 +58,9 @@
   flex-direction: column;
 }
 .list-header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  justify-content: center;
   align-items: center;
   border-bottom: 0.15rem solid #1a365d;
   font-size: 1.2rem;
