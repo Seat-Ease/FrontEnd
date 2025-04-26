@@ -1,6 +1,6 @@
 <template>
   <div class="top-bar">
-    <h3 class="restaurant-name">Demo Restaurant</h3>
+    <h3 class="restaurant-name">{{ settingsStore().getRestaurantData().name }}</h3>
     <div class="dateContainer">
       <font-awesome-icon
         @click="main_store.toggleCalendar"
@@ -13,6 +13,7 @@
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
+import { settingsStore } from '@/stores/settingsStore'
 import { computed } from 'vue'
 
 const main_store = mainStore()
