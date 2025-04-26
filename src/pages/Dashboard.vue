@@ -25,12 +25,16 @@
         :stat="String(reservationStore().getWalkinReservations(mainStore().appDate).length)"
         description="Clients en attente d'une table"
       />
-      <InformationBox title="Teminées" stat="0" description="Services complétés" />
       <InformationBox
+        title="Teminées"
+        :stat="reservationCompleted"
+        description="Services complétés"
+      />
+      <!-- <InformationBox
         title="Annulées/Absentes"
         stat="0"
         description="Réservations manquées et/ou annulées"
-      />
+      /> -->
     </div>
   </div>
 </template>
@@ -38,6 +42,14 @@
 import InformationBox from '@/components/dashboard/InformationBox.vue'
 import { reservationStore } from '@/stores/reservationStore'
 import { mainStore } from '@/stores/mainStore'
+import { computed } from 'vue'
+
+const reservationCompleted = computed(
+  () =>
+    reservationStore()
+      .getDailyReservations(mainStore().appDate)
+      .filter((reservation) => reservation.service_end_time !== '').length,
+)
 </script>
 <style>
 .dashboard-page-container {
