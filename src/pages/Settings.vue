@@ -50,6 +50,68 @@
         </div>
       </div>
     </div>
+    <div class="schedule-information-box">
+      <div class="box-header-container">
+        <div class="title-description-container">
+          <h3 class="box-title">Horaires</h3>
+          <p class="box-description">Définissez les heures d'ouverture de votre restaurant</p>
+        </div>
+        <button @click="editScheduleDataActivated = !editScheduleDataActivated" class="edit-btn">
+          {{ editScheduleDataActivated ? 'Enregistrer' : 'Modifier' }}
+        </button>
+      </div>
+      <div class="infos-container">
+        <div class="grid-container">
+          <p class="text">Lundi</p>
+          <div class="hours-container">
+            <p class="text-box">{{ settingsStore().getScheduleData().monday.split('-')[0] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().monday.split('-')[1] }}</p>
+          </div>
+        </div>
+        <div class="grid-container">
+          <p class="text">Mardi</p>
+          <div class="hours-container">
+            <p class="text-box">{{ settingsStore().getScheduleData().tuesday.split('-')[0] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().tuesday.split('-')[1] }}</p>
+          </div>
+        </div>
+        <div class="grid-container">
+          <p class="text">Mercredi</p>
+          <div class="hours-container">
+            <p class="text-box">{{ settingsStore().getScheduleData().wednesday.split('-')[0] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().wednesday.split('-')[1] }}</p>
+          </div>
+        </div>
+        <div class="grid-container">
+          <p class="text">Jeudi</p>
+          <div class="hours-container">
+            <p class="text-box">{{ settingsStore().getScheduleData().thursday.split('-')[0] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().thursday.split('-')[1] }}</p>
+          </div>
+        </div>
+        <div class="grid-container">
+          <p class="text">Vendredi</p>
+          <div class="hours-container">
+            <p class="text-box">{{ settingsStore().getScheduleData().friday.split('-')[0] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().friday.split('-')[1] }}</p>
+          </div>
+        </div>
+        <div class="grid-container">
+          <p class="text">Samedi</p>
+          <div class="hours-container">
+            <p class="text-box">{{ settingsStore().getScheduleData().saturday.split('-')[0] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().saturday.split('-')[1] }}</p>
+          </div>
+        </div>
+        <div class="grid-container">
+          <p class="text">Dimanche</p>
+          <div class="hours-container">
+            <p class="text-box">{{ settingsStore().getScheduleData().sunday.split('-')[0] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().sunday.split('-')[1] }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup>
@@ -57,6 +119,7 @@ import { settingsStore } from '@/stores/settingsStore'
 import { ref } from 'vue'
 
 const editRestaurantDataActivated = ref(false)
+const editScheduleDataActivated = ref(false)
 </script>
 <style scoped>
 .settings-page-container {
@@ -73,7 +136,8 @@ const editRestaurantDataActivated = ref(false)
   justify-content: space-between;
   align-items: center;
 }
-.restaurant-information-box {
+.restaurant-information-box,
+.schedule-information-box {
   border: 0.1rem solid #1a365d;
   background-color: #0f172a;
   border-radius: 0.75rem;
@@ -127,5 +191,10 @@ const editRestaurantDataActivated = ref(false)
   border: 0.1rem solid #1a365d;
   border-radius: 0.75rem;
   color: #fef6f6;
+}
+.hours-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
 }
 </style>

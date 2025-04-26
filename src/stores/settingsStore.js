@@ -21,7 +21,7 @@ export const settingsStore = defineStore('settingsStore', () => {
   }
 
   const scheduleData = ref({
-    sunday: 'off',
+    sunday: 'Fermé',
     monday: '11:00 - 23:00',
     tuesday: '11:00 - 23:00',
     wednesday: '11:00 - 23:00',
@@ -54,7 +54,7 @@ export const settingsStore = defineStore('settingsStore', () => {
   return {
     getRestaurantData,
     editRestaurantData,
-    scheduleData,
+    getScheduleData,
     editScheduleData,
     getAvailabiltiesSettings,
     editAvailabiltiesSettings,
