@@ -43,7 +43,12 @@
       <button v-if="!seated" class="cancel-btn btn">Annuler</button>
       <button
         v-if="seated"
-        @click="reservationStore().endServiceForReservation(reservation.id)"
+        @click="
+          () => {
+            reservationStore().endServiceForReservation(reservation.id)
+            reservation.tables_occupied.forEach((table) => floorStore().updateTableState(table.id))
+          }
+        "
         class="end-btn btn"
       >
         Terminé
@@ -54,6 +59,7 @@
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { reservationStore } from '@/stores/reservationStore'
+import { floorStore } from '@/stores/floorStore'
 
 const props = defineProps({
   reservation: { type: Object, required: true },
