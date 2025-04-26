@@ -41,12 +41,19 @@
         Placer
       </button>
       <button v-if="!seated" class="cancel-btn btn">Annuler</button>
-      <button v-if="seated" class="end-btn btn">Terminé</button>
+      <button
+        v-if="seated"
+        @click="reservationStore().endServiceForReservation(reservation.id)"
+        class="end-btn btn"
+      >
+        Terminé
+      </button>
     </div>
   </div>
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
+import { reservationStore } from '@/stores/reservationStore'
 
 const props = defineProps({
   reservation: { type: Object, required: true },
