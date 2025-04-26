@@ -19,11 +19,11 @@ const router = createRouter({
       name: 'floor plan',
       component: FloorPlan,
     },
-    {
-      path: '/tables',
-      name: 'tables',
-      component: Tables,
-    },
+    // {
+    //   path: '/tables',
+    //   name: 'tables',
+    //   component: Tables,
+    // },
     {
       path: '/settings',
       name: 'settings',

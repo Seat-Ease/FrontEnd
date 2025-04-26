@@ -17,12 +17,12 @@
         to="/reservations"
         >Réservation</RouterLink
       >
-      <RouterLink
+      <!-- <RouterLink
         class="link"
         :class="{ selectedPage: currentRoute.path === '/tables' }"
         to="/tables"
         >Tables</RouterLink
-      >
+      > -->
       <RouterLink
         class="link"
         :class="{ selectedPage: currentRoute.path === '/waitlist' }"
