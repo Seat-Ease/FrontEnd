@@ -112,6 +112,34 @@
         </div>
       </div>
     </div>
+    <div class="reservation-settings-box">
+      <div class="box-header-container">
+        <div class="title-description-container">
+          <h3 class="box-title">Paramètres de réservation</h3>
+          <p class="box-description">
+            Configurez le fonctionnement des réservations pour votre réservation
+          </p>
+        </div>
+        <button
+          @click="editReservationSettingActivated = !editReservationSettingActivated"
+          class="edit-btn"
+        >
+          {{ editReservationSettingActivated ? 'Enregistrer' : 'Modifier' }}
+        </button>
+      </div>
+      <div class="grid-container">
+        <div class="info-container">
+          <p class="text">Intervalle de réservation (minutes)</p>
+          <p class="text-box">{{ settingsStore().getAvailabiltiesSettings().intervalle }}</p>
+        </div>
+        <div class="info-container">
+          <p class="text">Durée de service estimée par client (minutes)</p>
+          <p class="text-box">
+            {{ settingsStore().getAvailabiltiesSettings().est_srvice_duration }}
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup>
@@ -120,6 +148,7 @@ import { ref } from 'vue'
 
 const editRestaurantDataActivated = ref(false)
 const editScheduleDataActivated = ref(false)
+const editReservationSettingActivated = ref(false)
 </script>
 <style scoped>
 .settings-page-container {
@@ -137,7 +166,8 @@ const editScheduleDataActivated = ref(false)
   align-items: center;
 }
 .restaurant-information-box,
-.schedule-information-box {
+.schedule-information-box,
+.reservation-settings-box {
   border: 0.1rem solid #1a365d;
   background-color: #0f172a;
   border-radius: 0.75rem;
