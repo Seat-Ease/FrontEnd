@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 export const settingsStore = defineStore('settingsStore', () => {
   const restaurantData = ref({
     name: 'Demo Restaurant',
+    telephone: '0896785432',
     address: '1, Ave Demo',
     city: 'Kinshasa',
     postal_code: 'kin111',
@@ -11,6 +12,7 @@ export const settingsStore = defineStore('settingsStore', () => {
   })
 
   function getRestaurantData() {
+    console.log(restaurantData.value)
     return restaurantData.value
   }
 
@@ -50,13 +52,10 @@ export const settingsStore = defineStore('settingsStore', () => {
   }
 
   return {
-    restaurantData,
     getRestaurantData,
     editRestaurantData,
     scheduleData,
-    getScheduleData,
     editScheduleData,
-    availabilitiesSettings,
     getAvailabiltiesSettings,
     editAvailabiltiesSettings,
   }
