@@ -8,18 +8,115 @@
         </div>
         <button @click="mainStore().newReservationFormShowing = false" class="close-btn">X</button>
       </div>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <div class="input-container">
-        <label for="nom-salle">Nom du client</label>
-        <input id="" type="text" placeholder="ex: Fiston Mayele" />
+        <label for="nom-client">Nom du client</label>
+        <input
+          v-model="reservationData.client_name"
+          id="nom-client"
+          type="text"
+          placeholder="ex: Fiston Mayele"
+        />
       </div>
-      <button @click="" class="submit-btn">Créer la réservation</button>
+      <div class="input-container">
+        <label for="telephone-client">Téléphone</label>
+        <input
+          v-model="reservationData.client_phone"
+          id="telephone-client"
+          type="number"
+          placeholder="ex: 0896541234"
+        />
+      </div>
+      <div class="day-time-container">
+        <div class="input-container">
+          <label for="telephone-client">Date</label>
+          <input
+            v-model="reservationData.date"
+            id="telephone-client"
+            type="date"
+            placeholder="ex: 0896541234"
+          />
+        </div>
+        <div class="input-container">
+          <label for="telephone-client">Heure</label>
+          <input
+            v-model="reservationData.time"
+            id="telephone-client"
+            type="time"
+            placeholder="ex: 0896541234"
+          />
+        </div>
+      </div>
+      <div class="input-container">
+        <label for="telephone-client">Nombre de personnes</label>
+        <input
+          v-model="reservationData.party_size"
+          id="telephone-client"
+          type="number"
+          placeholder="ex: 2"
+        />
+      </div>
+      <button @click="submit" class="submit-btn">Créer la réservation</button>
     </form>
   </div>
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
+import { reservationStore } from '@/stores/reservationStore'
+import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
+
+const errorMessage = ref('')
+
+function getNextDayFormatted() {
+  const today = new Date()
+  today.setDate(today.getDate() + 1)
+
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+const reservationData = ref({
+  id: String(uuidv4()),
+  client_name: '',
+  client_phone: '',
+  client_email: '',
+  date: getNextDayFormatted(),
+  time: '19:00',
+  party_size: '',
+  seated: false,
+  tables_occupied: [],
+  service_start_time: '',
+  service_end_time: '',
+  walk_in: false,
+  cancelled: false,
+})
+
+function submit(e) {
+  e.preventDefault()
+  if (
+    !reservationData.value.client_name ||
+    !reservationData.value.client_phone ||
+    !reservationData.value.party_size
+  ) {
+    errorMessage.value = 'Tous les champs sont obligatoires.'
+    return
+  } else errorMessage.value = ''
+  reservationStore().addReservation({ ...reservationData.value })
+  reservationData.value.client_name = ''
+  reservationData.value.client_phone = ''
+  reservationData.value.party_size = ''
+  mainStore().newReservationFormShowing = false
+}
 </script>
 <style scoped>
+.error {
+  font-size: 1rem;
+  color: red;
+}
 .form-container {
   background-color: #00000077;
   display: flex;
@@ -92,6 +189,11 @@ form {
 }
 .input-container > input::placeholder {
   color: rgb(161, 161, 161) 7;
+}
+.day-time-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
 }
 .submit-btn {
   align-self: flex-end;
