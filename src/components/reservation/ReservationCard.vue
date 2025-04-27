@@ -40,7 +40,13 @@
       >
         Placer
       </button>
-      <button v-if="!seated" class="cancel-btn btn">Annuler</button>
+      <button
+        v-if="!seated"
+        @click="reservationStore().cancelReservation(reservation.id)"
+        class="cancel-btn btn"
+      >
+        Annuler
+      </button>
       <button
         v-if="seated"
         @click="

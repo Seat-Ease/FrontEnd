@@ -498,10 +498,11 @@ export const reservationStore = defineStore('reservationStore', () => {
           isSameDate &&
           reservationDateTime >= new Date(now.getTime()) &&
           reservation.seated === false &&
-          reservation.walk_in === false
+          reservation.walk_in === false &&
+          reservation.cancelled === false
         )
       }
-      return isSameDate
+      return isSameDate && reservation.cancelled === false
     })
   }
 
@@ -519,7 +520,12 @@ export const reservationStore = defineStore('reservationStore', () => {
         const isSameDate = reservationDateObj.toDateString() === selectedDateStr
 
         if (selectedDateStr === todayStr) {
-          return isSameDate && reservation.seated === true && reservation.service_end_time === ''
+          return (
+            isSameDate &&
+            reservation.cancelled === false &&
+            reservation.seated === true &&
+            reservation.service_end_time === ''
+          )
         }
       })
       .sort((a, b) => a.time.localeCompare(b.time))
@@ -583,10 +589,15 @@ export const reservationStore = defineStore('reservationStore', () => {
         const isSameDate = reservationDateObj.toDateString() === selectedDateStr
 
         if (selectedDateStr === todayStr) {
-          return isSameDate && reservation.seated === false && reservation.walk_in === true
+          return (
+            isSameDate &&
+            reservation.seated === false &&
+            reservation.walk_in === true &&
+            reservation.cancelled === false
+          )
         }
 
-        return isSameDate && reservation.walk_in === true
+        return isSameDate && reservation.walk_in === true && reservation.cancelled === false
       })
       .sort((a, b) => a.time.localeCompare(b.time))
   }
