@@ -22,6 +22,9 @@
     <div v-if="mainStore().waitlistedFormShowing">
       <WaitlistedForm />
     </div>
+    <div v-if="mainStore().newReservationFormShowing">
+      <NewReservationForm />
+    </div>
     <Sidebar />
     <div class="header-page-container">
       <Header />
@@ -42,6 +45,7 @@ import NewTableForm from '@/components/floor plan/NewTableForm.vue'
 import EditTableForm from '@/components/floor plan/EditTableForm.vue'
 import FreeTablesComponent from '@/components/reservation/FreeTablesComponent.vue'
 import WaitlistedForm from '@/components/waitlist/WaitlistedForm.vue'
+import NewReservationForm from '@/components/reservation/NewReservationForm.vue'
 </script>
 
 <style scoped>

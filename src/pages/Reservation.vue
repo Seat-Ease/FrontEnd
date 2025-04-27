@@ -5,7 +5,9 @@
         <h1 class="page-title">Réservations</h1>
         <p class="page-description">Gérez les réservations de votre restaurant</p>
       </div>
-      <button @click="" class="add-reservation-btn">Nouvelle réservation</button>
+      <button @click="mainStore().newReservationFormShowing = true" class="add-reservation-btn">
+        Nouvelle réservation
+      </button>
     </div>
     <div class="input-container">
       <input id="min-covers" type="text" placeholder="Réchercher des réservations..." />
