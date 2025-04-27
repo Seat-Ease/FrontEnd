@@ -20,13 +20,34 @@ export const settingsStore = defineStore('settingsStore', () => {
   }
 
   const scheduleData = ref({
-    sunday: 'Fermé',
-    monday: '11:00 - 23:00',
-    tuesday: '11:00 - 23:00',
-    wednesday: '11:00 - 23:00',
-    thursday: '11:00 - 23:00',
-    friday: '11:00 - 23:00',
-    saturday: '11:00 - 23:00',
+    sunday: {
+      start: 'Fermé',
+      close: 'Fermé',
+    },
+    monday: {
+      start: '11:00',
+      close: '23:00',
+    },
+    tuesday: {
+      start: '11:00',
+      close: '23:00',
+    },
+    wednesday: {
+      start: '11:00',
+      close: '23:00',
+    },
+    thursday: {
+      start: '11:00',
+      close: '23:00',
+    },
+    friday: {
+      start: '11:00',
+      close: '23:00',
+    },
+    saturday: {
+      start: '11:00',
+      close: '23:00',
+    },
   })
 
   function getScheduleData() {

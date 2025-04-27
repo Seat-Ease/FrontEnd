@@ -109,50 +109,50 @@
         <div class="grid-container">
           <p class="text">Lundi</p>
           <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().monday.split('-')[0] }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().monday.split('-')[1] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().monday.start }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().monday.close }}</p>
           </div>
         </div>
         <div class="grid-container">
           <p class="text">Mardi</p>
           <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().tuesday.split('-')[0] }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().tuesday.split('-')[1] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().tuesday.start }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().tuesday.close }}</p>
           </div>
         </div>
         <div class="grid-container">
           <p class="text">Mercredi</p>
           <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().wednesday.split('-')[0] }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().wednesday.split('-')[1] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().wednesday.start }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().wednesday.close }}</p>
           </div>
         </div>
         <div class="grid-container">
           <p class="text">Jeudi</p>
           <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().thursday.split('-')[0] }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().thursday.split('-')[1] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().thursday.start }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().thursday.close }}</p>
           </div>
         </div>
         <div class="grid-container">
-          <p class="text">Vendredi</p>
+          <p class="text">Vcloseredi</p>
           <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().friday.split('-')[0] }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().friday.split('-')[1] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().friday.start }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().friday.close }}</p>
           </div>
         </div>
         <div class="grid-container">
           <p class="text">Samedi</p>
           <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().saturday.split('-')[0] }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().saturday.split('-')[1] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().saturday.start }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().saturday.close }}</p>
           </div>
         </div>
         <div class="grid-container">
           <p class="text">Dimanche</p>
           <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().sunday.split('-')[0] }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().sunday.split('-')[1] }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().sunday.start }}</p>
+            <p class="text-box">{{ settingsStore().getScheduleData().sunday.close }}</p>
           </div>
         </div>
       </div>
@@ -166,7 +166,16 @@
           </p>
         </div>
         <button
-          @click="editReservationSettingActivated = !editReservationSettingActivated"
+          @click="
+            () => {
+              if (editReservationSettingActivated) {
+                settingsStore().editAvailabiltiesSettings(reservationSettings)
+                editReservationSettingActivated = false
+                return
+              }
+              editReservationSettingActivated = true
+            }
+          "
           class="edit-btn"
         >
           {{ editReservationSettingActivated ? 'Enregistrer' : 'Modifier' }}
@@ -175,11 +184,23 @@
       <div class="grid-container">
         <div class="info-container">
           <p class="text">Intervalle de réservation (minutes)</p>
-          <p class="text-box">{{ settingsStore().getAvailabiltiesSettings().intervalle }}</p>
+          <input
+            v-if="editReservationSettingActivated"
+            v-model="reservationSettings.intervalle"
+            id="intervalle"
+            type="number"
+          />
+          <p v-else class="text-box">{{ settingsStore().getAvailabiltiesSettings().intervalle }}</p>
         </div>
         <div class="info-container">
           <p class="text">Durée de service estimée par client (minutes)</p>
-          <p class="text-box">
+          <input
+            v-if="editReservationSettingActivated"
+            v-model="reservationSettings.est_srvice_duration"
+            id="est_srvice_duration"
+            type="number"
+          />
+          <p v-else class="text-box">
             {{ settingsStore().getAvailabiltiesSettings().est_srvice_duration }}
           </p>
         </div>
@@ -192,6 +213,7 @@ import { settingsStore } from '@/stores/settingsStore'
 import { ref, onBeforeMount } from 'vue'
 
 const restaurantData = ref(null)
+const reservationSettings = ref(null)
 
 const editRestaurantDataActivated = ref(false)
 const editScheduleDataActivated = ref(false)
@@ -199,6 +221,7 @@ const editReservationSettingActivated = ref(false)
 
 onBeforeMount(() => {
   restaurantData.value = { ...settingsStore().getRestaurantData() }
+  reservationSettings.value = { ...settingsStore().getAvailabiltiesSettings() }
 })
 </script>
 <style scoped>
