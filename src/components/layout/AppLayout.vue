@@ -29,6 +29,9 @@
     <div class="header-page-container">
       <Header />
       <main>
+        <div v-if="mainStore().calendarShowing" class="calendar-container">
+          <v-date-picker @click="changeDate" color="teal" highlights="dark" v-model="date" />
+        </div>
         <RouterView />
       </main>
     </div>
@@ -46,6 +49,14 @@ import EditTableForm from '@/components/floor plan/EditTableForm.vue'
 import FreeTablesComponent from '@/components/reservation/FreeTablesComponent.vue'
 import WaitlistedForm from '@/components/waitlist/WaitlistedForm.vue'
 import NewReservationForm from '@/components/reservation/NewReservationForm.vue'
+import { ref } from 'vue'
+
+const date = ref(new Date(mainStore().appDate))
+
+function changeDate() {
+  mainStore().appDate = new Date(date.value)
+  mainStore().toggleCalendar()
+}
 </script>
 
 <style scoped>
@@ -67,5 +78,16 @@ import NewReservationForm from '@/components/reservation/NewReservationForm.vue'
 main {
   flex: 1;
   overflow-y: scroll;
+  position: relative;
+}
+.calendar-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  color: #0f172a;
 }
 </style>
