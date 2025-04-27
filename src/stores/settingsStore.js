@@ -12,7 +12,6 @@ export const settingsStore = defineStore('settingsStore', () => {
   })
 
   function getRestaurantData() {
-    console.log(restaurantData.value)
     return restaurantData.value
   }
 

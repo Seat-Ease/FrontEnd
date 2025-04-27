@@ -13,7 +13,16 @@
           <p class="box-description">Informations générales sur votre restaurant</p>
         </div>
         <button
-          @click="editRestaurantDataActivated = !editRestaurantDataActivated"
+          @click="
+            () => {
+              if (editRestaurantDataActivated) {
+                settingsStore().editRestaurantData(restaurantData)
+                editRestaurantDataActivated = false
+                return
+              }
+              editRestaurantDataActivated = true
+            }
+          "
           class="edit-btn"
         >
           {{ editRestaurantDataActivated ? 'Enregistrer' : 'Modifier' }}
@@ -23,29 +32,65 @@
         <div class="infos-container">
           <div class="info-container">
             <p class="text">Nom</p>
-            <p class="text-box">{{ settingsStore().getRestaurantData().name }}</p>
+            <input
+              v-if="editRestaurantDataActivated"
+              v-model="restaurantData.name"
+              id="name"
+              type="text"
+            />
+            <p v-else class="text-box">{{ settingsStore().getRestaurantData().name }}</p>
           </div>
           <div class="info-container">
             <p class="text">Téléphone</p>
-            <p class="text-box">{{ settingsStore().getRestaurantData().telephone }}</p>
+            <input
+              v-if="editRestaurantDataActivated"
+              v-model="restaurantData.telephone"
+              id="telephone"
+              type="number"
+            />
+            <p v-else class="text-box">{{ settingsStore().getRestaurantData().telephone }}</p>
           </div>
           <div class="info-container">
             <p class="text">Site Web</p>
-            <p class="text-box">{{ settingsStore().getRestaurantData().website_link }}</p>
+            <input
+              v-if="editRestaurantDataActivated"
+              v-model="restaurantData.website_link"
+              id="website_link"
+              type="text"
+            />
+            <p v-else class="text-box">{{ settingsStore().getRestaurantData().website_link }}</p>
           </div>
         </div>
         <div class="infos-container">
           <div class="info-container">
             <p class="text">Adresse</p>
-            <p class="text-box">{{ settingsStore().getRestaurantData().address }}</p>
+            <input
+              v-if="editRestaurantDataActivated"
+              v-model="restaurantData.address"
+              id="address"
+              type="text"
+            />
+            <p v-else class="text-box">{{ settingsStore().getRestaurantData().address }}</p>
           </div>
           <div class="info-container">
             <p class="text">Ville</p>
-            <p class="text-box">{{ settingsStore().getRestaurantData().city }}</p>
+            <input
+              v-if="editRestaurantDataActivated"
+              v-model="restaurantData.city"
+              id="city"
+              type="text"
+            />
+            <p v-else class="text-box">{{ settingsStore().getRestaurantData().city }}</p>
           </div>
           <div class="info-container">
             <p class="text">Code postal</p>
-            <p class="text-box">{{ settingsStore().getRestaurantData().postal_code }}</p>
+            <input
+              v-if="editRestaurantDataActivated"
+              v-model="restaurantData.postal_code"
+              id="postal_code"
+              type="text"
+            />
+            <p v-else class="text-box">{{ settingsStore().getRestaurantData().postal_code }}</p>
           </div>
         </div>
       </div>
@@ -144,11 +189,17 @@
 </template>
 <script setup>
 import { settingsStore } from '@/stores/settingsStore'
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
+
+const restaurantData = ref(null)
 
 const editRestaurantDataActivated = ref(false)
 const editScheduleDataActivated = ref(false)
 const editReservationSettingActivated = ref(false)
+
+onBeforeMount(() => {
+  restaurantData.value = { ...settingsStore().getRestaurantData() }
+})
 </script>
 <style scoped>
 .settings-page-container {
@@ -226,5 +277,19 @@ const editReservationSettingActivated = ref(false)
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+}
+.info-container > input {
+  background-color: #0f172a;
+  padding: 1rem;
+  border: 0.1rem solid #1a365d;
+  border-radius: 0.75rem;
+  color: #f1f5f9;
+  font-size: 1.4rem;
+}
+.info-container > input:focus {
+  outline: 0.2rem solid #1a365d;
+}
+.info-container > input::placeholder {
+  color: rgb(161, 161, 161) 7;
 }
 </style>

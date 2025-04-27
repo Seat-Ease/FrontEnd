@@ -74,7 +74,7 @@ export const floorStore = defineStore('floorStore', () => {
     {
       id: 'ea081a16-7eed-4341-86ed-0c7d6e2c4e6a',
       x: 70,
-      y: 600,
+      y: 510,
       width: 50,
       height: 50,
       draggable: true,
@@ -90,7 +90,7 @@ export const floorStore = defineStore('floorStore', () => {
     {
       id: 'b7f7691e-2641-42a7-8e5b-1f6e7cfd4c10',
       x: 160,
-      y: 40,
+      y: 60,
       width: 50,
       height: 50,
       draggable: true,
@@ -106,7 +106,7 @@ export const floorStore = defineStore('floorStore', () => {
     {
       id: '05092a1b-a095-49a1-a47f-2ecbe0e6e3ff',
       x: 160,
-      y: 170,
+      y: 160,
       width: 50,
       height: 50,
       draggable: true,
@@ -121,8 +121,8 @@ export const floorStore = defineStore('floorStore', () => {
     },
     {
       id: '71fb47df-06f0-4fbf-8e8d-5c687a93b665',
-      x: 200,
-      y: 340,
+      x: 180,
+      y: 300,
       width: 50,
       height: 50,
       draggable: true,
@@ -137,8 +137,8 @@ export const floorStore = defineStore('floorStore', () => {
     },
     {
       id: '40fc2a12-faff-428f-a5a8-ff9516546560',
-      x: 200,
-      y: 470,
+      x: 180,
+      y: 400,
       width: 50,
       height: 50,
       draggable: true,
@@ -154,7 +154,7 @@ export const floorStore = defineStore('floorStore', () => {
     {
       id: 'abbb41b5-3817-4ba6-8e8c-941e9fe38fcd',
       x: 160,
-      y: 560,
+      y: 485,
       width: 50,
       height: 50,
       draggable: true,
