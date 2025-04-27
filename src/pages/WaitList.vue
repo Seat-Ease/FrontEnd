@@ -80,5 +80,6 @@ const waitlist = computed(() => reservationStore().getWalkinReservations(mainSto
   font-size: 1.2rem;
   color: #d6d6d6;
   align-self: center;
+  margin-top: 3rem;
 }
 </style>
