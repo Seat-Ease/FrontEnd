@@ -35,7 +35,7 @@
             mainStore().selectedReservation = reservation
           }
         "
-        v-if="!seated"
+        v-if="!seated && todayStr === selectedDateStr"
         class="seat-btn btn"
       >
         Placer
@@ -66,11 +66,15 @@
 import { mainStore } from '@/stores/mainStore'
 import { reservationStore } from '@/stores/reservationStore'
 import { floorStore } from '@/stores/floorStore'
+import { computed } from 'vue'
 
 const props = defineProps({
   reservation: { type: Object, required: true },
   seated: { type: Boolean, required: true },
 })
+
+const todayStr = new Date().toDateString()
+const selectedDateStr = new Date(computed(() => mainStore().appDate)).toDateString()
 
 function formatTableList() {
   const tableNamesFormatted = []
