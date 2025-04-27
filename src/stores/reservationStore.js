@@ -558,8 +558,15 @@ export const reservationStore = defineStore('reservationStore', () => {
   }
 
   function addReservation(newReservation) {
-    console.log(newReservation)
     reservations.value.push(newReservation)
+  }
+
+  function cancelReservation(reservation_id) {
+    const reservationIndex = reservations.value.findIndex(
+      (reservation) => reservation.id === reservation_id,
+    )
+    if (reservationIndex === -1) return
+    reservations.value[reservationIndex].cancelled = true
   }
 
   function getWalkinReservations(appDate) {
@@ -587,6 +594,7 @@ export const reservationStore = defineStore('reservationStore', () => {
   return {
     getReservations,
     addReservation,
+    cancelReservation,
     getSeatedReservations,
     endServiceForReservation,
     startServiceForReservation,
