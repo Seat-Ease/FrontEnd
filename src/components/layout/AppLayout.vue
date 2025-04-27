@@ -32,7 +32,9 @@
         <div v-if="mainStore().calendarShowing" class="calendar-container">
           <v-date-picker @click="changeDate" color="teal" highlights="dark" v-model="date" />
         </div>
-        <RouterView />
+        <Transition name="slide">
+          <RouterView />
+        </Transition>
       </main>
     </div>
   </div>
@@ -79,6 +81,7 @@ main {
   flex: 1;
   overflow-y: scroll;
   position: relative;
+  background-color: #1e293b;
 }
 .calendar-container {
   position: absolute;
@@ -89,5 +92,27 @@ main {
   justify-content: flex-end;
   align-items: flex-start;
   color: #0f172a;
+}
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.6s ease;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.slide-enter-from {
+  transform: translateX(-100%);
+}
+.slide-enter-to {
+  transform: translateX(0);
+}
+.slide-leave-from {
+  transform: translateX(0);
+}
+.slide-leave-to {
+  transform: translateX(100%);
 }
 </style>
