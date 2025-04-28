@@ -2,19 +2,19 @@
   <div class="side-bar-container">
     <h3 class="brand-container">Seat Ease</h3>
     <div class="options-container">
-      <RouterLink class="link" :class="{ selectedPage: currentRoute.path === '/' }" to="/"
+      <RouterLink class="link" :class="{ selectedPage: currentRoute.path === '/app/' }" to="/app/"
         >Tableau de bord</RouterLink
       >
       <RouterLink
         class="link"
-        :class="{ selectedPage: currentRoute.path === '/floorplan' }"
-        to="/floorplan"
+        :class="{ selectedPage: currentRoute.path === '/app/floorplan' }"
+        to="/app/floorplan"
         >Plan de salle</RouterLink
       >
       <RouterLink
         class="link"
-        :class="{ selectedPage: currentRoute.path === '/reservations' }"
-        to="/reservations"
+        :class="{ selectedPage: currentRoute.path === '/app/reservations' }"
+        to="/app/reservations"
         >Réservation</RouterLink
       >
       <!-- <RouterLink
@@ -25,14 +25,14 @@
       > -->
       <RouterLink
         class="link"
-        :class="{ selectedPage: currentRoute.path === '/waitlist' }"
-        to="/waitlist"
+        :class="{ selectedPage: currentRoute.path === '/app/waitlist' }"
+        to="/app/waitlist"
         >Liste d'attente</RouterLink
       >
       <RouterLink
         class="link"
-        :class="{ selectedPage: currentRoute.path === '/settings' }"
-        to="/settings"
+        :class="{ selectedPage: currentRoute.path === '/app/settings' }"
+        to="/app/settings"
         >Paramètres</RouterLink
       >
     </div>

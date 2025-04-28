@@ -53,10 +53,14 @@ import WaitlistedForm from '@/components/waitlist/WaitlistedForm.vue'
 import NewReservationForm from '@/components/reservation/NewReservationForm.vue'
 import { ref } from 'vue'
 
-const date = ref(new Date(mainStore().appDate))
+const date = ref(mainStore().appDate ? new Date(mainStore().appDate) : new Date())
 
 function changeDate() {
-  mainStore().appDate = new Date(date.value)
+  if (date.value instanceof Date && !isNaN(date.value)) {
+    mainStore().appDate = new Date(date.value)
+  } else {
+    mainStore().appDate = new Date()
+  }
   mainStore().toggleCalendar()
 }
 </script>

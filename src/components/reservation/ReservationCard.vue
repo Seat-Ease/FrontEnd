@@ -35,7 +35,7 @@
             mainStore().selectedReservation = reservation
           }
         "
-        v-if="!seated && todayStr !== selectedDateStr"
+        v-if="!seated && todayStr === selectedDateStr"
         class="seat-btn btn"
       >
         Placer
@@ -74,7 +74,7 @@ const props = defineProps({
 })
 
 const todayStr = new Date().toDateString()
-const selectedDateStr = new Date(computed(() => mainStore().appDate)).toDateString()
+const selectedDateStr = new Date(computed(() => mainStore().appDate).value).toDateString()
 
 function formatTableList() {
   const tableNamesFormatted = []
