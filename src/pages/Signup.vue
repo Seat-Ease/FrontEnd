@@ -8,11 +8,13 @@
       Déjà client ? Connectez-vous
       <RouterLink to="/login">Ici</RouterLink>
     </p>
-    <GeneralInfo />
+    <!-- <GeneralInfo /> -->
+    <ScheduleInfo />
   </div>
 </template>
 <script setup>
 import GeneralInfo from '@/components/signup/GeneralInfo.vue'
+import ScheduleInfo from '@/components/signup/ScheduleInfo.vue'
 </script>
 <style scoped>
 .signup-container {
