@@ -2,7 +2,7 @@
   <div class="login-container">
     <p class="title">Connectez-vous au compte de votre restaurant</p>
     <div class="input-container">
-      <input v-model="credentials.email" id="restaurant-email" type="text" placeholder="Email" />
+      <input v-model="credentials.email" id="restaurant-email" type="text" placeholder="Courriel" />
     </div>
     <div class="input-container">
       <input

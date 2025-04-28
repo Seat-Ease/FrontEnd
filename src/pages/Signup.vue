@@ -9,12 +9,14 @@
       <RouterLink to="/login">Ici</RouterLink>
     </p>
     <!-- <GeneralInfo /> -->
-    <ScheduleInfo />
+    <!-- <ScheduleInfo /> -->
+    <EmailPasswordInfo />
   </div>
 </template>
 <script setup>
 import GeneralInfo from '@/components/signup/GeneralInfo.vue'
 import ScheduleInfo from '@/components/signup/ScheduleInfo.vue'
+import EmailPasswordInfo from '@/components/signup/EmailPasswordInfo.vue'
 </script>
 <style scoped>
 .signup-container {
