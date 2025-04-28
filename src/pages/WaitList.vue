@@ -9,6 +9,13 @@
         Ajouter
       </button>
     </div>
+    <div class="input-container">
+      <input
+        v-model="mainStore().searchParamWaitlist"
+        type="text"
+        placeholder="Réchercher un client..."
+      />
+    </div>
     <div class="list-header-wrapper">
       <div class="list-header">
         <p>Nom</p>
@@ -19,8 +26,11 @@
       </div>
       <div class="list-container">
         <p v-if="waitlist.length === 0" class="empty-list">Aucun client en attente</p>
+        <p class="no-results-text" v-if="paramVar && getWaitList().length === 0">
+          Aucun résultat trouvé.
+        </p>
         <WaitlistedCard
-          v-for="reservation in waitlist"
+          v-for="reservation in getWaitList()"
           :id="reservation.id"
           :reservation="reservation"
         />
@@ -34,7 +44,15 @@ import { reservationStore } from '@/stores/reservationStore'
 import WaitlistedCard from '@/components/waitlist/WaitlistedCard.vue'
 import { computed } from 'vue'
 
+const paramVar = computed(() => mainStore().searchParamWaitlist)
 const waitlist = computed(() => reservationStore().getWalkinReservations(mainStore().appDate))
+
+function getWaitList() {
+  if (paramVar.value === '') return waitlist.value
+  return waitlist.value.filter((reservation) =>
+    (reservation.client_name || '').includes(paramVar.value),
+  )
+}
 </script>
 <style scoped>
 .waitlist-page-container {
@@ -76,10 +94,26 @@ const waitlist = computed(() => reservationStore().getWalkinReservations(mainSto
   color: #d6d6d6;
   padding-bottom: 1rem;
 }
-.empty-list {
+.empty-list,
+.no-results-text {
   font-size: 1.2rem;
   color: #d6d6d6;
   align-self: center;
   margin-top: 3rem;
+}
+.input-container > input {
+  background-color: #1e293b;
+  padding: 1rem;
+  border: 0.1rem solid #1a365d;
+  border-radius: 0.75rem;
+  color: #f1f5f9;
+  font-size: 1.4rem;
+  min-width: 30rem;
+}
+.input-container > input:focus {
+  outline: 0.2rem solid #1a365d;
+}
+.input-container > input::placeholder {
+  color: #d2d2d2;
 }
 </style>

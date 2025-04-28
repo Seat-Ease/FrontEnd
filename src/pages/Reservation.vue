@@ -12,7 +12,6 @@
     <div class="input-container">
       <input
         v-model="mainStore().searchParamReservation"
-        id="min-covers"
         type="text"
         placeholder="Réchercher un client..."
       />
