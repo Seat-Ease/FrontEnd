@@ -35,7 +35,7 @@
             mainStore().selectedReservation = reservation
           }
         "
-        v-if="!seated && todayStr === selectedDateStr"
+        v-if="!seated && todayStr !== selectedDateStr"
         class="seat-btn btn"
       >
         Placer

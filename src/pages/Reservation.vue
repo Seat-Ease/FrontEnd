@@ -10,7 +10,12 @@
       </button>
     </div>
     <div class="input-container">
-      <input id="min-covers" type="text" placeholder="Réchercher des réservations..." />
+      <input
+        v-model="mainStore().searchParamReservation"
+        id="min-covers"
+        type="text"
+        placeholder="Réchercher un client..."
+      />
     </div>
     <ReservationBox
       boxTitle="Réservations à venir"

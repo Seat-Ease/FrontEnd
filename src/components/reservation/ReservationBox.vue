@@ -7,9 +7,12 @@
     <p v-if="reservationListEmpty" class="no-reservation-text">
       {{ noReservationText }}
     </p>
+    <p class="no-results-text" v-if="paramVar && getReservationList().length === 0">
+      Aucun résultat trouvé.
+    </p>
     <div class="list-reservation">
       <ReservationCard
-        v-for="reservation in reservationList"
+        v-for="reservation in getReservationList()"
         :id="reservation"
         :reservation="reservation"
         :seated="seated"
@@ -17,22 +20,28 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
+import { mainStore } from '@/stores/mainStore'
 import ReservationCard from './ReservationCard.vue'
-export default {
-  name: 'ReservationBox',
-  components: {
-    ReservationCard,
-  },
-  props: {
-    boxTitle: { type: String, required: true },
-    boxDescription: { type: String, required: true },
-    noReservationText: { type: String, required: true },
-    reservationListEmpty: { type: Boolean, required: true },
-    totalCount: { type: Number, required: true },
-    seated: { type: Boolean, required: true },
-    reservationList: { type: Array, required: true },
-  },
+import { computed } from 'vue'
+
+const paramVar = computed(() => mainStore().searchParamReservation)
+
+const props = defineProps({
+  boxTitle: { type: String, required: true },
+  boxDescription: { type: String, required: true },
+  noReservationText: { type: String, required: true },
+  reservationListEmpty: { type: Boolean, required: true },
+  totalCount: { type: Number, required: true },
+  seated: { type: Boolean, required: true },
+  reservationList: { type: Array, required: true },
+})
+
+function getReservationList() {
+  if (paramVar.value === '') return props.reservationList
+  return props.reservationList.filter((reservation) =>
+    (reservation.client_name || '').includes(paramVar.value),
+  )
 }
 </script>
 <style scoped>
@@ -47,7 +56,8 @@ export default {
   min-height: 20rem;
   max-height: 45rem;
 }
-.no-reservation-text {
+.no-reservation-text,
+.no-results-text {
   font-size: 1.3rem;
   align-self: center;
   color: #d2d2d2;

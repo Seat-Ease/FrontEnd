@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 export const mainStore = defineStore('mainStore', () => {
   const calendarShowing = ref(false)
+  const searchParamReservation = ref('')
   const selectedReservation = ref(null)
   const freeTablesListShowingReservation = ref(false)
   const freeTablesListShowingWaitList = ref(false)
@@ -22,6 +23,7 @@ export const mainStore = defineStore('mainStore', () => {
   }
 
   return {
+    searchParamReservation,
     calendarShowing,
     toggleCalendar,
     appDate,
