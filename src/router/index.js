@@ -8,6 +8,7 @@ import WaitList from '@/pages/WaitList.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import Home from '@/pages/Home.vue'
 import Signup from '@/pages/Signup.vue'
+import Login from '@/pages/Login.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,11 @@ const router = createRouter({
           path: '/signup',
           name: 'signup',
           component: Signup,
+        },
+        {
+          path: '/login',
+          name: 'login',
+          component: Login,
         },
       ],
     },
