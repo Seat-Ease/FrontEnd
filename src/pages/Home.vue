@@ -37,7 +37,7 @@ main {
 .slide-leave-active {
   transition: transform 0.6s ease;
   position: absolute;
-  width: 100%;
+  width: 40%;
   height: 100%;
   top: 0;
   left: 0;

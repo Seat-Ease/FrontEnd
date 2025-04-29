@@ -1,22 +1,56 @@
 <template>
   <div class="signup-container">
     <div class="btns-container">
-      <button class="prev btn">Précedent</button>
-      <button class="next btn">Suivant</button>
+      <button v-if="componentToShow !== 'GeneralInfo'" @click="goToPrevComponent" class="prev btn">
+        Précedent
+      </button>
+      <button
+        v-if="componentToShow !== 'EmailPasswordInfo'"
+        @click="goToNextComponent"
+        class="next btn"
+      >
+        Suivant
+      </button>
     </div>
     <p class="redirect-login">
       Déjà client ? Connectez-vous
       <RouterLink to="/login">Ici</RouterLink>
     </p>
-    <!-- <GeneralInfo /> -->
-    <!-- <ScheduleInfo /> -->
-    <EmailPasswordInfo />
+    <div class="form-container">
+      <Transition name="slide" mode="out-in">
+        <component :is="currentComponent" :key="componentToShow" />
+      </Transition>
+    </div>
   </div>
 </template>
 <script setup>
 import GeneralInfo from '@/components/signup/GeneralInfo.vue'
 import ScheduleInfo from '@/components/signup/ScheduleInfo.vue'
 import EmailPasswordInfo from '@/components/signup/EmailPasswordInfo.vue'
+import { ref, computed } from 'vue'
+
+const componentToShow = ref('GeneralInfo')
+
+const currentComponent = computed(() => {
+  switch (componentToShow.value) {
+    case 'GeneralInfo':
+      return GeneralInfo
+    case 'ScheduleInfo':
+      return ScheduleInfo
+    case 'EmailPasswordInfo':
+      return EmailPasswordInfo
+  }
+})
+
+function goToNextComponent() {
+  if (componentToShow.value === 'GeneralInfo') componentToShow.value = 'ScheduleInfo'
+  else if (componentToShow.value === 'ScheduleInfo') componentToShow.value = 'EmailPasswordInfo'
+}
+
+function goToPrevComponent() {
+  if (componentToShow.value === 'EmailPasswordInfo') componentToShow.value = 'ScheduleInfo'
+  else if (componentToShow.value === 'ScheduleInfo') componentToShow.value = 'GeneralInfo'
+}
 </script>
 <style scoped>
 .signup-container {
@@ -25,6 +59,7 @@ import EmailPasswordInfo from '@/components/signup/EmailPasswordInfo.vue'
   gap: 2rem;
   width: 40%;
   margin: 5rem auto;
+  position: relative;
 }
 .btns-container {
   display: flex;
@@ -51,5 +86,32 @@ import EmailPasswordInfo from '@/components/signup/EmailPasswordInfo.vue'
   color: #0d9488;
   font-weight: bold;
   letter-spacing: 0.1rem;
+}
+.form-container {
+  position: relative;
+  min-height: 400px;
+  overflow: hidden;
+}
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.4s ease;
+  position: absolute;
+  width: 100%;
+}
+.slide-enter-from {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+.slide-enter-to {
+  transform: translateX(0%);
+  opacity: 1;
+}
+.slide-leave-from {
+  transform: translateX(0%);
+  opacity: 1;
+}
+.slide-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
 }
 </style>
