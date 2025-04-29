@@ -5,6 +5,7 @@
         <p class="title">Courriel et mot de passe</p>
       </div>
     </div>
+    <p class="error">{{ errorMessage }}</p>
     <div class="input-container">
       <input
         v-model="credentials.email"
@@ -21,18 +22,50 @@
         placeholder="Mot de passe*"
       />
     </div>
-    <button @click="" class="submit-btn">Soumettre</button>
+    <button @click="validateBeforeLeave" class="submit-btn">Soumettre</button>
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { signup } from '@/stores/signup'
+import { ref, onBeforeUnmount, onBeforeMount } from 'vue'
+
+function validateBeforeLeave() {
+  if (!credentials.value.email) {
+    errorMessage.value = 'Courriel invalid.'
+    return false
+  } else if (!credentials.value.password) {
+    errorMessage.value = 'Mot de passe invalid.'
+    return false
+  } else if (credentials.value.password.length < 8) {
+    errorMessage.value = 'Mot de passe doit avoir une longueur minimale de 8 caractères.'
+    return false
+  } else {
+    errorMessage.value = ''
+    signup().setCredentials({ ...credentials.value })
+    return true
+  }
+}
+
+defineExpose({
+  validateBeforeLeave,
+})
+
+const errorMessage = ref('')
 
 const credentials = ref({
   email: '',
   password: '',
 })
+
+onBeforeUnmount(() => {})
+
+onBeforeMount(() => (credentials.value = JSON.parse(JSON.stringify(signup().getCredentials()))))
 </script>
 <style scoped>
+.error {
+  font-size: 1rem;
+  color: red;
+}
 .email-password-container {
   display: flex;
   flex-direction: column;

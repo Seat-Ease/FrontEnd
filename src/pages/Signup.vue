@@ -18,7 +18,7 @@
     </p>
     <div class="form-container">
       <Transition name="slide" mode="out-in">
-        <component :is="currentComponent" :key="componentToShow" />
+        <component :is="currentComponent" ref="currentComponentRef" :key="componentToShow" />
       </Transition>
     </div>
   </div>
@@ -30,6 +30,7 @@ import EmailPasswordInfo from '@/components/signup/EmailPasswordInfo.vue'
 import { ref, computed } from 'vue'
 
 const componentToShow = ref('GeneralInfo')
+const currentComponentRef = ref(null)
 
 const currentComponent = computed(() => {
   switch (componentToShow.value) {
@@ -42,12 +43,25 @@ const currentComponent = computed(() => {
   }
 })
 
-function goToNextComponent() {
+async function validateBeforeChange() {
+  if (currentComponentRef.value?.validateBeforeLeave) {
+    return await currentComponentRef.value.validateBeforeLeave()
+  }
+  return true
+}
+
+async function goToNextComponent() {
+  const canProceed = await validateBeforeChange()
+  if (!canProceed) return
+
   if (componentToShow.value === 'GeneralInfo') componentToShow.value = 'ScheduleInfo'
   else if (componentToShow.value === 'ScheduleInfo') componentToShow.value = 'EmailPasswordInfo'
 }
 
-function goToPrevComponent() {
+async function goToPrevComponent() {
+  const canProceed = await validateBeforeChange()
+  if (!canProceed) return
+
   if (componentToShow.value === 'EmailPasswordInfo') componentToShow.value = 'ScheduleInfo'
   else if (componentToShow.value === 'ScheduleInfo') componentToShow.value = 'GeneralInfo'
 }

@@ -7,6 +7,7 @@
       </div>
     </div>
     <form>
+      <p v-if="error" class="error">Tous les champs avec (*) sont obligatoire</p>
       <div class="input-container">
         <input v-model="generalInfo.name" id="restaurant-name" type="text" placeholder="Nom*" />
       </div>
@@ -39,7 +40,7 @@
       </div>
       <div class="input-container">
         <input
-          v-model="generalInfo.website"
+          v-model="generalInfo.website_link"
           id="restaurant-website"
           type="text"
           placeholder="Site Web"
@@ -49,7 +50,29 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { signup } from '@/stores/signup'
+import { ref, onBeforeUnmount, onBeforeMount } from 'vue'
+
+const error = ref(false)
+
+function validateBeforeLeave() {
+  if (
+    !generalInfo.value.name ||
+    !generalInfo.value.phone ||
+    !generalInfo.value.address ||
+    !generalInfo.value.postal_code
+  ) {
+    error.value = true
+    return false
+  } else {
+    error.value = false
+    return true
+  }
+}
+
+defineExpose({
+  validateBeforeLeave,
+})
 
 const generalInfo = ref({
   name: '',
@@ -57,10 +80,20 @@ const generalInfo = ref({
   address: '',
   city: '',
   postal_code: '',
-  website: '',
+  website_link: '',
 })
+
+onBeforeUnmount(() => {
+  signup().setGeneralInfo({ ...generalInfo.value })
+})
+
+onBeforeMount(() => (generalInfo.value = JSON.parse(JSON.stringify(signup().getGeneralInfo()))))
 </script>
 <style scoped>
+.error {
+  font-size: 1rem;
+  color: red;
+}
 .general-info-container {
   display: flex;
   flex-direction: column;

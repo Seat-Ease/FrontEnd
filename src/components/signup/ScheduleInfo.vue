@@ -52,7 +52,16 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { signup } from '@/stores/signup'
+import { ref, onBeforeUnmount, onBeforeMount } from 'vue'
+
+function validateBeforeLeave() {
+  return true
+}
+
+defineExpose({
+  validateBeforeLeave,
+})
 
 const scheduleData = ref({
   monday: false,
@@ -65,6 +74,12 @@ const scheduleData = ref({
   opening_time: '11:00',
   closing_time: '23:00',
 })
+
+onBeforeUnmount(() => {
+  signup().setScheduleData({ ...scheduleData.value })
+})
+
+onBeforeMount(() => (scheduleData.value = JSON.parse(JSON.stringify(signup().getScheduleData()))))
 </script>
 <style scoped>
 .schedule-info-container {
