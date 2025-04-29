@@ -4,9 +4,7 @@
       <h1 class="brand-container">Seat Ease</h1>
     </div>
     <main>
-      <Transition name="slide">
-        <RouterView></RouterView>
-      </Transition>
+      <RouterView />
     </main>
   </div>
 </template>
@@ -32,26 +30,7 @@
 main {
   background-color: #1e293b;
   flex-grow: 1;
-}
-.slide-enter-active,
-.slide-leave-active {
-  transition: transform 0.6s ease;
-  position: absolute;
-  width: 40%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
-.slide-enter-from {
-  transform: translateX(-100%);
-}
-.slide-enter-to {
-  transform: translateX(0);
-}
-.slide-leave-from {
-  transform: translateX(0);
-}
-.slide-leave-to {
-  transform: translateX(100%);
+  position: relative;
+  overflow: hidden;
 }
 </style>
