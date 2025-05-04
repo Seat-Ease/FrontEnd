@@ -5,18 +5,17 @@
       <LoadingComponent />
     </div>
     <div v-else class="error-confirmation">
-      <p v-if="error" class="error">{{ error }}</p>
-      <p
-        v-if="error"
-        @click="
-          () => {
-            signupinprogress = false
-          }
-        "
-        class="error-btn btn"
-      >
-        Réessayer
-      </p>
+      <div v-if="error" class="error-container">
+        <p class="error">Erreur serveur.</p>
+        <button @click="signupinprogress = false" class="error-btn btn">Réessayer</button>
+      </div>
+      <div v-else class="confirmation-container">
+        <p class="confirmation">
+          Votre compte a été créé avec succès. <br />
+          Cliquez le boutton ci-bas pour accèder à votre compte.
+        </p>
+        <button class="redirect-account">Accéder au compte</button>
+      </div>
     </div>
   </div>
   <div v-else class="signup-container">
@@ -58,7 +57,7 @@ import { ref, computed } from 'vue'
 
 const loading = ref(false)
 const signupinprogress = ref(false)
-const error = ref('')
+const error = ref(false)
 
 const componentToShow = ref('GeneralInfo')
 const currentComponentRef = ref(null)
@@ -74,12 +73,23 @@ const currentComponent = computed(() => {
   }
 })
 
-async function startSignUpProcess() {
+async function startSignUpProcess(account_uid) {
   const canProceed = await validateBeforeChange()
   if (!canProceed) return
 
   signupinprogress.value = true
   loading.value = true
+
+  const response = await signup().createRestaurantProfile(account_uid)
+  if (!response.ok) {
+    loading.value = false
+    error.value = true
+    return
+  }
+
+  error.value = false
+  loading.value = false
+  signup().cleanUp()
 }
 
 async function validateBeforeChange() {
@@ -125,7 +135,8 @@ async function goToPrevComponent() {
   color: #0d9488;
   text-decoration: underline;
 }
-.error-btn {
+.error-btn,
+.redirect-account {
   border: 0.1rem solid #1a365d;
   display: flex;
   align-items: center;
@@ -135,11 +146,20 @@ async function goToPrevComponent() {
   background-color: #0d9488;
   margin-top: 1rem;
   cursor: pointer;
+  color: #f1f5f9;
+  font-size: 1.4rem;
 }
 .error-confirmation {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.confirmation-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  text-align: center;
 }
 .redirect-login {
   display: flex;

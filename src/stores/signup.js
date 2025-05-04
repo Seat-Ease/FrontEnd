@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import { getAuth, createUserWithEmailAndPassword, deleteUser } from 'firebase/auth'
+import { getFirestore, doc, setDoc } from 'firebase/firestore'
 import { app } from '@/firebase'
 
 export const signup = defineStore('signup', () => {
@@ -71,6 +72,51 @@ export const signup = defineStore('signup', () => {
     }
   }
 
+  async function createRestaurantProfile(account_uid) {
+    const restaurantData = {
+      email: credentials.value.email,
+      general: { ...general_info.value },
+      schedule: { ...scheduleData.value },
+    }
+    try {
+      await setDoc(doc(getFirestore(app), 'restaurants', account_uid), restaurantData)
+      const response = { ok: true }
+      return response
+    } catch (error) {
+      await deleteUser(getAuth(app).currentUser)
+      const response = { ok: false }
+      return response
+    }
+  }
+
+  function cleanUp() {
+    general_info.value = {
+      name: '',
+      phone: '',
+      address: '',
+      city: '',
+      postal_code: '',
+      website_link: '',
+    }
+
+    scheduleData.value = {
+      monday: false,
+      tuesday: true,
+      wednesday: true,
+      thursday: true,
+      friday: true,
+      saturday: true,
+      sunday: false,
+      opening_time: '11:00',
+      closing_time: '23:00',
+    }
+
+    credentials.value = {
+      email: '',
+      password: '',
+    }
+  }
+
   return {
     getGeneralInfo,
     setGeneralInfo,
@@ -79,5 +125,7 @@ export const signup = defineStore('signup', () => {
     getCredentials,
     setCredentials,
     registerAuthAccount,
+    createRestaurantProfile,
+    cleanUp,
   }
 })

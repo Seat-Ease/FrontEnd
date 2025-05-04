@@ -65,7 +65,7 @@ async function validateBeforeLeave() {
       return false
     }
     errorMessage.value = ''
-    emit('formSubmitted')
+    emit('formSubmitted', response.uid)
     return true
   }
 }
