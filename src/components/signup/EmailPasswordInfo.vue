@@ -22,7 +22,9 @@
         placeholder="Mot de passe*"
       />
     </div>
-    <button @click="validateBeforeLeave" class="submit-btn">Soumettre</button>
+    <button @click="validateBeforeLeave" class="submit-btn">
+      {{ checkingEmail ? 'Validation de votre courriel en cours...' : 'Soumettre' }}
+    </button>
   </div>
 </template>
 <script setup>
@@ -30,6 +32,7 @@ import { signup } from '@/stores/signup'
 import { ref, onBeforeUnmount, onBeforeMount, defineEmits } from 'vue'
 
 const errorMessage = ref('')
+const checkingEmail = ref(false)
 
 const credentials = ref({
   email: '',
@@ -43,7 +46,7 @@ function isValidEmail(email) {
   return emailRegex.test(email)
 }
 
-function validateBeforeLeave() {
+async function validateBeforeLeave() {
   if (!credentials.value.password || !credentials.value.email) {
     errorMessage.value = 'Tous les champs sont obligatoires.'
     return false
@@ -54,6 +57,13 @@ function validateBeforeLeave() {
     errorMessage.value = 'Mot de passe doit avoir une longueur minimale de 8 caractères.'
     return false
   } else {
+    signup().setCredentials({ ...credentials.value })
+    const response = await signup().registerAuthAccount()
+    if (!response.status.ok) {
+      errorMessage.value =
+        'Courriel déjà utilisé. Veuillez vous diriger vers la page de connexion pour vous connecter à votre compte.'
+      return false
+    }
     errorMessage.value = ''
     emit('formSubmitted')
     return true
@@ -61,7 +71,6 @@ function validateBeforeLeave() {
 }
 
 onBeforeUnmount(() => {
-  signup().setCredentials({ ...credentials.value })
   credentials.value = {
     email: '',
     password: '',

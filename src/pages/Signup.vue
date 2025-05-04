@@ -1,7 +1,23 @@
 <template>
-  <div v-if="loading" class="next-step-container">
-    <p>Veuillez patienter pendant que nous configurons votre compte</p>
-    <LoadingComponent />
+  <div v-if="signupinprogress" class="next-step-container">
+    <div v-if="loading" class="loading">
+      <p>Veuillez patienter pendant que nous configurons votre compte</p>
+      <LoadingComponent />
+    </div>
+    <div v-else class="error-confirmation">
+      <p v-if="error" class="error">{{ error }}</p>
+      <p
+        v-if="error"
+        @click="
+          () => {
+            signupinprogress = false
+          }
+        "
+        class="error-btn btn"
+      >
+        Réessayer
+      </p>
+    </div>
   </div>
   <div v-else class="signup-container">
     <div class="btns-container">
@@ -41,6 +57,8 @@ import { signup } from '@/stores/signup'
 import { ref, computed } from 'vue'
 
 const loading = ref(false)
+const signupinprogress = ref(false)
+const error = ref('')
 
 const componentToShow = ref('GeneralInfo')
 const currentComponentRef = ref(null)
@@ -57,6 +75,10 @@ const currentComponent = computed(() => {
 })
 
 async function startSignUpProcess() {
+  const canProceed = await validateBeforeChange()
+  if (!canProceed) return
+
+  signupinprogress.value = true
   loading.value = true
 }
 
@@ -102,6 +124,22 @@ async function goToPrevComponent() {
   background-color: #1e293b;
   color: #0d9488;
   text-decoration: underline;
+}
+.error-btn {
+  border: 0.1rem solid #1a365d;
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  background-color: #0d9488;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+.error-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .redirect-login {
   display: flex;

@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import { app } from '@/firebase'
 
 export const signup = defineStore('signup', () => {
   const general_info = ref({
@@ -53,6 +54,23 @@ export const signup = defineStore('signup', () => {
     credentials.value = p_data
   }
 
+  async function registerAuthAccount() {
+    try {
+      const user = await createUserWithEmailAndPassword(
+        getAuth(app),
+        getCredentials().email,
+        getCredentials().password,
+      )
+      const response = { status: { ok: true }, uid: user.user.uid }
+      return response
+    } catch (error) {
+      const response = {
+        status: { ok: false },
+      }
+      return response
+    }
+  }
+
   return {
     getGeneralInfo,
     setGeneralInfo,
@@ -60,5 +78,6 @@ export const signup = defineStore('signup', () => {
     setScheduleData,
     getCredentials,
     setCredentials,
+    registerAuthAccount,
   }
 })
