@@ -29,12 +29,17 @@
 import { signup } from '@/stores/signup'
 import { ref, onBeforeUnmount, onBeforeMount } from 'vue'
 
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
 function validateBeforeLeave() {
-  if (!credentials.value.email) {
-    errorMessage.value = 'Courriel invalid.'
+  if (!credentials.value.password || !credentials.value.email) {
+    errorMessage.value = 'Tous les champs sont obligatoires.'
     return false
-  } else if (!credentials.value.password) {
-    errorMessage.value = 'Mot de passe invalid.'
+  } else if (!isValidEmail(credentials.value.email)) {
+    errorMessage.value = 'Courriel invalid.'
     return false
   } else if (credentials.value.password.length < 8) {
     errorMessage.value = 'Mot de passe doit avoir une longueur minimale de 8 caractères.'
