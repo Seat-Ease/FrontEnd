@@ -30,7 +30,12 @@
       <Header />
       <main>
         <div v-if="mainStore().calendarShowing" class="calendar-container">
-          <v-date-picker @click="changeDate" color="teal" highlights="dark" v-model="date" />
+          <v-date-picker
+            @click="mainStore().toggleCalendar()"
+            color="teal"
+            highlights="dark"
+            v-model="mainStore().appDate"
+          />
         </div>
         <Transition name="slide">
           <RouterView />
@@ -51,18 +56,7 @@ import EditTableForm from '@/components/floor plan/EditTableForm.vue'
 import FreeTablesComponent from '@/components/reservation/FreeTablesComponent.vue'
 import WaitlistedForm from '@/components/waitlist/WaitlistedForm.vue'
 import NewReservationForm from '@/components/reservation/NewReservationForm.vue'
-import { ref } from 'vue'
-
-const date = ref(mainStore().appDate ? new Date(mainStore().appDate) : new Date())
-
-function changeDate() {
-  if (date.value instanceof Date && !isNaN(date.value)) {
-    mainStore().appDate = new Date(date.value)
-  } else {
-    mainStore().appDate = new Date()
-  }
-  mainStore().toggleCalendar()
-}
+import { Calendar, DatePicker } from 'v-calendar'
 </script>
 
 <style scoped>

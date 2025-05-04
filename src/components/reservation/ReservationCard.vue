@@ -74,7 +74,9 @@ const props = defineProps({
 })
 
 const todayStr = new Date().toDateString()
+console.log(todayStr)
 const selectedDateStr = new Date(computed(() => mainStore().appDate).value).toDateString()
+console.log(selectedDateStr)
 
 function formatTableList() {
   const tableNamesFormatted = []
