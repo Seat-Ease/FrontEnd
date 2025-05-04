@@ -77,6 +77,17 @@ const scheduleData = ref({
 
 onBeforeUnmount(() => {
   signup().setScheduleData({ ...scheduleData.value })
+  scheduleData.value = {
+    monday: false,
+    tuesday: true,
+    wednesday: true,
+    thursday: true,
+    friday: true,
+    saturday: true,
+    sunday: false,
+    opening_time: '11:00',
+    closing_time: '23:00',
+  }
 })
 
 onBeforeMount(() => (scheduleData.value = JSON.parse(JSON.stringify(signup().getScheduleData()))))

@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 
 export const signup = defineStore('signup', () => {
   const general_info = ref({

@@ -27,7 +27,16 @@
 </template>
 <script setup>
 import { signup } from '@/stores/signup'
-import { ref, onBeforeUnmount, onBeforeMount } from 'vue'
+import { ref, onBeforeUnmount, onBeforeMount, defineEmits } from 'vue'
+
+const errorMessage = ref('')
+
+const credentials = ref({
+  email: '',
+  password: '',
+})
+
+const emit = defineEmits(['formSubmitted'])
 
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -46,23 +55,18 @@ function validateBeforeLeave() {
     return false
   } else {
     errorMessage.value = ''
-    signup().setCredentials({ ...credentials.value })
+    emit('formSubmitted')
     return true
   }
 }
 
-defineExpose({
-  validateBeforeLeave,
+onBeforeUnmount(() => {
+  signup().setCredentials({ ...credentials.value })
+  credentials.value = {
+    email: '',
+    password: '',
+  }
 })
-
-const errorMessage = ref('')
-
-const credentials = ref({
-  email: '',
-  password: '',
-})
-
-onBeforeUnmount(() => {})
 
 onBeforeMount(() => (credentials.value = JSON.parse(JSON.stringify(signup().getCredentials()))))
 </script>

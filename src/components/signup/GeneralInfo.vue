@@ -85,6 +85,14 @@ const generalInfo = ref({
 
 onBeforeUnmount(() => {
   signup().setGeneralInfo({ ...generalInfo.value })
+  generalInfo.value = {
+    name: '',
+    phone: '',
+    address: '',
+    city: '',
+    postal_code: '',
+    website_link: '',
+  }
 })
 
 onBeforeMount(() => (generalInfo.value = JSON.parse(JSON.stringify(signup().getGeneralInfo()))))

@@ -1,5 +1,9 @@
 <template>
-  <div class="signup-container">
+  <div v-if="loading" class="next-step-container">
+    <p>Veuillez patienter pendant que nous configurons votre compte</p>
+    <LoadingComponent />
+  </div>
+  <div v-else class="signup-container">
     <div class="btns-container">
       <button v-if="componentToShow !== 'GeneralInfo'" @click="goToPrevComponent" class="prev btn">
         Précedent
@@ -18,7 +22,12 @@
     </p>
     <div class="form-container">
       <Transition name="slide" mode="out-in">
-        <component :is="currentComponent" ref="currentComponentRef" :key="componentToShow" />
+        <component
+          @formSubmitted="startSignUpProcess"
+          :is="currentComponent"
+          ref="currentComponentRef"
+          :key="componentToShow"
+        />
       </Transition>
     </div>
   </div>
@@ -27,7 +36,11 @@
 import GeneralInfo from '@/components/signup/GeneralInfo.vue'
 import ScheduleInfo from '@/components/signup/ScheduleInfo.vue'
 import EmailPasswordInfo from '@/components/signup/EmailPasswordInfo.vue'
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import { signup } from '@/stores/signup'
 import { ref, computed } from 'vue'
+
+const loading = ref(false)
 
 const componentToShow = ref('GeneralInfo')
 const currentComponentRef = ref(null)
@@ -42,6 +55,10 @@ const currentComponent = computed(() => {
       return EmailPasswordInfo
   }
 })
+
+async function startSignUpProcess() {
+  loading.value = true
+}
 
 async function validateBeforeChange() {
   if (currentComponentRef.value?.validateBeforeLeave) {
@@ -127,5 +144,17 @@ async function goToPrevComponent() {
 .slide-leave-to {
   transform: translateX(100%);
   opacity: 0;
+}
+.next-step-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  padding: 5rem 0;
+  align-items: center;
+  justify-content: center;
+}
+.next-step-container p {
+  color: #f1f5f9;
+  font-size: 2rem;
 }
 </style>
