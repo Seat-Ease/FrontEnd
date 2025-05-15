@@ -1,11 +1,67 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+} from 'firebase/firestore'
+import { app } from '@/firebase'
 
 export const floorStore = defineStore('floorStore', () => {
   const rooms = ref([
     { id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719', name: 'Salle Principale' },
     { id: '20c97f29-5cc0-466a-9b9e-e395538fa890', name: 'Terrasse' },
   ])
+  function getRooms() {
+    return rooms.value
+  }
+  async function loadRooms(restaurant_id) {
+    try {
+      const q = query(
+        collection(getFirestore(app), 'rooms'),
+        where('restaurant_id', '==', restaurant_id),
+      )
+      const snapshot = await getDocs(q)
+      rooms.value = snapshot.docs.map((doc) => doc.data())
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async function addRoom(newRoom) {
+    try {
+      await setDoc(doc(getFirestore(app), 'rooms', newRoom.id), newRoom)
+      await loadRooms(newRoom.restaurant_id)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async function editRoomName(room_id, newName) {
+    const restaurant_id = rooms.find((room) => room.i === room_id).restaurant_id
+    try {
+      const roomRef = doc(getFirestore(app), 'rooms', room_id)
+      await updateDoc(roomRef, { name: newName })
+      await loadRooms(restaurant_id)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async function deleteRoom(room_id) {
+    const restaurant_id = rooms.find((room) => room.i === room_id).restaurant_id
+    try {
+      await deleteDoc(doc(getFirestore(app), 'rooms', room_id))
+      await loadRooms(restaurant_id)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // Tables
   const tables = ref([
     {
       id: 'dc701711-324a-4021-875d-ffc8adb751e5',
@@ -488,18 +544,55 @@ export const floorStore = defineStore('floorStore', () => {
       occupied: false,
     },
   ])
-  function getRooms() {
-    return rooms.value
+  async function loadTables(room_id) {
+    try {
+      const q = query(collection(getFirestore(app), 'tables'), where('room_id', '==', room_id))
+      const snapshot = await getDocs(q)
+      tables.value = snapshot.docs.map((doc) => doc.data())
+    } catch (error) {
+      console.log(error)
+    }
   }
-  function addRoom(newRoom) {
-    rooms.value.push(newRoom)
+  function getTables() {
+    return tables.value
   }
-  function editRoomName(room_id, newName) {
-    const roomIndex = rooms.value.findIndex((room) => room.id === room_id)
-    rooms.value[roomIndex].name = newName
+  async function addTable(newTable) {
+    try {
+      await setDoc(doc(getFirestore(app), 'tables', newTable.id), newTable)
+      await loadTables(newTable.room_id)
+    } catch (error) {
+      console.log(error)
+    }
   }
-  function deleteRoom(room_id) {
-    rooms.value = rooms.value.filter((room) => room.id !== room_id)
+  async function editTable(updatedTable) {
+    try {
+      const tableRef = doc(getFirestore(app), 'tables', updatedTable.id)
+      await updateDoc(tableRef, updatedTable)
+      await loadTables(updatedTable.room_id)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async function deleteTable(table_id) {
+    const table = tables.value.find((t) => t.id === table_id)
+    if (!table) return
+    try {
+      await deleteDoc(doc(getFirestore(app), 'tables', table_id))
+      await loadTables(table.room_id)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async function updateTableState(table_id) {
+    const table = tables.value.find((t) => t.id === table_id)
+    if (!table) return
+    try {
+      const newState = !table.occupied
+      await updateDoc(doc(getFirestore(app), 'tables', table_id), { occupied: newState })
+      await loadTables(table.room_id)
+    } catch (error) {
+      console.log(error)
+    }
   }
   function getTablesCount(id) {
     return tables.value.filter((table) => table.room_id === id).length
@@ -512,35 +605,11 @@ export const floorStore = defineStore('floorStore', () => {
     )
     return totalCount
   }
-  function getTables() {
-    return tables.value
-  }
   function getTablesPerRoom(room_id) {
     return getTables().filter((table) => table.room_id === room_id)
   }
   function getFreeTablesPerRoom(room_id) {
     return getTablesPerRoom(room_id).filter((table) => table.occupied === false)
-  }
-  function addTable(newTable) {
-    tables.value.push(newTable)
-  }
-  function editTable(p_table) {
-    console.log(p_table)
-    const tableIndex = tables.value.findIndex((table) => table.id === p_table.id)
-    if (tableIndex === -1) return
-    else {
-      tables.value[tableIndex] = { ...p_table }
-    }
-  }
-  function deleteTable(table_id) {
-    tables.value = tables.value.filter((table) => table.id !== table_id)
-  }
-  function updateTableState(id) {
-    const tableIndex = tables.value.findIndex((table) => table.id === id)
-    if (tableIndex === -1) return
-    else {
-      tables.value[tableIndex].occupied = !tables.value[tableIndex].occupied
-    }
   }
   return {
     getRooms,
