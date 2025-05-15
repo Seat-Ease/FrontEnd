@@ -25,16 +25,16 @@ import { mainStore } from '@/stores/mainStore'
 import { ref } from 'vue'
 
 const roomNameInput = ref('')
-function editName(e) {
+async function editName(e) {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
-  floorStore().editRoomName(mainStore().selectedRoom.id, roomNameInput.value)
+  await floorStore().editRoomName(mainStore().selectedRoom.id, roomNameInput.value)
   roomNameInput.value = ''
   mainStore().editRoomFormShowing = false
 }
-function deleteRoom(e) {
+async function deleteRoom(e) {
   e.preventDefault()
-  floorStore().deleteRoom(mainStore().selectedRoom.id)
+  await floorStore().deleteRoom(mainStore().selectedRoom.id)
   if (floorStore().getRooms().length > 0) {
     mainStore().selectedRoom = floorStore().getRooms()[0]
   }

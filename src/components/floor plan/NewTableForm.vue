@@ -59,7 +59,7 @@ const newTableData = ref({
   occupied: false,
 })
 
-function submitForm(e) {
+async function submitForm(e) {
   e.preventDefault()
   if (newTableData.value.name.length === 0) {
     errorMessage.value = 'Nom de table obligatoire'
@@ -68,7 +68,7 @@ function submitForm(e) {
     errorMessage.value = 'Capacité minimale ne peut pas être supérieure à la capacité maximale'
     return
   } else errorMessage.value = ''
-  floorStore().addTable({ ...newTableData.value })
+  await floorStore().addTable({ ...newTableData.value })
   newTableData.value.name = ''
   newTableData.value.minCovers = 1
   newTableData.value.maxCovers = 1

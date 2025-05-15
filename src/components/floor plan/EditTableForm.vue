@@ -51,7 +51,7 @@ const newTableData = ref({
   occupied: mainStore().selectedTable.occupied,
 })
 
-function submitForm(e) {
+async function submitForm(e) {
   e.preventDefault()
   if (newTableData.value.name.length === 0) {
     errorMessage.value = 'Nom de table obligatoire'
@@ -60,7 +60,7 @@ function submitForm(e) {
     errorMessage.value = 'Capacité minimale ne peut pas être supérieure à la capacité maximale'
     return
   } else errorMessage.value = ''
-  floorStore().editTable({ ...newTableData.value })
+  await floorStore().editTable({ ...newTableData.value })
   mainStore().tableEditingActivated = false
   mainStore().editTableFormShowing = false
 }

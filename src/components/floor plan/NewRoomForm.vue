@@ -28,14 +28,15 @@ import { v4 as uuidv4 } from 'uuid'
 import { ref } from 'vue'
 
 const roomNameInput = ref('')
-function submitForm(e) {
+async function submitForm(e) {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
   const newRoom = {
     id: String(uuidv4()),
     name: roomNameInput.value,
+    restaurant_id: '',
   }
-  floorStore().addRoom(newRoom)
+  await floorStore().addRoom({ ...newRoom })
   mainStore().selectedRoom = floorStore().getRooms()[0]
   roomNameInput.value = ''
   mainStore().newRoomFormShowing = false

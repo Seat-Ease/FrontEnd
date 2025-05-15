@@ -18,9 +18,6 @@ export const floorStore = defineStore('floorStore', () => {
     { id: '97a2da6c-f5bf-46d6-a97c-0a964ae9f719', name: 'Salle Principale' },
     { id: '20c97f29-5cc0-466a-9b9e-e395538fa890', name: 'Terrasse' },
   ])
-  function getRooms() {
-    return rooms.value
-  }
   async function loadRooms(restaurant_id) {
     try {
       const q = query(
@@ -32,6 +29,9 @@ export const floorStore = defineStore('floorStore', () => {
     } catch (error) {
       console.log(error)
     }
+  }
+  async function getRooms() {
+    return rooms.value
   }
   async function addRoom(newRoom) {
     try {
