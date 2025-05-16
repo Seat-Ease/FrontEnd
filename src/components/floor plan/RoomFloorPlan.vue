@@ -2,14 +2,18 @@
   <div class="room-floor-plan">
     <div class="container-header">
       <div class="name-stat-container">
-        <p class="room-name">{{ mainStore().selectedRoom.name }}</p>
+        <p class="room-name">
+          {{ mainStore().selectedRoom.name }}
+        </p>
         <div class="room-stats-container">
           <p class="tables-count">
-            {{ floorStore().getTablesCount(mainStore().selectedRoom.id) }} tables
+            {{ floorStore().getTablesCount(mainStore().selectedRoom.id) }}
+            tables
           </p>
           <hr />
           <p class="places-count">
-            {{ floorStore().getPlacesCount(mainStore().selectedRoom.id) }} places au total
+            {{ floorStore().getPlacesCount(mainStore().selectedRoom.id) }}
+            places au total
           </p>
         </div>
         <div class="table-state-legend-container">
@@ -111,12 +115,12 @@ function createTable(stage, newTableData) {
       tableCapacity.y(newTable.y())
     })
 
-    newTable.on('dragend', function () {
+    newTable.on('dragend', async function () {
       const tableIndex = floorStore()
         .getTables()
         .findIndex((table) => String(table.id) === String(newTableData.id))
-      floorStore().getTables()[tableIndex].x = newTable.x()
-      floorStore().getTables()[tableIndex].y = newTable.y()
+      console.log(newTable)
+      await floorStore().editTable({ ...newTable })
     })
 
     newTable.on('click tap', function () {

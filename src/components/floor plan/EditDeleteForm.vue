@@ -13,8 +13,14 @@
         <input v-model="roomNameInput" id="nom-salle" type="text" placeholder="Nom de la salle" />
       </div>
       <div class="btns-container">
-        <button @click="deleteRoom" class="delete-btn">Supprimer</button>
-        <button @click="editName" class="submit-btn">Enregistrer</button>
+        <button @click="deleteRoom" class="delete-btn">
+          Supprimer
+          <span v-if="loadingDelete"><SpinnerComponent /></span>
+        </button>
+        <button @click="editName" class="submit-btn">
+          Enregistrer
+          <span v-if="loadingSave"><SpinnerComponent /></span>
+        </button>
       </div>
     </form>
   </div>
@@ -23,18 +29,26 @@
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
 import { ref } from 'vue'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
-const roomNameInput = ref('')
+const loadingSave = ref(false)
+const loadingDelete = ref(false)
+
+const roomNameInput = ref(mainStore().selectedRoom.name)
 async function editName(e) {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
+  loadingSave.value = true
   await floorStore().editRoomName(mainStore().selectedRoom.id, roomNameInput.value)
+  loadingSave.value = false
   roomNameInput.value = ''
   mainStore().editRoomFormShowing = false
 }
 async function deleteRoom(e) {
   e.preventDefault()
+  loadingDelete.value = true
   await floorStore().deleteRoom(mainStore().selectedRoom.id)
+  loadingDelete.value = false
   if (floorStore().getRooms().length > 0) {
     mainStore().selectedRoom = floorStore().getRooms()[0]
   }
@@ -129,6 +143,9 @@ form {
   cursor: pointer;
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 .submit-btn {
   background-color: rgb(0, 74, 177);

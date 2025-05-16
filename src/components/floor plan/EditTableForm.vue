@@ -26,7 +26,10 @@
         <label for="max-covers">Capacité maximale</label>
         <input v-model="newTableData.maxCovers" id="max-covers" type="number" placeholder="ex: 3" />
       </div>
-      <button @click="submitForm" class="submit-btn">Enregistrer</button>
+      <button @click="submitForm" class="submit-btn">
+        Enregistrer
+        <span v-if="loading"><SpinnerComponent /></span>
+      </button>
     </form>
   </div>
 </template>
@@ -34,8 +37,10 @@
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 import { ref } from 'vue'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const errorMessage = ref('')
+const loading = ref(false)
 
 const newTableData = ref({
   id: mainStore().selectedTable.id,
@@ -60,7 +65,9 @@ async function submitForm(e) {
     errorMessage.value = 'Capacité minimale ne peut pas être supérieure à la capacité maximale'
     return
   } else errorMessage.value = ''
+  loading.value = true
   await floorStore().editTable({ ...newTableData.value })
+  loading.value = false
   mainStore().tableEditingActivated = false
   mainStore().editTableFormShowing = false
 }
@@ -150,6 +157,9 @@ form {
   letter-spacing: 0.05rem;
   background-color: rgb(0, 74, 177);
   align-self: flex-end;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 .error-message {
   font-size: 1.2rem;

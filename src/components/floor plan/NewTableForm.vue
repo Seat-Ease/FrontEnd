@@ -33,7 +33,10 @@
           <option value="Circle">Cercle</option>
         </select>
       </div>
-      <button @click="submitForm" class="submit-btn">Enregistrer</button>
+      <button @click="submitForm" class="submit-btn">
+        Enregistrer
+        <span v-if="loading"><SpinnerComponent /></span>
+      </button>
     </form>
   </div>
 </template>
@@ -42,8 +45,10 @@ import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const errorMessage = ref('')
+const loading = ref(false)
 
 const newTableData = ref({
   id: String(uuidv4()),
@@ -68,7 +73,9 @@ async function submitForm(e) {
     errorMessage.value = 'Capacité minimale ne peut pas être supérieure à la capacité maximale'
     return
   } else errorMessage.value = ''
+  loading.value = true
   await floorStore().addTable({ ...newTableData.value })
+  loading.value = false
   newTableData.value.name = ''
   newTableData.value.minCovers = 1
   newTableData.value.maxCovers = 1
@@ -161,6 +168,9 @@ form {
   letter-spacing: 0.05rem;
   background-color: rgb(0, 74, 177);
   align-self: flex-end;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 .error-message {
   font-size: 1.2rem;

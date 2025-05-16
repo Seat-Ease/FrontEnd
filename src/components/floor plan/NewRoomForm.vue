@@ -17,7 +17,10 @@
           placeholder="ex: Salle principale, Terrasse"
         />
       </div>
-      <button @click="submitForm" class="submit-btn">Créer la salle</button>
+      <button @click="submitForm" class="submit-btn">
+        Créer la salle
+        <span v-if="loading"><SpinnerComponent /></span>
+      </button>
     </form>
   </div>
 </template>
@@ -26,8 +29,11 @@ import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
 import { v4 as uuidv4 } from 'uuid'
 import { ref } from 'vue'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const roomNameInput = ref('')
+const loading = ref(false)
+
 async function submitForm(e) {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
@@ -36,7 +42,9 @@ async function submitForm(e) {
     name: roomNameInput.value,
     restaurant_id: '',
   }
+  loading.value = true
   await floorStore().addRoom({ ...newRoom })
+  loading.value = false
   mainStore().selectedRoom = floorStore().getRooms()[0]
   roomNameInput.value = ''
   mainStore().newRoomFormShowing = false
@@ -126,5 +134,8 @@ form {
   cursor: pointer;
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 </style>
