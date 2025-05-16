@@ -241,7 +241,7 @@ const editRestaurantDataActivated = ref(false)
 const editScheduleDataActivated = ref(false)
 const editReservationSettingActivated = ref(false)
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   restaurantData.value = JSON.parse(JSON.stringify(settingsStore().getGeneralInfo()))
   scheduleData.value = JSON.parse(JSON.stringify(settingsStore().getScheduleData()))
   reservationSettings.value = JSON.parse(JSON.stringify(settingsStore().getAvailabiltiesSettings()))

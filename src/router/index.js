@@ -9,6 +9,9 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import Home from '@/pages/Home.vue'
 import Signup from '@/pages/Signup.vue'
 import Login from '@/pages/Login.vue'
+import { app } from '@/firebase'
+import { getAuth } from 'firebase/auth'
+import { settingsStore } from '@/stores/settingsStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +37,7 @@ const router = createRouter({
       path: '/app',
       name: 'app',
       component: AppLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: '/app',
@@ -68,6 +72,20 @@ const router = createRouter({
       ],
     },
   ],
+})
+
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.requiresAuth) {
+    if (!getAuth(app).currentUser) {
+      next('/login')
+    } else {
+      const data = await settingsStore().loadRestaurantData(getAuth(app).currentUser.uid)
+      settingsStore().setRestaurantData(data)
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router
