@@ -14,7 +14,7 @@
           Votre compte a été créé avec succès. <br />
           Cliquez le boutton ci-bas pour accèder à votre compte.
         </p>
-        <button class="redirect-account">Accéder au compte</button>
+        <RouterLink to="/app/settings" class="redirect-account">Accéder au compte</RouterLink>
       </div>
     </div>
   </div>

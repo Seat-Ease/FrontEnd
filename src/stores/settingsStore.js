@@ -1,86 +1,102 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { app } from '@/firebase'
 
 export const settingsStore = defineStore('settingsStore', () => {
+  async function loadRestaurantData(account_uid) {
+    try {
+      const restaurantRef = doc(getFirestore(app), 'restaurants', account_uid)
+      const snapshot = await getDoc(restaurantRef)
+
+      if (!snapshot.exists()) {
+        console.warn('Aucun restaurant trouvé pour cet utilisateur.')
+        return null
+      }
+
+      return snapshot.data()
+    } catch (error) {
+      console.error('Erreur lors du chargement du restaurant :', error)
+      return null
+    }
+  }
+
   const restaurantData = ref({
-    name: 'Demo Restaurant',
-    telephone: '0896785432',
-    address: '1, Ave Demo',
-    city: 'Kinshasa',
-    postal_code: 'kin111',
-    website_link: 'www.demo-restaurant.com',
+    account_uid: '',
+    email: '',
+    general: {
+      name: '',
+      telephone: '',
+      address: '',
+      city: '',
+      postal_code: '',
+      website_link: '',
+    },
+    schedule: {
+      monday: false,
+      tuesday: true,
+      wednesday: true,
+      thursday: true,
+      friday: true,
+      saturday: true,
+      sunday: false,
+      opening_time: '11:00',
+      closing_time: '23:00',
+    },
+    availabilities: { intervalle: '', available_tables: '' },
   })
 
-  function getRestaurantData() {
-    return restaurantData.value
+  function setRestaurantData(p_data) {
+    restaurantData.value = { ...p_data }
   }
 
-  function editRestaurantData(p_data) {
-    restaurantData.value = p_data
+  function getGeneralInfo() {
+    return restaurantData.value.general
   }
 
-  const scheduleData = ref({
-    sunday: {
-      opened: false,
-      start: '',
-      close: '',
-    },
-    monday: {
-      opened: true,
-      start: '11:00',
-      close: '23:00',
-    },
-    tuesday: {
-      opened: true,
-      start: '11:00',
-      close: '23:00',
-    },
-    wednesday: {
-      opened: true,
-      start: '11:00',
-      close: '23:00',
-    },
-    thursday: {
-      opened: true,
-      start: '11:00',
-      close: '23:00',
-    },
-    friday: {
-      opened: true,
-      start: '11:00',
-      close: '23:00',
-    },
-    saturday: {
-      opened: true,
-      start: '11:00',
-      close: '23:00',
-    },
-  })
+  async function editGeneralInfo(p_data) {
+    try {
+      const restaurantRef = doc(getFirestore(app), 'restaurants', restaurantData.value.account_uid)
+      await updateDoc(restaurantRef, { general: { ...p_data } })
+      await loadRestaurantData(restaurantData.value.account_uid)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   function getScheduleData() {
-    return scheduleData.value
+    return restaurantData.value.schedule
   }
 
-  function editScheduleData(p_data) {
-    scheduleData.value = p_data
+  async function editScheduleData(p_data) {
+    try {
+      const restaurantRef = doc(getFirestore(app), 'restaurants', restaurantData.value.account_uid)
+      await updateDoc(restaurantRef, { schedule: { ...p_data } })
+      await loadRestaurantData(restaurantData.value.account_uid)
+    } catch (error) {
+      console.log(error)
+    }
   }
-
-  const availabilitiesSettings = ref({
-    intervalle: '15',
-    est_srvice_duration: '90',
-  })
 
   function getAvailabiltiesSettings() {
-    return availabilitiesSettings.value
+    return restaurantData.value.availabilities
   }
 
-  function editAvailabiltiesSettings(p_data) {
-    availabilitiesSettings.value = p_data
+  async function editAvailabiltiesSettings(p_data) {
+    try {
+      const restaurantRef = doc(getFirestore(app), 'restaurants', restaurantData.value.account_uid)
+      await updateDoc(restaurantRef, { availabilities: { ...p_data } })
+      await loadRestaurantData(restaurantData.value.account_uid)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return {
-    getRestaurantData,
-    editRestaurantData,
+    loadRestaurantData,
+    setRestaurantData,
+    getGeneralInfo,
+    editGeneralInfo,
     getScheduleData,
     editScheduleData,
     getAvailabiltiesSettings,

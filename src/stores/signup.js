@@ -74,9 +74,11 @@ export const signup = defineStore('signup', () => {
 
   async function createRestaurantProfile(account_uid) {
     const restaurantData = {
+      account_uid,
       email: credentials.value.email,
       general: { ...general_info.value },
       schedule: { ...scheduleData.value },
+      availabilities: { intervalle: '30', available_tables: '3' },
     }
     try {
       await setDoc(doc(getFirestore(app), 'restaurants', account_uid), restaurantData)
