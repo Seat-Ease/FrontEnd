@@ -1,13 +1,16 @@
 <template>
   <div class="top-bar">
     <h3 class="restaurant-name">{{ settingsStore().getGeneralInfo().name }}</h3>
-    <div class="dateContainer">
-      <font-awesome-icon
-        @click="main_store.toggleCalendar"
-        class="calendar"
-        :icon="['fas', 'calendar']"
-      />
-      <p class="date">{{ formattedDate }}</p>
+    <div class="utils-container">
+      <div class="dateContainer">
+        <font-awesome-icon
+          @click="main_store.toggleCalendar"
+          class="calendar"
+          :icon="['fas', 'calendar']"
+        />
+        <p class="date">{{ formattedDate }}</p>
+      </div>
+      <button class="signout-btn">Fermer la session</button>
     </div>
   </div>
 </template>
@@ -47,5 +50,20 @@ const formattedDate = computed(() => {
   font-size: 1.6rem;
   color: #fff;
   font-weight: 500;
+}
+.utils-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.signout-btn {
+  border: 0.1rem solid #0d9488;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-size: 1.4rem;
+  background-color: #0f172a;
+  color: #0d9488;
+  font-weight: 600;
+  cursor: pointer;
 }
 </style>
