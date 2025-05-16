@@ -46,6 +46,10 @@ export const settingsStore = defineStore('settingsStore', () => {
     availabilities: { intervalle: '', available_tables: '' },
   })
 
+  function getAccountUID() {
+    return restaurantData.value.account_uid
+  }
+
   function setRestaurantData(p_data) {
     restaurantData.value = { ...p_data }
   }
@@ -94,6 +98,7 @@ export const settingsStore = defineStore('settingsStore', () => {
 
   return {
     loadRestaurantData,
+    getAccountUID,
     setRestaurantData,
     getGeneralInfo,
     editGeneralInfo,
