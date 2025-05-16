@@ -26,7 +26,7 @@ export const settingsStore = defineStore('settingsStore', () => {
     email: '',
     general: {
       name: '',
-      telephone: '',
+      phone: '',
       address: '',
       city: '',
       postal_code: '',

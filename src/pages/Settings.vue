@@ -51,7 +51,7 @@
               id="telephone"
               type="number"
             />
-            <p v-else class="text-box">{{ settingsStore().getGeneralInfo().telephone }}</p>
+            <p v-else class="text-box">{{ settingsStore().getGeneralInfo().phone }}</p>
           </div>
           <div class="info-container">
             <p class="text">Site Web</p>
