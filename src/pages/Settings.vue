@@ -14,9 +14,11 @@
         </div>
         <button
           @click="
-            () => {
+            async () => {
               if (editRestaurantDataActivated) {
-                settingsStore().editRestaurantData(restaurantData)
+                loadingGeneral = true
+                await settingsStore().editGeneralInfo({ ...restaurantData })
+                loadingGeneral = false
                 editRestaurantDataActivated = false
                 return
               }
@@ -26,6 +28,7 @@
           class="edit-btn"
         >
           {{ editRestaurantDataActivated ? 'Enregistrer' : 'Modifier' }}
+          <span v-if="loadingGeneral"><SpinnerComponent /></span>
         </button>
       </div>
       <div class="grid-container">
@@ -38,7 +41,7 @@
               id="name"
               type="text"
             />
-            <p v-else class="text-box">{{ settingsStore().getRestaurantData().name }}</p>
+            <p v-else class="text-box">{{ settingsStore().getGeneralInfo().name }}</p>
           </div>
           <div class="info-container">
             <p class="text">Téléphone</p>
@@ -48,7 +51,7 @@
               id="telephone"
               type="number"
             />
-            <p v-else class="text-box">{{ settingsStore().getRestaurantData().telephone }}</p>
+            <p v-else class="text-box">{{ settingsStore().getGeneralInfo().telephone }}</p>
           </div>
           <div class="info-container">
             <p class="text">Site Web</p>
@@ -58,7 +61,7 @@
               id="website_link"
               type="text"
             />
-            <p v-else class="text-box">{{ settingsStore().getRestaurantData().website_link }}</p>
+            <p v-else class="text-box">{{ settingsStore().getGeneralInfo().website_link }}</p>
           </div>
         </div>
         <div class="infos-container">
@@ -70,7 +73,7 @@
               id="address"
               type="text"
             />
-            <p v-else class="text-box">{{ settingsStore().getRestaurantData().address }}</p>
+            <p v-else class="text-box">{{ settingsStore().getGeneralInfo().address }}</p>
           </div>
           <div class="info-container">
             <p class="text">Ville</p>
@@ -80,7 +83,7 @@
               id="city"
               type="text"
             />
-            <p v-else class="text-box">{{ settingsStore().getRestaurantData().city }}</p>
+            <p v-else class="text-box">{{ settingsStore().getGeneralInfo().city }}</p>
           </div>
           <div class="info-container">
             <p class="text">Code postal</p>
@@ -90,7 +93,7 @@
               id="postal_code"
               type="text"
             />
-            <p v-else class="text-box">{{ settingsStore().getRestaurantData().postal_code }}</p>
+            <p v-else class="text-box">{{ settingsStore().getGeneralInfo().postal_code }}</p>
           </div>
         </div>
       </div>
@@ -99,63 +102,73 @@
       <div class="box-header-container">
         <div class="title-description-container">
           <h3 class="box-title">Horaires</h3>
-          <p class="box-description">Définissez les heures d'ouverture de votre restaurant</p>
+          <p class="box-description">
+            Définissez les jours et heures d'ouverture de votre restaurant
+          </p>
         </div>
-        <button @click="editScheduleDataActivated = !editScheduleDataActivated" class="edit-btn">
+        <button
+          @click="
+            async () => {
+              if (editScheduleDataActivated) {
+                loadingSchedule = true
+                await settingsStore().editScheduleData({ ...scheduleData })
+                loadingSchedule = false
+                editScheduleDataActivated = false
+                return
+              }
+              editScheduleDataActivated = true
+            }
+          "
+          class="edit-btn"
+        >
           {{ editScheduleDataActivated ? 'Enregistrer' : 'Modifier' }}
+          <span v-if="loadingSchedule"><SpinnerComponent /></span>
         </button>
       </div>
-      <div class="infos-container">
-        <div class="grid-container">
-          <p class="text">Lundi</p>
-          <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().monday.start }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().monday.close }}</p>
+      <form>
+        <p>Cochez les jours que vous êtes ouvert</p>
+        <div class="inputs-container">
+          <div class="checkbox-container">
+            <input v-model="scheduleData.monday" id="monday-check" type="checkbox" />
+            <label for="monday-check">Lundi</label>
+          </div>
+          <div class="checkbox-container">
+            <input v-model="scheduleData.tuesday" id="tuesday-check" type="checkbox" />
+            <label for="tuesday-check">Mardi</label>
+          </div>
+          <div class="checkbox-container">
+            <input v-model="scheduleData.wednesday" id="wednesday-check" type="checkbox" />
+            <label for="wednesday-check">Mercredi</label>
+          </div>
+          <div class="checkbox-container">
+            <input v-model="scheduleData.thursday" id="thursday-check" type="checkbox" />
+            <label for="thursday-check">Jeudi</label>
+          </div>
+          <div class="checkbox-container">
+            <input v-model="scheduleData.friday" id="friday-check" type="checkbox" />
+            <label for="friday-check">Vendredi</label>
+          </div>
+          <div class="checkbox-container">
+            <input v-model="scheduleData.saturday" id="saturday-check" type="checkbox" />
+            <label for="saturday-check">Samedi</label>
+          </div>
+          <div class="checkbox-container">
+            <input v-model="scheduleData.sunday" id="sunday-check" type="checkbox" />
+            <label for="sunday-check">Dimanche</label>
           </div>
         </div>
-        <div class="grid-container">
-          <p class="text">Mardi</p>
-          <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().tuesday.start }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().tuesday.close }}</p>
+        <p>Entrez les heures d'ouverture</p>
+        <div class="openin-closing-container">
+          <div class="input-container">
+            <label for="opening">Heure d'ouverture</label>
+            <input v-model="scheduleData.opening_time" id="opening" type="time" />
+          </div>
+          <div class="input-container">
+            <label for="closing">Heure de fermeture</label>
+            <input v-model="scheduleData.closing_time" id="closing" type="time" />
           </div>
         </div>
-        <div class="grid-container">
-          <p class="text">Mercredi</p>
-          <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().wednesday.start }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().wednesday.close }}</p>
-          </div>
-        </div>
-        <div class="grid-container">
-          <p class="text">Jeudi</p>
-          <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().thursday.start }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().thursday.close }}</p>
-          </div>
-        </div>
-        <div class="grid-container">
-          <p class="text">Vcloseredi</p>
-          <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().friday.start }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().friday.close }}</p>
-          </div>
-        </div>
-        <div class="grid-container">
-          <p class="text">Samedi</p>
-          <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().saturday.start }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().saturday.close }}</p>
-          </div>
-        </div>
-        <div class="grid-container">
-          <p class="text">Dimanche</p>
-          <div class="hours-container">
-            <p class="text-box">{{ settingsStore().getScheduleData().sunday.start }}</p>
-            <p class="text-box">{{ settingsStore().getScheduleData().sunday.close }}</p>
-          </div>
-        </div>
-      </div>
+      </form>
     </div>
     <div class="reservation-settings-box">
       <div class="box-header-container">
@@ -167,9 +180,11 @@
         </div>
         <button
           @click="
-            () => {
+            async () => {
               if (editReservationSettingActivated) {
-                settingsStore().editAvailabiltiesSettings(reservationSettings)
+                loadingReservation = true
+                await settingsStore().editAvailabiltiesSettings({ ...reservationSettings })
+                loadingReservation = false
                 editReservationSettingActivated = false
                 return
               }
@@ -179,6 +194,7 @@
           class="edit-btn"
         >
           {{ editReservationSettingActivated ? 'Enregistrer' : 'Modifier' }}
+          <span v-if="loadingReservation"><SpinnerComponent /></span>
         </button>
       </div>
       <div class="grid-container">
@@ -193,15 +209,15 @@
           <p v-else class="text-box">{{ settingsStore().getAvailabiltiesSettings().intervalle }}</p>
         </div>
         <div class="info-container">
-          <p class="text">Durée de service estimée par client (minutes)</p>
+          <p class="text">Nombre de tables disponibles pour chaque période de réservation</p>
           <input
             v-if="editReservationSettingActivated"
-            v-model="reservationSettings.est_srvice_duration"
+            v-model="reservationSettings.available_tables"
             id="est_srvice_duration"
             type="number"
           />
           <p v-else class="text-box">
-            {{ settingsStore().getAvailabiltiesSettings().est_srvice_duration }}
+            {{ settingsStore().getAvailabiltiesSettings().available_tables }}
           </p>
         </div>
       </div>
@@ -211,17 +227,24 @@
 <script setup>
 import { settingsStore } from '@/stores/settingsStore'
 import { ref, onBeforeMount } from 'vue'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const restaurantData = ref(null)
+const scheduleData = ref(null)
 const reservationSettings = ref(null)
+
+const loadingGeneral = ref(false)
+const loadingSchedule = ref(false)
+const loadingReservation = ref(false)
 
 const editRestaurantDataActivated = ref(false)
 const editScheduleDataActivated = ref(false)
 const editReservationSettingActivated = ref(false)
 
 onBeforeMount(() => {
-  restaurantData.value = { ...settingsStore().getRestaurantData() }
-  reservationSettings.value = { ...settingsStore().getAvailabiltiesSettings() }
+  restaurantData.value = JSON.parse(JSON.stringify(settingsStore().getGeneralInfo()))
+  scheduleData.value = JSON.parse(JSON.stringify(settingsStore().getScheduleData()))
+  reservationSettings.value = JSON.parse(JSON.stringify(settingsStore().getAvailabiltiesSettings()))
 })
 </script>
 <style scoped>
@@ -259,6 +282,9 @@ onBeforeMount(() => {
   cursor: pointer;
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 .box-title {
   font-size: 1.6rem;
@@ -314,5 +340,40 @@ onBeforeMount(() => {
 }
 .info-container > input::placeholder {
   color: rgb(161, 161, 161) 7;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  font-size: 1.2rem;
+  color: #f1f5f9;
+}
+.inputs-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+.checkbox-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 1.2rem;
+  color: #f1f5f9;
+}
+input[type='checkbox'] {
+  accent-color: #0d9488;
+}
+.input-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.input-container input {
+  width: 50%;
+}
+.openin-closing-container {
+  display: flex;
+  align-content: center;
+  gap: 3rem;
 }
 </style>

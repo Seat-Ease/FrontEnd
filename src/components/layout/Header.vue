@@ -1,6 +1,6 @@
 <template>
   <div class="top-bar">
-    <h3 class="restaurant-name">{{ settingsStore().getRestaurantData().name }}</h3>
+    <h3 class="restaurant-name">{{ settingsStore().getGeneralInfo().name }}</h3>
     <div class="dateContainer">
       <font-awesome-icon
         @click="main_store.toggleCalendar"
