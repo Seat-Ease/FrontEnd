@@ -1,6 +1,7 @@
 <template>
   <div class="login-container">
     <p class="title">Connectez-vous au compte de votre restaurant</p>
+    <p v-if="error" class="error">{{ error }}</p>
     <div class="input-container">
       <input v-model="credentials.email" id="restaurant-email" type="text" placeholder="Courriel" />
     </div>
@@ -17,16 +18,62 @@
       <span>Nouveau ? Enregistrez-vous </span>
       <RouterLink to="/signup">Ici</RouterLink>
     </p>
-    <button @click="" class="submit-btn">Connecter</button>
+    <button @click="submitForm" class="submit-btn">
+      Connecter
+      <span v-if="loading"><SpinnerComponent /></span>
+    </button>
   </div>
 </template>
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { app } from '@/firebase'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const credentials = ref({
   email: '',
   password: '',
 })
+
+const error = ref('')
+const loading = ref(false)
+
+const router = useRouter()
+
+async function submitForm(e) {
+  e.preventDefault()
+  loading.value = true
+  if (!credentials.value.email || !credentials.value.password) {
+    error.value = 'Tous les champs sont obligatoires'
+    loading.value = false
+    return
+  }
+  try {
+    const response = await signInWithEmailAndPassword(
+      getAuth(app),
+      credentials.value.email,
+      credentials.value.password,
+    )
+    if (response.user) {
+      router.push('/app/')
+      loading.value = false
+      return
+    }
+  } catch (e) {
+    if (e.message.includes('email')) {
+      error.value = 'Courriel invalid'
+      loading.value = false
+      return
+    }
+    if (e.message.includes('credential')) {
+      error.value = 'Mot de passe invalid'
+      credentials.value.password = ''
+      loading.value = false
+      return
+    }
+  }
+}
 </script>
 <style scoped>
 .login-container {
@@ -102,5 +149,13 @@ const credentials = ref({
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
   background-color: rgb(0, 74, 177);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.error {
+  font-size: 1.2rem;
+  color: red;
 }
 </style>
