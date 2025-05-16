@@ -40,8 +40,8 @@ export const settingsStore = defineStore('settingsStore', () => {
       friday: true,
       saturday: true,
       sunday: false,
-      opening_time: '11:00',
-      closing_time: '23:00',
+      opening_time: '',
+      closing_time: '',
     },
     availabilities: { intervalle: '', available_tables: '' },
   })
@@ -96,6 +96,33 @@ export const settingsStore = defineStore('settingsStore', () => {
     }
   }
 
+  function clearData() {
+    restaurantData.value = {
+      account_uid: '',
+      email: '',
+      general: {
+        name: '',
+        phone: '',
+        address: '',
+        city: '',
+        postal_code: '',
+        website_link: '',
+      },
+      schedule: {
+        monday: false,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: true,
+        sunday: false,
+        opening_time: '11:00',
+        closing_time: '23:00',
+      },
+      availabilities: { intervalle: '', available_tables: '' },
+    }
+  }
+
   return {
     loadRestaurantData,
     getAccountUID,
@@ -106,5 +133,6 @@ export const settingsStore = defineStore('settingsStore', () => {
     editScheduleData,
     getAvailabiltiesSettings,
     editAvailabiltiesSettings,
+    clearData,
   }
 })

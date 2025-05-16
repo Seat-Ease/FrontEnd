@@ -4,13 +4,13 @@
     <div class="utils-container">
       <div class="dateContainer">
         <font-awesome-icon
-          @click="main_store.toggleCalendar"
+          @click="mainStore().toggleCalendar"
           class="calendar"
           :icon="['fas', 'calendar']"
         />
         <p class="date">{{ formattedDate }}</p>
       </div>
-      <button class="signout-btn">Fermer la session</button>
+      <button @click="handleSignout" class="signout-btn">Fermer la session</button>
     </div>
   </div>
 </template>
@@ -18,16 +18,29 @@
 import { mainStore } from '@/stores/mainStore'
 import { settingsStore } from '@/stores/settingsStore'
 import { computed } from 'vue'
-
-const main_store = mainStore()
+import { useRouter } from 'vue-router'
+import { app } from '@/firebase'
+import { getAuth, signOut } from 'firebase/auth'
 
 const formattedDate = computed(() => {
-  return main_store.appDate.toLocaleDateString('fr-FR', {
+  return mainStore().appDate.toLocaleDateString('fr-FR', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
   })
 })
+
+const router = useRouter()
+
+async function handleSignout() {
+  try {
+    await signOut(getAuth(app))
+    settingsStore().clearData()
+    router.push('/login')
+  } catch (error) {
+    console.log(error.message)
+  }
+}
 </script>
 <style scoped>
 .top-bar {

@@ -53,6 +53,7 @@ import ScheduleInfo from '@/components/signup/ScheduleInfo.vue'
 import EmailPasswordInfo from '@/components/signup/EmailPasswordInfo.vue'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import { signup } from '@/stores/signup'
+import { settingsStore } from '@/stores/settingsStore'
 import { ref, computed } from 'vue'
 
 const loading = ref(false)
@@ -86,6 +87,9 @@ async function startSignUpProcess(account_uid) {
     error.value = true
     return
   }
+
+  const data = await settingsStore().loadRestaurantData(account_uid)
+  settingsStore().setRestaurantData(data)
 
   error.value = false
   loading.value = false

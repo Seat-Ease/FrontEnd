@@ -9,8 +9,6 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import Home from '@/pages/Home.vue'
 import Signup from '@/pages/Signup.vue'
 import Login from '@/pages/Login.vue'
-import { app } from '@/firebase'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { settingsStore } from '@/stores/settingsStore'
 
 const router = createRouter({
@@ -76,13 +74,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth) {
-    onAuthStateChanged(getAuth(app), async (userConnected) => {
-      if (userConnected) {
-        const data = await settingsStore().loadRestaurantData(userConnected.uid)
-        settingsStore().setRestaurantData(data)
-      }
-    })
-    if (settingsStore().getAccountUID) {
+    if (settingsStore().getAccountUID()) {
       next()
     } else {
       next('/login')

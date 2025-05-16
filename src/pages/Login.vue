@@ -28,6 +28,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { app } from '@/firebase'
+import { settingsStore } from '@/stores/settingsStore'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
@@ -55,8 +56,11 @@ async function submitForm(e) {
       credentials.value.email,
       credentials.value.password,
     )
+    console.log(response.user)
     if (response.user) {
-      router.push('/app/')
+      const data = await settingsStore().loadRestaurantData(response.user.uid)
+      settingsStore().setRestaurantData(data)
+      router.push('/app')
       loading.value = false
       return
     }
