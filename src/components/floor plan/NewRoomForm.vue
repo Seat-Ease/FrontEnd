@@ -25,6 +25,7 @@
   </div>
 </template>
 <script setup>
+import { settingsStore } from '@/stores/settingsStore'
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
 import { v4 as uuidv4 } from 'uuid'
@@ -40,7 +41,7 @@ async function submitForm(e) {
   const newRoom = {
     id: String(uuidv4()),
     name: roomNameInput.value,
-    restaurant_id: '',
+    restaurant_id: settingsStore().getAccountUID(),
   }
   loading.value = true
   await floorStore().addRoom({ ...newRoom })
