@@ -56,7 +56,6 @@ async function submitForm(e) {
       credentials.value.email,
       credentials.value.password,
     )
-    console.log(response.user)
     if (response.user) {
       const data = await settingsStore().loadRestaurantData(response.user.uid)
       settingsStore().setRestaurantData(data)

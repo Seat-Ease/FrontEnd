@@ -3,16 +3,16 @@
     <div class="container-header">
       <div class="name-stat-container">
         <p class="room-name">
-          {{ mainStore().selectedRoom.name }}
+          {{ mainStore().selectedRoom?.name }}
         </p>
         <div class="room-stats-container">
           <p class="tables-count">
-            {{ floorStore().getTablesCount(mainStore().selectedRoom.id) }}
+            {{ floorStore().getTablesCount(mainStore().selectedRoom?.id) }}
             tables
           </p>
           <hr />
           <p class="places-count">
-            {{ floorStore().getPlacesCount(mainStore().selectedRoom.id) }}
+            {{ floorStore().getPlacesCount(mainStore().selectedRoom?.id) }}
             places au total
           </p>
         </div>
@@ -47,7 +47,17 @@
         </button>
       </div>
     </div>
-    <div ref="canvasContainer" class="canvas-container">
+    <div v-if="noTables" class="no-table-container">
+      <p class="first-line">Aucune table créée</p>
+      <p class="second-line">
+        Commencez par créer des tables pour la salle, <br />
+        comme "Table VIP", "Table centrale".
+      </p>
+      <button @click="mainStore().newTableFormShowing = true" class="add-table-btn">
+        Créer votre première table
+      </button>
+    </div>
+    <div v-else ref="canvasContainer" class="canvas-container">
       <v-stage ref="stageRef" :config="stageConfig"></v-stage>
     </div>
   </div>
@@ -60,6 +70,7 @@ import { floorStore } from '@/stores/floorStore'
 
 const stageRef = ref(null)
 const canvasContainer = ref(null)
+const noTables = ref(true)
 
 const stageConfig = reactive({
   width: 800,
@@ -67,7 +78,7 @@ const stageConfig = reactive({
   draggable: false,
 })
 function createTable(stage, newTableData) {
-  const targetRoom = stage.find((room) => room.attrs.id === newTableData.room_id)
+  const targetRoom = stage?.find((room) => room.attrs.id === newTableData.room_id)
   if (!targetRoom) return
 
   if (newTableData.shape === 'Circle') {
@@ -197,35 +208,35 @@ function createTable(stage, newTableData) {
 }
 function toggleRoomVisibility(selectedRoom) {
   nextTick(() => {
-    const stage = stageRef.value.getNode().children
-    stage.forEach((room) => {
-      if (room.attrs.id !== selectedRoom.id) {
+    const stage = stageRef.value?.getNode().children
+    stage?.forEach((room) => {
+      if (room.attrs.id !== selectedRoom?.id) {
         room.visible(false)
       } else {
         room.visible(true)
       }
     })
-    stageRef.value.getNode().batchDraw()
+    stageRef.value?.getNode().batchDraw()
   })
 }
 function destroyTable() {
-  const stage = stageRef.value.getNode()
+  const stage = stageRef.value?.getNode()
   if (!stage || !mainStore().selectedTable?.id || !mainStore().selectedTable?.room_id) return
 
-  const layer = stage.children.find((room) => room.attrs.id === mainStore().selectedRoom.id)
+  const layer = stage?.children.find((room) => room.attrs.id === mainStore().selectedRoom.id)
   if (!layer) return
 
-  const shape = layer.findOne(`#${mainStore().selectedTable.id}`)
-  if (shape) shape.destroy()
+  const shape = layer?.findOne(`#${mainStore().selectedTable.id}`)
+  if (shape) shape?.destroy()
 
-  const nameText = layer.findOne(`#${mainStore().selectedTable.id}-label-name`)
-  if (nameText) nameText.destroy()
+  const nameText = layer?.findOne(`#${mainStore().selectedTable.id}-label-name`)
+  if (nameText) nameText?.destroy()
 
-  const capacityText = layer.findOne(`#${mainStore().selectedTable.id}-label-capacity`)
-  if (capacityText) capacityText.destroy()
+  const capacityText = layer?.findOne(`#${mainStore().selectedTable.id}-label-capacity`)
+  if (capacityText) capacityText?.destroy()
 
   // 🎨 Redraw layer
-  layer.batchDraw()
+  layer?.batchDraw()
   floorStore().deleteTable(mainStore().selectedTable.id)
   mainStore().selectedTable = null
   mainStore().tableEditingActivated = false
@@ -234,12 +245,16 @@ function handleFreeingTable() {
   floorStore().updateTableState(mainStore().selectedTable.id)
   mainStore().tableEditingActivated = false
 }
-onMounted(() => {
+onMounted(async () => {
+  await floorStore().loadTables(mainStore().selectedRoom?.id)
   if (canvasContainer.value) {
     stageConfig.width = canvasContainer.value.clientWidth
     stageConfig.height = canvasContainer.value.clientHeight
   }
-  const stage = stageRef.value.getNode()
+  if (floorStore().getTables()?.length !== 0) {
+    noTables.value = false
+  }
+  const stage = stageRef.value?.getNode()
   if (stage && floorStore().getRooms() !== null) {
     // Create layers
     floorStore()
@@ -275,11 +290,10 @@ watch(
   (newLength, oldLength) => {
     if (newLength > oldLength) {
       const latestTable = floorStore().getTables()[newLength - 1]
-      const stage = stageRef.value.getNode()
-      createTable(stage.children, latestTable)
-
+      const stage = stageRef.value?.getNode()
+      createTable(stage?.children, latestTable)
       // Redraw the canvas
-      stage.batchDraw()
+      stage?.batchDraw()
     }
   },
   { deep: true, immediate: true },
@@ -300,21 +314,21 @@ watch(
     })
 
     if (changedTable) {
-      const stage = stageRef.value.getNode()
-      const layer = stage.children.find((room) => room.attrs.id === changedTable.room_id)
+      const stage = stageRef.value?.getNode()
+      const layer = stage?.children.find((room) => room.attrs.id === changedTable.room_id)
       if (!layer) return
 
-      const oldShape = layer.findOne(`#${changedTable.id}`)
-      if (oldShape) oldShape.destroy()
+      const oldShape = layer?.findOne(`#${changedTable.id}`)
+      if (oldShape) oldShape?.destroy()
 
-      const oldNameLabel = layer.findOne(`#${changedTable.id}-label-name`)
-      if (oldNameLabel) oldNameLabel.destroy()
+      const oldNameLabel = layer?.findOne(`#${changedTable.id}-label-name`)
+      if (oldNameLabel) oldNameLabel?.destroy()
 
-      const oldCapacityLabel = layer.findOne(`#${changedTable.id}-label-capacity`)
-      if (oldCapacityLabel) oldCapacityLabel.destroy()
+      const oldCapacityLabel = layer?.findOne(`#${changedTable.id}-label-capacity`)
+      if (oldCapacityLabel) oldCapacityLabel?.destroy()
 
-      createTable(stage.children, changedTable)
-      stage.batchDraw()
+      createTable(stage?.children, changedTable)
+      stage?.batchDraw()
     }
   },
   { deep: true },
@@ -358,7 +372,6 @@ watch(
   display: flex;
   gap: 0.75rem;
 }
-
 .btn {
   border: none;
   color: #fff;
@@ -407,5 +420,36 @@ watch(
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+.no-table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  min-height: 30rem;
+  padding: 2rem 0;
+}
+.first-line {
+  font-size: 2.5rem;
+  color: #fff;
+}
+.second-line {
+  color: #f1f5f9;
+  font-size: 1.2rem;
+}
+.add-table-btn {
+  border: none;
+  background-color: rgb(0, 74, 177);
+  color: #fff;
+  font-size: 1.6rem;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  letter-spacing: 0.05rem;
 }
 </style>

@@ -14,8 +14,8 @@
         <p
           @click="changeSelectedRoom"
           class="room"
-          :class="{ selectedRoom: mainStore().selectedRoom.id === String(room.id) }"
           v-for="room in floorStore().getRooms()"
+          :class="{ selectedRoom: mainStore().selectedRoom?.id === String(room.id) }"
           :ref="room.id"
           :id="room.id"
         >
@@ -32,7 +32,7 @@
       </div>
     </div>
     <div class="room-plan-container">
-      <div v-if="floorStore().getRooms().length === 0">
+      <div v-if="roomsListLength === 0">
         <NoRoomComponent />
       </div>
       <div v-else>
@@ -42,7 +42,8 @@
   </div>
 </template>
 <script setup>
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, watch, ref } from 'vue'
+import { settingsStore } from '@/stores/settingsStore'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 import NoRoomComponent from '@/components/floor plan/NoRoomComponent.vue'
@@ -54,11 +55,25 @@ function changeSelectedRoom(e) {
     .find((room) => room.id === e.target.id)
 }
 
-onBeforeMount(() => {
+const roomsListLength = ref(0)
+
+onBeforeMount(async () => {
+  await floorStore().loadRooms(settingsStore().getAccountUID())
   if (floorStore().getRooms().length > 0) {
-    mainStore().selectedRoom = floorStore().getRooms()[0]
+    const firstRoom = floorStore().getRooms()[0]
+    mainStore().selectedRoom = firstRoom
+    roomsListLength.value = floorStore().getRooms().length
   }
 })
+watch(
+  () => mainStore().selectedRoom,
+  async (room) => {
+    if (room) {
+      await floorStore().loadTables(room.id)
+    }
+  },
+  { immediate: true },
+)
 </script>
 <style scoped>
 .floor-plan-page-container {

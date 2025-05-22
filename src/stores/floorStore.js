@@ -39,7 +39,7 @@ export const floorStore = defineStore('floorStore', () => {
     }
   }
   async function editRoomName(room_id, newName) {
-    const restaurant_id = rooms.value.find((room) => room.i === room_id).restaurant_id
+    const restaurant_id = rooms.value.find((room) => room.id === room_id).restaurant_id
     try {
       const roomRef = doc(getFirestore(app), 'rooms', room_id)
       await updateDoc(roomRef, { name: newName })
@@ -49,7 +49,7 @@ export const floorStore = defineStore('floorStore', () => {
     }
   }
   async function deleteRoom(room_id) {
-    const restaurant_id = rooms.value.find((room) => room.i === room_id).restaurant_id
+    const restaurant_id = rooms.value.find((room) => room.id === room_id).restaurant_id
     try {
       await deleteDoc(doc(getFirestore(app), 'rooms', room_id))
       await loadRooms(restaurant_id)
@@ -60,10 +60,12 @@ export const floorStore = defineStore('floorStore', () => {
 
   const tables = ref([])
   async function loadTables(room_id) {
+    console.log('Before ', tables.value)
     try {
       const q = query(collection(getFirestore(app), 'tables'), where('room_id', '==', room_id))
       const snapshot = await getDocs(q)
       tables.value = snapshot.docs.map((doc) => doc.data())
+      console.log('After ', tables.value)
     } catch (error) {
       console.log(error)
     }
@@ -128,10 +130,12 @@ export const floorStore = defineStore('floorStore', () => {
     return getTablesPerRoom(room_id).filter((table) => table.occupied === false)
   }
   return {
+    loadRooms,
     getRooms,
     addRoom,
     editRoomName,
     deleteRoom,
+    loadTables,
     getTablesCount,
     getPlacesCount,
     getTables,
