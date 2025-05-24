@@ -47,30 +47,47 @@
         </button>
       </div>
     </div>
-    <div v-if="noTables" class="no-table-container">
-      <p class="first-line">Aucune table créée</p>
-      <p class="second-line">
-        Commencez par créer des tables pour la salle, <br />
-        comme "Table VIP", "Table centrale".
-      </p>
-      <button @click="mainStore().newTableFormShowing = true" class="add-table-btn">
-        Créer votre première table
-      </button>
+    <div v-if="loadingTables">
+      <LoadingComponent />
     </div>
-    <div v-else ref="canvasContainer" class="canvas-container">
-      <v-stage ref="stageRef" :config="stageConfig"></v-stage>
+    <div v-else>
+      <div v-if="noTables" class="no-table-container">
+        <p class="first-line">Aucune table créée</p>
+        <p class="second-line">
+          Commencez par créer des tables pour la salle, <br />
+          comme "Table VIP", "Table centrale".
+        </p>
+        <button @click="mainStore().newTableFormShowing = true" class="add-table-btn">
+          Créer votre première table
+        </button>
+      </div>
+      <div v-else ref="canvasContainer" class="canvas-container">
+        <v-stage ref="stageRef" :config="stageConfig"></v-stage>
+      </div>
     </div>
   </div>
 </template>
 <script setup>
-import { ref, onMounted, nextTick, reactive, watch } from 'vue'
+import { ref, onMounted, onBeforeMount, nextTick, reactive, watch, computed } from 'vue'
 import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
+import LoadingComponent from '@/components/LoadingComponent.vue'
 
 const stageRef = ref(null)
 const canvasContainer = ref(null)
-const noTables = ref(true)
+const noTables = computed(() => {
+  const roomId = mainStore().selectedRoom?.id
+  if (!roomId) return true
+
+  const tables = floorStore()
+    .getTables()
+    .filter((t) => t.room_id === roomId)
+
+  return tables.length === 0
+})
+
+const loadingTables = ref(true)
 
 const stageConfig = reactive({
   width: 800,
@@ -246,92 +263,87 @@ function handleFreeingTable() {
   mainStore().tableEditingActivated = false
 }
 onMounted(async () => {
-  await floorStore().loadTables(mainStore().selectedRoom?.id)
+  loadingTables.value = true
+  mainStore().selectedRoom = floorStore().getRooms()[0]
+  try {
+    await floorStore().loadTables(mainStore().selectedRoom.id)
+  } finally {
+    loadingTables.value = false
+  }
+
+  await nextTick()
+
+  if (floorStore().getTables().length === 0) return
+
   if (canvasContainer.value) {
     stageConfig.width = canvasContainer.value.clientWidth
     stageConfig.height = canvasContainer.value.clientHeight
   }
-  if (floorStore().getTables()?.length !== 0) {
-    noTables.value = false
-  }
+
   const stage = stageRef.value?.getNode()
-  if (stage && floorStore().getRooms() !== null) {
-    // Create layers
-    floorStore()
-      .getRooms()
-      .forEach((room) => {
-        const layer = new Konva.Layer({
-          ...room,
-          opacity: 1,
-          visible: true,
-        })
-        stage.add(layer)
-      })
-    // Makes the first one in the list visible
-    mainStore().selectedRoom = floorStore().getRooms()[0]
-    stage.children.forEach((room) => {
-      if (room.attrs.id !== mainStore().selectedRoom.id) {
-        room.visible(false)
-      } else {
-        room.visible(true)
-      }
+  if (!stage || floorStore().getRooms().length === 0) return
+
+  const layer = new Konva.Layer({
+    ...mainStore().selectedRoom,
+    opacity: 1,
+    visible: true,
+  })
+
+  stage.add(layer)
+
+  floorStore()
+    .getTables()
+    .forEach((table) => {
+      createTable(stage.children, table)
     })
-    // Create tables in respective rooms
+
+  stage.batchDraw()
+})
+watch(
+  () => mainStore().selectedRoom,
+  async (newValue) => {
+    loadingTables.value = true
+    try {
+      await floorStore().loadTables(mainStore().selectedRoom.id)
+    } finally {
+      loadingTables.value = false
+    }
+
+    await nextTick()
+
+    if (floorStore().getTables().length === 0) return
+
+    const stage = stageRef.value?.getNode()
+
+    const roomAlreadyExist = stage?.children.find((room) => room.attrs.id === newValue.id)
+    if (roomAlreadyExist) {
+      toggleRoomVisibility(newValue)
+      return
+    }
+
+    if (canvasContainer.value) {
+      stageConfig.width = canvasContainer.value.clientWidth
+      stageConfig.height = canvasContainer.value.clientHeight
+    }
+
+    if (!stage || floorStore().getRooms().length === 0) return
+
+    const layer = new Konva.Layer({
+      ...newValue,
+      opacity: 1,
+      visible: true,
+    })
+
+    stage.add(layer)
+
     floorStore()
       .getTables()
       .forEach((table) => {
         createTable(stage.children, table)
       })
-    stageRef.value.getNode().batchDraw()
-  }
-})
-watch(
-  () => floorStore().getTables().length,
-  (newLength, oldLength) => {
-    if (newLength > oldLength) {
-      const latestTable = floorStore().getTables()[newLength - 1]
-      const stage = stageRef.value?.getNode()
-      createTable(stage?.children, latestTable)
-      // Redraw the canvas
-      stage?.batchDraw()
-    }
+
+    stage.batchDraw()
   },
-  { deep: true, immediate: true },
-)
-watch(
-  () => mainStore().selectedRoom,
-  (newValue) => toggleRoomVisibility(newValue),
-)
-watch(
-  () =>
-    floorStore()
-      .getTables()
-      .map((t) => ({ ...t })),
-  (newTables, oldTables) => {
-    const changedTable = newTables.find((newT, idx) => {
-      const oldT = oldTables[idx]
-      return JSON.stringify(newT) !== JSON.stringify(oldT)
-    })
-
-    if (changedTable) {
-      const stage = stageRef.value?.getNode()
-      const layer = stage?.children.find((room) => room.attrs.id === changedTable.room_id)
-      if (!layer) return
-
-      const oldShape = layer?.findOne(`#${changedTable.id}`)
-      if (oldShape) oldShape?.destroy()
-
-      const oldNameLabel = layer?.findOne(`#${changedTable.id}-label-name`)
-      if (oldNameLabel) oldNameLabel?.destroy()
-
-      const oldCapacityLabel = layer?.findOne(`#${changedTable.id}-label-capacity`)
-      if (oldCapacityLabel) oldCapacityLabel?.destroy()
-
-      createTable(stage?.children, changedTable)
-      stage?.batchDraw()
-    }
-  },
-  { deep: true },
 )
 </script>
 <style scoped>

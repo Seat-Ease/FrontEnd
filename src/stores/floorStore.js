@@ -22,7 +22,7 @@ export const floorStore = defineStore('floorStore', () => {
         where('restaurant_id', '==', restaurant_id),
       )
       const snapshot = await getDocs(q)
-      rooms.value = snapshot.docs.map((doc) => doc.data())
+      rooms.value = snapshot.docs.map((doc) => doc.data()).reverse()
     } catch (error) {
       console.log(error)
     }
@@ -60,12 +60,10 @@ export const floorStore = defineStore('floorStore', () => {
 
   const tables = ref([])
   async function loadTables(room_id) {
-    console.log('Before ', tables.value)
     try {
       const q = query(collection(getFirestore(app), 'tables'), where('room_id', '==', room_id))
       const snapshot = await getDocs(q)
       tables.value = snapshot.docs.map((doc) => doc.data())
-      console.log('After ', tables.value)
     } catch (error) {
       console.log(error)
     }
