@@ -40,6 +40,9 @@ async function editName(e) {
   if (roomNameInput.value.length === 0) return
   loadingSave.value = true
   await floorStore().editRoomName(mainStore().selectedRoom.id, roomNameInput.value)
+  mainStore().selectedRoom = floorStore()
+    .getRooms()
+    .find((room) => room.id === mainStore().selectedRoom.id)
   loadingSave.value = false
   roomNameInput.value = ''
   mainStore().editRoomFormShowing = false

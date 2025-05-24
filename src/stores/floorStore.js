@@ -22,7 +22,7 @@ export const floorStore = defineStore('floorStore', () => {
         where('restaurant_id', '==', restaurant_id),
       )
       const snapshot = await getDocs(q)
-      rooms.value = snapshot.docs.map((doc) => doc.data()).reverse()
+      rooms.value = snapshot.docs.map((doc) => doc.data())
     } catch (error) {
       console.log(error)
     }
