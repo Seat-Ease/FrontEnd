@@ -16,34 +16,57 @@
         placeholder="Réchercher un client..."
       />
     </div>
-    <ReservationBox
-      boxTitle="Réservations à venir"
-      boxDescription="Nombres de réservations à venir"
-      noReservationText="Aucune réservation à venir pour aujourd'hui"
-      :reservationListEmpty="
-        reservationStore().getUpcomingReservations(mainStore().appDate).length === 0
-      "
-      :totalCount="reservationStore().getUpcomingReservations(mainStore().appDate).length"
-      :seated="false"
-      :reservationList="reservationStore().getUpcomingReservations(mainStore().appDate)"
-    />
-    <ReservationBox
-      boxTitle="Réservations placées"
-      boxDescription="Clients actuellement dans votre restaurant"
-      noReservationText="Aucun client n'est actuellement à table"
-      :reservationListEmpty="
-        reservationStore().getSeatedReservations(mainStore().appDate).length === 0
-      "
-      :totalCount="reservationStore().getSeatedReservations(mainStore().appDate).length"
-      :seated="true"
-      :reservationList="reservationStore().getSeatedReservations(mainStore().appDate)"
-    />
+    <div v-if="loadingData">
+      <LoadingComponent />
+    </div>
+    <div v-else class="reservationBox-container">
+      <ReservationBox
+        boxTitle="Réservations à venir"
+        boxDescription="Nombres de réservations à venir"
+        noReservationText="Aucune réservation à venir pour aujourd'hui"
+        :reservationListEmpty="upcomingReservations.length === 0"
+        :totalCount="upcomingReservations.length"
+        :seated="false"
+        :reservationList="upcomingReservations"
+      />
+      <ReservationBox
+        boxTitle="Réservations placées"
+        boxDescription="Clients actuellement dans votre restaurant"
+        noReservationText="Aucun client n'est actuellement à table"
+        :reservationListEmpty="seatedReservations.length === 0"
+        :totalCount="seatedReservations.length"
+        :seated="true"
+        :reservationList="seatedReservations"
+      />
+    </div>
   </div>
 </template>
 <script setup>
 import { reservationStore } from '@/stores/reservationStore'
+import { settingsStore } from '@/stores/settingsStore'
 import { mainStore } from '@/stores/mainStore'
+import { computed, onMounted, ref } from 'vue'
 import ReservationBox from '@/components/reservation/ReservationBox.vue'
+import LoadingComponent from '@/components/LoadingComponent.vue'
+
+const seatedReservations = computed(() =>
+  reservationStore().getSeatedReservations(mainStore().appDate),
+)
+
+const upcomingReservations = computed(() =>
+  reservationStore().getUpcomingReservations(mainStore().appDate),
+)
+
+const loadingData = ref(true)
+
+onMounted(async () => {
+  loadingData.value = true
+  try {
+    await reservationStore().loadReservations(settingsStore().getAccountUID())
+  } finally {
+    loadingData.value = false
+  }
+})
 </script>
 <style scoped>
 .reservation-page-container {
@@ -53,6 +76,11 @@ import ReservationBox from '@/components/reservation/ReservationBox.vue'
   flex-direction: column;
   gap: 3rem;
   padding: 3rem;
+}
+.reservationBox-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
 }
 .page-header-container {
   display: flex;

@@ -1,5 +1,16 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  query,
+  where,
+} from 'firebase/firestore'
+import { app } from '@/firebase'
 
 export const reservationStore = defineStore('reservationStore', () => {
   const reservations = ref([])
