@@ -56,17 +56,23 @@
           placeholder="ex: 2"
         />
       </div>
-      <button @click="submit" class="submit-btn">Créer la réservation</button>
+      <button @click="submit" class="submit-btn">
+        Créer la réservation
+        <span v-if="loading"><SpinnerComponent /></span>
+      </button>
     </form>
   </div>
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { reservationStore } from '@/stores/reservationStore'
+import { settingsStore } from '@/stores/settingsStore'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const errorMessage = ref('')
+const loading = ref(false)
 
 function getNextDayFormatted() {
   const today = new Date()
@@ -93,9 +99,10 @@ const reservationData = ref({
   service_end_time: '',
   walk_in: false,
   cancelled: false,
+  restaurant_id: settingsStore().getAccountUID(),
 })
 
-function submit(e) {
+async function submit(e) {
   e.preventDefault()
   if (
     !reservationData.value.client_name ||
@@ -105,7 +112,9 @@ function submit(e) {
     errorMessage.value = 'Tous les champs sont obligatoires.'
     return
   } else errorMessage.value = ''
-  reservationStore().addReservation({ ...reservationData.value })
+  loading.value = true
+  await reservationStore().addReservation({ ...reservationData.value })
+  loading.value = false
   reservationData.value.client_name = ''
   reservationData.value.client_phone = ''
   reservationData.value.party_size = ''
@@ -205,5 +214,8 @@ form {
   cursor: pointer;
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 </style>
