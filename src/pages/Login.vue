@@ -29,6 +29,9 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { app } from '@/firebase'
 import { settingsStore } from '@/stores/settingsStore'
+import { floorStore } from '@/stores/floorStore'
+import { mainStore } from '@/stores/mainStore'
+import { reservationStore } from '@/stores/reservationStore'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
@@ -57,11 +60,17 @@ async function submitForm(e) {
       credentials.value.password,
     )
     if (response.user) {
-      const data = await settingsStore().loadRestaurantData(response.user.uid)
-      settingsStore().setRestaurantData(data)
-      router.push('/app')
-      loading.value = false
-      return
+      try {
+        const data = await settingsStore().loadRestaurantData(response.user.uid)
+        settingsStore().setRestaurantData(data)
+        await reservationStore().loadReservations(response.user.uid)
+        await floorStore().loadRooms(response.user.uid)
+        mainStore().selectedRoom = floorStore().getRooms()[0]
+      } finally {
+        router.push('/app')
+        loading.value = false
+        return
+      }
     }
   } catch (e) {
     if (e.message.includes('email')) {
