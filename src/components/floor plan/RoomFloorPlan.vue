@@ -345,6 +345,22 @@ watch(
     stage.batchDraw()
   },
 )
+watch(
+  () => floorStore().getTables(),
+  async (newVal) => {
+    loadingTables.value = true
+    if (newVal.length === 0) {
+      loadingTables.value = false
+      return
+    }
+    await nextTick()
+
+    const latestTable = newVal[newVal.length - 1]
+    const stage = stageRef.value?.getNode()
+    createTable(stage.children, latestTable)
+    loadingTables.value = false
+  },
+)
 </script>
 <style scoped>
 .room-floor-plan {

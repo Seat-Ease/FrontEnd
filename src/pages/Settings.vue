@@ -47,7 +47,7 @@
             <p class="text">Téléphone</p>
             <input
               v-if="editRestaurantDataActivated"
-              v-model="restaurantData.telephone"
+              v-model="restaurantData.phone"
               id="telephone"
               type="number"
             />

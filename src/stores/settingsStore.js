@@ -62,7 +62,7 @@ export const settingsStore = defineStore('settingsStore', () => {
     try {
       const restaurantRef = doc(getFirestore(app), 'restaurants', restaurantData.value.account_uid)
       await updateDoc(restaurantRef, { general: { ...p_data } })
-      await loadRestaurantData(restaurantData.value.account_uid)
+      setRestaurantData(await loadRestaurantData(restaurantData.value.account_uid))
     } catch (error) {
       console.log(error)
     }
@@ -76,7 +76,7 @@ export const settingsStore = defineStore('settingsStore', () => {
     try {
       const restaurantRef = doc(getFirestore(app), 'restaurants', restaurantData.value.account_uid)
       await updateDoc(restaurantRef, { schedule: { ...p_data } })
-      await loadRestaurantData(restaurantData.value.account_uid)
+      setRestaurantData(await loadRestaurantData(restaurantData.value.account_uid))
     } catch (error) {
       console.log(error)
     }
@@ -90,7 +90,7 @@ export const settingsStore = defineStore('settingsStore', () => {
     try {
       const restaurantRef = doc(getFirestore(app), 'restaurants', restaurantData.value.account_uid)
       await updateDoc(restaurantRef, { availabilities: { ...p_data } })
-      await loadRestaurantData(restaurantData.value.account_uid)
+      setRestaurantData(await loadRestaurantData(restaurantData.value.account_uid))
     } catch (error) {
       console.log(error)
     }
