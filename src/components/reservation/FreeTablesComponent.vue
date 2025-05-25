@@ -5,7 +5,10 @@
         <div class="title-description-container">
           <p class="title">Tables disponibles</p>
         </div>
-        <button @click="mainStore().freeTablesListShowingReservation = false" class="close-btn">
+        <button
+          @click="() => (mainStore().freeTablesListShowingReservation = false)"
+          class="close-btn"
+        >
           X
         </button>
       </div>

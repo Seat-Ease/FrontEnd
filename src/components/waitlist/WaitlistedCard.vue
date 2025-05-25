@@ -16,12 +16,33 @@
       >
         Placer
       </button>
-      <button class="cancel-btn btn">Annuler</button>
+      <button
+        @click="
+          async () => {
+            try {
+              loadingCancellation = true
+              await reservationStore().cancelReservation(reservation.id)
+            } finally {
+              loadingCancellation = false
+            }
+          }
+        "
+        class="cancel-btn btn"
+      >
+        Annuler
+        <span v-if="loadingCancellation"><SpinnerComponent /></span>
+      </button>
     </div>
   </div>
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
+import { reservationStore } from '@/stores/reservationStore'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
+import { ref } from 'vue'
+
+const loadingCancellation = ref(false)
+
 const props = defineProps({
   reservation: { type: Object, required: true },
 })
@@ -54,6 +75,8 @@ const props = defineProps({
   cursor: pointer;
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
+  display: flex;
+  gap: 1rem;
 }
 .seat-btn {
   background-color: #0d9488;
