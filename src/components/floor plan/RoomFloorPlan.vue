@@ -69,10 +69,13 @@
 </template>
 <script setup>
 import { ref, onMounted, onBeforeMount, nextTick, reactive, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 import LoadingComponent from '@/components/LoadingComponent.vue'
+
+const route = useRoute()
 
 const stageRef = ref(null)
 const canvasContainer = ref(null)
@@ -344,15 +347,19 @@ watch(
 
     stage.batchDraw()
   },
+  { immediate: true },
 )
 watch(
   () => floorStore().getTables(),
   async (newVal) => {
+    if (floorStore().getLastOperationOnTable() !== 'add') return
+
     loadingTables.value = true
     if (newVal.length === 0) {
       loadingTables.value = false
       return
     }
+
     await nextTick()
 
     const latestTable = newVal[newVal.length - 1]
@@ -360,6 +367,7 @@ watch(
     createTable(stage.children, latestTable)
     loadingTables.value = false
   },
+  { immediate: true },
 )
 </script>
 <style scoped>

@@ -14,6 +14,12 @@ import {
 import { app } from '@/firebase'
 
 export const floorStore = defineStore('floorStore', () => {
+  const lastOperationOnTables = ref(null)
+
+  function getLastOperationOnTable() {
+    return lastOperationOnTables.value
+  }
+
   const rooms = ref([])
   async function loadRooms(restaurant_id) {
     try {
@@ -64,6 +70,7 @@ export const floorStore = defineStore('floorStore', () => {
       const q = query(collection(getFirestore(app), 'tables'), where('room_id', '==', room_id))
       const snapshot = await getDocs(q)
       tables.value = snapshot.docs.map((doc) => doc.data())
+      lastOperationOnTables.value = 'load'
     } catch (error) {
       console.log(error)
     }
@@ -75,6 +82,7 @@ export const floorStore = defineStore('floorStore', () => {
     try {
       await setDoc(doc(getFirestore(app), 'tables', newTable.id), newTable)
       await loadTables(newTable.room_id)
+      lastOperationOnTables.value = 'add'
     } catch (error) {
       console.log(error)
     }
@@ -85,6 +93,7 @@ export const floorStore = defineStore('floorStore', () => {
       const table = await updateDoc(tableRef, updatedTable)
       console.log(table)
       await loadTables(updatedTable.room_id)
+      lastOperationOnTables.value = 'edit'
     } catch (error) {
       console.log(error)
     }
@@ -95,6 +104,7 @@ export const floorStore = defineStore('floorStore', () => {
     try {
       await deleteDoc(doc(getFirestore(app), 'tables', table_id))
       await loadTables(table.room_id)
+      lastOperationOnTables.value = 'delete'
     } catch (error) {
       console.log(error)
     }
@@ -106,6 +116,7 @@ export const floorStore = defineStore('floorStore', () => {
       const newState = !table.occupied
       await updateDoc(doc(getFirestore(app), 'tables', table_id), { occupied: newState })
       await loadTables(table.room_id)
+      lastOperationOnTables.value = 'update'
     } catch (error) {
       console.log(error)
     }
@@ -142,5 +153,6 @@ export const floorStore = defineStore('floorStore', () => {
     editTable,
     deleteTable,
     getFreeTablesPerRoom,
+    getLastOperationOnTable,
   }
 })
