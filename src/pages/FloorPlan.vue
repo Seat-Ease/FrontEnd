@@ -42,7 +42,7 @@
   </div>
 </template>
 <script setup>
-import { onBeforeMount, watch, ref } from 'vue'
+import { onBeforeMount, watch, ref, computed } from 'vue'
 import { settingsStore } from '@/stores/settingsStore'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
@@ -55,7 +55,7 @@ function changeSelectedRoom(e) {
     .find((room) => room.id === e.target.id)
 }
 
-const roomsListLength = ref(0)
+const roomsListLength = computed(() => floorStore().getRooms().length)
 
 onBeforeMount(async () => {
   await floorStore().loadRooms(settingsStore().getAccountUID())
