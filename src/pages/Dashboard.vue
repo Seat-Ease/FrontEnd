@@ -27,7 +27,7 @@
       />
       <InformationBox
         title="Teminées"
-        :stat="reservationCompleted"
+        :stat="String(reservationCompleted)"
         description="Services complétés"
       />
       <!-- <InformationBox
