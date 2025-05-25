@@ -15,11 +15,14 @@
             {{ room.name }}
           </option>
         </select>
-        <button @click="handleTableAssignation" class="confirm-btn">Confirmer</button>
+        <button @click="handleTableAssignation" class="confirm-btn">
+          Confirmer
+          <span v-if="loadingTablesAssignation"><SpinnerComponent /></span>
+        </button>
       </div>
       <p v-if="error" class="error">{{ error }}</p>
       <div class="list-container">
-        <div v-if="loading" class="loading-container">
+        <div v-if="loadingTables" class="loading-container">
           <SpinnerComponent />
         </div>
         <div
@@ -33,7 +36,7 @@
           <p class="capacity">{{ table.maxCovers }} places</p>
         </div>
         <p
-          v-if="floorStore().getFreeTablesPerRoom(roomSelected).length === 0 && !loading"
+          v-if="floorStore().getFreeTablesPerRoom(roomSelected).length === 0 && !loadingTables"
           class="no-free-tables"
         >
           Aucune table libre dans cette salle.
@@ -51,7 +54,8 @@ import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const error = ref('')
 const capacity = ref(0)
-const loading = ref(false)
+const loadingTables = ref(false)
+const loadingTablesAssignation = ref(false)
 
 const roomSelected = ref(floorStore().getRooms()[0].id)
 const selectedTables = ref([])
@@ -77,34 +81,39 @@ function updateSelectedTables(p_table) {
     selectedTables.value = selectedTables.value.filter((table) => table.id !== p_table.id)
   }
 }
-function handleTableAssignation() {
+async function handleTableAssignation() {
+  loadingTablesAssignation.value = true
   if (selectedTables.value.length <= 0 || capacity < mainStore().selectedReservation.party_size) {
     error.value = 'Capacité insuffisante pour le nombre de personnes'
   } else error.value = ''
-  reservationStore().startServiceForReservation(mainStore().selectedReservation.id, [
-    ...selectedTables.value,
-  ])
-  selectedTables.value.forEach((table) => floorStore().updateTableState(table.id))
-  selectedTables.value = []
-  mainStore().freeTablesListShowingReservation = false
-  mainStore().freeTablesListShowingWaitList = false
+  try {
+    await reservationStore().startServiceForReservation(mainStore().selectedReservation.id, [
+      ...selectedTables.value,
+    ])
+    selectedTables.value.forEach(async (table) => await floorStore().updateTableState(table.id))
+  } finally {
+    selectedTables.value = []
+    mainStore().freeTablesListShowingReservation = false
+    mainStore().freeTablesListShowingWaitList = false
+    loadingTablesAssignation.value = false
+  }
 }
 onMounted(async () => {
-  loading.value = true
+  loadingTables.value = true
   try {
     await floorStore().loadTables(floorStore().getRooms()[0].id)
   } finally {
-    loading.value = false
+    loadingTables.value = false
   }
 })
 watch(
   () => roomSelected.value,
   async (newVal) => {
-    loading.value = true
+    loadingTables.value = true
     try {
       await floorStore().loadTables(newVal)
     } finally {
-      loading.value = false
+      loadingTables.value = false
     }
   },
 )
@@ -176,6 +185,8 @@ watch(
   letter-spacing: 0.05rem;
   background-color: rgb(0, 74, 177);
   align-self: flex-end;
+  display: flex;
+  gap: 1rem;
 }
 .input-container > select {
   background-color: #0f172a;
