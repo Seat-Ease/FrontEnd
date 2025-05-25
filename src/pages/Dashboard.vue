@@ -30,11 +30,11 @@
         :stat="String(reservationCompleted)"
         description="Services complétés"
       />
-      <!-- <InformationBox
-        title="Annulées/Absentes"
-        stat="0"
-        description="Réservations manquées et/ou annulées"
-      /> -->
+      <InformationBox
+        title="Annulées"
+        :stat="String(reservationCancelled)"
+        description="Réservations manquées annulées"
+      />
     </div>
   </div>
 </template>
@@ -49,6 +49,13 @@ const reservationCompleted = computed(
     reservationStore()
       .getDailyReservations(mainStore().appDate)
       .filter((reservation) => reservation.service_end_time !== '').length,
+)
+
+const reservationCancelled = computed(
+  () =>
+    reservationStore()
+      .getDailyReservations(mainStore().appDate)
+      .filter((reservation) => reservation.cancelled === true).length,
 )
 </script>
 <style>
