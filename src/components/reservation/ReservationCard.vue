@@ -50,14 +50,22 @@
       <button
         v-if="seated"
         @click="
-          () => {
-            reservationStore().endServiceForReservation(reservation.id)
-            reservation.tables_occupied.forEach((table) => floorStore().updateTableState(table.id))
+          async () => {
+            try {
+              loadingEndService = true
+              await reservationStore().endServiceForReservation(reservation.id)
+              reservation.tables_occupied.forEach(
+                async (table) => await floorStore().updateTableState(table.id),
+              )
+            } finally {
+              loadingEndService = false
+            }
           }
         "
         class="end-btn btn"
       >
         Terminé
+        <span v-if="loadingEndService"><SpinnerComponent /></span>
       </button>
     </div>
   </div>
@@ -66,12 +74,15 @@
 import { mainStore } from '@/stores/mainStore'
 import { reservationStore } from '@/stores/reservationStore'
 import { floorStore } from '@/stores/floorStore'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const props = defineProps({
   reservation: { type: Object, required: true },
   seated: { type: Boolean, required: true },
 })
+
+const loadingEndService = ref(false)
 
 const todayStr = new Date().toDateString()
 const selectedDateStr = new Date(computed(() => mainStore().appDate).value).toDateString()
@@ -139,6 +150,8 @@ function formatTableList() {
   cursor: pointer;
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
+  display: flex;
+  gap: 1rem;
 }
 .seat-btn {
   background-color: #0d9488;
