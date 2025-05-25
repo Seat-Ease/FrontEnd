@@ -19,7 +19,11 @@
       </div>
       <p v-if="error" class="error">{{ error }}</p>
       <div class="list-container">
+        <div v-if="loading" class="loading-container">
+          <SpinnerComponent />
+        </div>
         <div
+          v-else
           v-for="table in floorStore().getFreeTablesPerRoom(roomSelected)"
           @click="updateSelectedTables(table)"
           class="table-card"
@@ -28,6 +32,12 @@
           <p class="name">{{ table.name }}</p>
           <p class="capacity">{{ table.maxCovers }} places</p>
         </div>
+        <p
+          v-if="floorStore().getFreeTablesPerRoom(roomSelected).length === 0 && !loading"
+          class="no-free-tables"
+        >
+          Aucune table libre dans cette salle.
+        </p>
       </div>
     </div>
   </div>
@@ -36,10 +46,12 @@
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
 import { reservationStore } from '@/stores/reservationStore'
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const error = ref('')
 const capacity = ref(0)
+const loading = ref(false)
 
 const roomSelected = ref(floorStore().getRooms()[0].id)
 const selectedTables = ref([])
@@ -77,6 +89,25 @@ function handleTableAssignation() {
   mainStore().freeTablesListShowingReservation = false
   mainStore().freeTablesListShowingWaitList = false
 }
+onMounted(async () => {
+  loading.value = true
+  try {
+    await floorStore().loadTables(floorStore().getRooms()[0].id)
+  } finally {
+    loading.value = false
+  }
+})
+watch(
+  () => roomSelected.value,
+  async (newVal) => {
+    loading.value = true
+    try {
+      await floorStore().loadTables(newVal)
+    } finally {
+      loading.value = false
+    }
+  },
+)
 </script>
 <style scoped>
 .error {
@@ -175,8 +206,19 @@ function handleTableAssignation() {
   gap: 1rem;
   overflow: scroll;
 }
+.loading-container {
+  align-self: center;
+  justify-self: center;
+  height: 30%;
+  width: 30%;
+}
 .selectedTables {
   border-color: #0d9488;
   color: #0d9488;
+}
+.no-free-tables {
+  font-size: 1.4rem;
+  color: #c0c0c0;
+  font-style: italic;
 }
 </style>
