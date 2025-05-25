@@ -35,15 +35,22 @@
           placeholder="ex: 3"
         />
       </div>
-      <button @click="addToWaitlist" class="submit-btn">Enregistrer</button>
+      <button @click="addToWaitlist" class="submit-btn">
+        Enregistrer
+        <span v-if="loading"><SpinnerComponent /></span>
+      </button>
     </form>
   </div>
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { reservationStore } from '@/stores/reservationStore'
+import { settingsStore } from '@/stores/settingsStore'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
+
+const loading = ref(false)
 
 const now = new Date()
 const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
@@ -69,21 +76,26 @@ const newReservation = ref({
   service_end_time: '',
   walk_in: true,
   cancelled: false,
+  restaurant_id: settingsStore().getAccountUID(),
 })
 
-function addToWaitlist(e) {
+async function addToWaitlist(e) {
   e.preventDefault()
+  loading.value = true
   if (newReservation.value.client_name === '') {
     errorMessage.value = 'Nom du client obligatoire'
   } else if (newReservation.value.client_phone === undefined) {
     errorMessage.value = 'Numéro de téléphone obligatoire'
   } else errorMessage.value = ''
-  console.log(newReservation.value)
-  reservationStore().addReservation({ ...newReservation.value })
-  newReservation.value.client_name = ''
-  newReservation.value.client_phone = undefined
-  newReservation.value.party_size = 1
-  mainStore().waitlistedFormShowing = false
+  try {
+    await reservationStore().addReservation({ ...newReservation.value })
+  } finally {
+    newReservation.value.client_name = ''
+    newReservation.value.client_phone = undefined
+    newReservation.value.party_size = 1
+    loading.value = false
+    mainStore().waitlistedFormShowing = false
+  }
 }
 </script>
 <style scoped>
@@ -171,6 +183,8 @@ form {
   letter-spacing: 0.05rem;
   background-color: rgb(0, 74, 177);
   align-self: flex-end;
+  display: flex;
+  gap: 1rem;
 }
 .error-message {
   font-size: 1.2rem;
