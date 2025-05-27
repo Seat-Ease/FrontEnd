@@ -62,7 +62,6 @@ onBeforeMount(async () => {
   if (floorStore().getRooms().length > 0) {
     const firstRoom = floorStore().getRooms()[0]
     mainStore().selectedRoom = firstRoom
-    roomsListLength.value = floorStore().getRooms().length
   }
 })
 watch(

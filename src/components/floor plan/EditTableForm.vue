@@ -66,7 +66,7 @@ async function submitForm(e) {
     return
   } else errorMessage.value = ''
   loading.value = true
-  await floorStore().editTable({ ...newTableData.value })
+  await floorStore().editTable(newTableData.value.id, { ...newTableData.value })
   loading.value = false
   mainStore().tableEditingActivated = false
   mainStore().editTableFormShowing = false

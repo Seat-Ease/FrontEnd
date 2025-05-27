@@ -37,10 +37,21 @@
         </button>
         <button
           v-if="!mainStore().selectedTable.occupied"
-          @click="destroyTable"
+          @click="
+            async () => {
+              try {
+                loadingDeletion = true
+                await destroyTable()
+              } finally {
+                loadingDeletion = false
+                mainStore().tableEditingActivated = false
+              }
+            }
+          "
           class="delete-table btn"
         >
           Supprimer la table
+          <span v-if="loadingDeletion"><SpinnerComponent /></span>
         </button>
         <button @click="mainStore().editTableFormShowing = true" class="edit-table btn">
           Modifier la table
@@ -74,23 +85,18 @@ import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 import LoadingComponent from '@/components/LoadingComponent.vue'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const route = useRoute()
 
 const stageRef = ref(null)
 const canvasContainer = ref(null)
 const noTables = computed(() => {
-  const roomId = mainStore().selectedRoom?.id
-  if (!roomId) return true
-
-  const tables = floorStore()
-    .getTables()
-    .filter((t) => t.room_id === roomId)
-
-  return tables.length === 0
+  return floorStore().getTables().length === 0
 })
 
 const loadingTables = ref(true)
+const loadingDeletion = ref(false)
 
 const stageConfig = reactive({
   width: 800,
@@ -147,11 +153,15 @@ function createTable(stage, newTableData) {
     })
 
     newTable.on('dragend', async function () {
-      const tableIndex = floorStore()
-        .getTables()
-        .findIndex((table) => String(table.id) === String(newTableData.id))
-      console.log(newTable)
-      await floorStore().editTable({ ...newTable })
+      try {
+        mainStore().selectedTable = newTable.attrs
+        await floorStore().editTable(newTable.attrs.id, {
+          x: newTable.attrs.x,
+          y: newTable.attrs.y,
+        })
+      } catch (e) {
+        console.log(e)
+      }
     })
 
     newTable.on('click tap', function () {
@@ -208,12 +218,16 @@ function createTable(stage, newTableData) {
       tableCapacity.y(newTable.y() + newTable.height() / 2)
     })
 
-    newTable.on('dragend', function () {
-      const tableIndex = floorStore()
-        .getTables()
-        .findIndex((table) => String(table.id) === String(newTableData.id))
-      floorStore().getTables()[tableIndex].x = newTable.x()
-      floorStore().getTables()[tableIndex].y = newTable.y()
+    newTable.on('dragend', async function () {
+      try {
+        mainStore().selectedTable = newTable.attrs
+        await floorStore().editTable(newTable.attrs.id, {
+          x: newTable.attrs.x,
+          y: newTable.attrs.y,
+        })
+      } catch (e) {
+        console.log(e)
+      }
     })
 
     newTable.on('click tap', function () {
@@ -227,6 +241,7 @@ function createTable(stage, newTableData) {
   }
 }
 function toggleRoomVisibility(selectedRoom) {
+  mainStore().tableEditingActivated = false
   nextTick(() => {
     const stage = stageRef.value?.getNode().children
     stage?.forEach((room) => {
@@ -239,7 +254,7 @@ function toggleRoomVisibility(selectedRoom) {
     stageRef.value?.getNode().batchDraw()
   })
 }
-function destroyTable() {
+async function destroyTable() {
   const stage = stageRef.value?.getNode()
   if (!stage || !mainStore().selectedTable?.id || !mainStore().selectedTable?.room_id) return
 
@@ -257,7 +272,7 @@ function destroyTable() {
 
   // 🎨 Redraw layer
   layer?.batchDraw()
-  floorStore().deleteTable(mainStore().selectedTable.id)
+  await floorStore().deleteTable(mainStore().selectedTable.id)
   mainStore().selectedTable = null
   mainStore().tableEditingActivated = false
 }
@@ -267,6 +282,7 @@ function handleFreeingTable() {
 }
 onMounted(async () => {
   loadingTables.value = true
+  mainStore().tableEditingActivated = false
   mainStore().selectedRoom = floorStore().getRooms()[0]
   try {
     await floorStore().loadTables(mainStore().selectedRoom.id)
@@ -352,20 +368,39 @@ watch(
 watch(
   () => floorStore().getTables(),
   async (newVal) => {
-    if (floorStore().getLastOperationOnTable() !== 'add') return
-
-    loadingTables.value = true
-    if (newVal.length === 0) {
-      loadingTables.value = false
-      return
-    }
-
-    await nextTick()
-
-    const latestTable = newVal[newVal.length - 1]
-    const stage = stageRef.value?.getNode()
-    createTable(stage.children, latestTable)
     loadingTables.value = false
+    if (floorStore().getLastOperationOnTable() === 'edit') {
+      const stage = stageRef.value?.getNode()
+      if (!stage) return
+
+      const layer = stage?.children.find((room) => room.attrs.id === mainStore().selectedRoom.id)
+      if (!layer) return
+
+      const shape = layer?.findOne(`#${mainStore().selectedTable.id}`)
+      if (shape) shape?.destroy()
+
+      const nameText = layer?.findOne(`#${mainStore().selectedTable.id}-label-name`)
+      if (nameText) nameText?.destroy()
+
+      const capacityText = layer?.findOne(`#${mainStore().selectedTable.id}-label-capacity`)
+      if (capacityText) capacityText?.destroy()
+
+      const table = floorStore()
+        .getTables()
+        .find((t) => t.id === mainStore().selectedTable.id)
+
+      createTable(stage.children, table)
+      floorStore().setLastOperationOnTableNull()
+    } else if (floorStore().getLastOperationOnTable() === 'add') {
+      const stage = stageRef.value?.getNode()
+      console.log(stage)
+      if (!stage) return
+
+      console.log(newVal[newVal.length - 1])
+
+      createTable(stage.children, newVal[newVal.length - 1])
+      floorStore().setLastOperationOnTableNull()
+    }
   },
   { immediate: true },
 )

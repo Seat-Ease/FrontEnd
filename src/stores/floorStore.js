@@ -20,6 +20,10 @@ export const floorStore = defineStore('floorStore', () => {
     return lastOperationOnTables.value
   }
 
+  function setLastOperationOnTableNull() {
+    lastOperationOnTables.value = null
+  }
+
   const rooms = ref([])
   async function loadRooms(restaurant_id) {
     try {
@@ -70,7 +74,6 @@ export const floorStore = defineStore('floorStore', () => {
       const q = query(collection(getFirestore(app), 'tables'), where('room_id', '==', room_id))
       const snapshot = await getDocs(q)
       tables.value = snapshot.docs.map((doc) => doc.data())
-      lastOperationOnTables.value = 'load'
     } catch (error) {
       console.log(error)
     }
@@ -80,20 +83,20 @@ export const floorStore = defineStore('floorStore', () => {
   }
   async function addTable(newTable) {
     try {
+      lastOperationOnTables.value = 'add'
       await setDoc(doc(getFirestore(app), 'tables', newTable.id), newTable)
       await loadTables(newTable.room_id)
-      lastOperationOnTables.value = 'add'
     } catch (error) {
       console.log(error)
     }
   }
-  async function editTable(updatedTable) {
+  async function editTable(table_id, updated_data) {
+    const table = tables.value.find((t) => t.id === table_id)
     try {
-      const tableRef = doc(getFirestore(app), 'tables', updatedTable.id)
-      const table = await updateDoc(tableRef, updatedTable)
-      console.log(table)
-      await loadTables(updatedTable.room_id)
       lastOperationOnTables.value = 'edit'
+      const tableRef = doc(getFirestore(app), 'tables', table_id)
+      await updateDoc(tableRef, { ...updated_data })
+      await loadTables(table.room_id)
     } catch (error) {
       console.log(error)
     }
@@ -102,9 +105,9 @@ export const floorStore = defineStore('floorStore', () => {
     const table = tables.value.find((t) => t.id === table_id)
     if (!table) return
     try {
+      lastOperationOnTables.value = 'delete'
       await deleteDoc(doc(getFirestore(app), 'tables', table_id))
       await loadTables(table.room_id)
-      lastOperationOnTables.value = 'delete'
     } catch (error) {
       console.log(error)
     }
@@ -154,5 +157,6 @@ export const floorStore = defineStore('floorStore', () => {
     deleteTable,
     getFreeTablesPerRoom,
     getLastOperationOnTable,
+    setLastOperationOnTableNull,
   }
 })
