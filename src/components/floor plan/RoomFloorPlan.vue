@@ -27,36 +27,6 @@
           </div>
         </div>
       </div>
-      <div v-if="mainStore().tableEditingActivated" class="tables-btns-container">
-        <button
-          @click="handleFreeingTable"
-          v-if="mainStore().selectedTable.occupied"
-          class="free-table btn"
-        >
-          Libérer la table
-        </button>
-        <button
-          v-if="!mainStore().selectedTable.occupied"
-          @click="
-            async () => {
-              try {
-                loadingDeletion = true
-                await destroyTable()
-              } finally {
-                loadingDeletion = false
-                mainStore().tableEditingActivated = false
-              }
-            }
-          "
-          class="delete-table btn"
-        >
-          Supprimer la table
-          <span v-if="loadingDeletion"><SpinnerComponent /></span>
-        </button>
-        <button @click="mainStore().editTableFormShowing = true" class="edit-table btn">
-          Modifier la table
-        </button>
-      </div>
     </div>
     <div v-if="loadingTables">
       <LoadingComponent />
@@ -321,6 +291,7 @@ onMounted(async () => {
 watch(
   () => mainStore().selectedRoom,
   async (newValue) => {
+    mainStore().tableEditingActivated = false
     loadingTables.value = true
     try {
       await floorStore().loadTables(mainStore().selectedRoom.id)
@@ -362,45 +333,6 @@ watch(
       })
 
     stage.batchDraw()
-  },
-  { immediate: true },
-)
-watch(
-  () => floorStore().getTables(),
-  async (newVal) => {
-    loadingTables.value = false
-    if (floorStore().getLastOperationOnTable() === 'edit') {
-      const stage = stageRef.value?.getNode()
-      if (!stage) return
-
-      const layer = stage?.children.find((room) => room.attrs.id === mainStore().selectedRoom.id)
-      if (!layer) return
-
-      const shape = layer?.findOne(`#${mainStore().selectedTable.id}`)
-      if (shape) shape?.destroy()
-
-      const nameText = layer?.findOne(`#${mainStore().selectedTable.id}-label-name`)
-      if (nameText) nameText?.destroy()
-
-      const capacityText = layer?.findOne(`#${mainStore().selectedTable.id}-label-capacity`)
-      if (capacityText) capacityText?.destroy()
-
-      const table = floorStore()
-        .getTables()
-        .find((t) => t.id === mainStore().selectedTable.id)
-
-      createTable(stage.children, table)
-      floorStore().setLastOperationOnTableNull()
-    } else if (floorStore().getLastOperationOnTable() === 'add') {
-      const stage = stageRef.value?.getNode()
-      console.log(stage)
-      if (!stage) return
-
-      console.log(newVal[newVal.length - 1])
-
-      createTable(stage.children, newVal[newVal.length - 1])
-      floorStore().setLastOperationOnTableNull()
-    }
   },
   { immediate: true },
 )

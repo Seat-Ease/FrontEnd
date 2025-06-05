@@ -32,7 +32,7 @@ export const floorStore = defineStore('floorStore', () => {
         where('restaurant_id', '==', restaurant_id),
       )
       const snapshot = await getDocs(q)
-      rooms.value = snapshot.docs.map((doc) => doc.data())
+      rooms.value = [...snapshot.docs.map((doc) => doc.data())]
     } catch (error) {
       console.log(error)
     }
@@ -73,7 +73,9 @@ export const floorStore = defineStore('floorStore', () => {
     try {
       const q = query(collection(getFirestore(app), 'tables'), where('room_id', '==', room_id))
       const snapshot = await getDocs(q)
-      tables.value = snapshot.docs.map((doc) => doc.data())
+      const newTables = snapshot.docs.map((doc) => doc.data())
+
+      tables.value.splice(0, tables.value.length, ...newTables)
     } catch (error) {
       console.log(error)
     }
@@ -116,10 +118,10 @@ export const floorStore = defineStore('floorStore', () => {
     const table = tables.value.find((t) => t.id === table_id)
     if (!table) return
     try {
+      lastOperationOnTables.value = 'update table state'
       const newState = !table.occupied
       await updateDoc(doc(getFirestore(app), 'tables', table_id), { occupied: newState })
       await loadTables(table.room_id)
-      lastOperationOnTables.value = 'update'
     } catch (error) {
       console.log(error)
     }

@@ -1,5 +1,8 @@
 <template>
   <div class="floor-plan-page-container">
+    <Transition name="slide">
+      <FloorPlanPanel v-if="mainStore().floorPlanPanelShowing" />
+    </Transition>
     <div class="page-header-container">
       <div class="title-description-container">
         <h1 class="page-title">Plan de salle</h1>
@@ -23,11 +26,8 @@
         </p>
       </div>
       <div class="btns-container">
-        <button @click="mainStore().editRoomFormShowing = true" class="edit-room-btn">
+        <button @click="mainStore().floorPlanPanelShowing = true" class="edit-room-btn">
           Modifier la salle
-        </button>
-        <button @click="mainStore().newTableFormShowing = true" class="add-table-btn">
-          Ajouter une table
         </button>
       </div>
     </div>
@@ -42,12 +42,13 @@
   </div>
 </template>
 <script setup>
-import { onBeforeMount, watch, ref, computed } from 'vue'
+import { onBeforeMount, watch, ref, computed, onUnmounted } from 'vue'
 import { settingsStore } from '@/stores/settingsStore'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 import NoRoomComponent from '@/components/floor plan/NoRoomComponent.vue'
 import RoomFloorPlan from '@/components/floor plan/RoomFloorPlan.vue'
+import FloorPlanPanel from '@/components/floor plan/FloorPlanPanel.vue'
 
 function changeSelectedRoom(e) {
   mainStore().selectedRoom = floorStore()
@@ -58,6 +59,7 @@ function changeSelectedRoom(e) {
 const roomsListLength = computed(() => floorStore().getRooms().length)
 
 onBeforeMount(async () => {
+  console.log(mainStore().floorPlanPanelShowing)
   await floorStore().loadRooms(settingsStore().getAccountUID())
   if (floorStore().getRooms().length > 0) {
     const firstRoom = floorStore().getRooms()[0]
@@ -73,6 +75,7 @@ watch(
   },
   { immediate: true },
 )
+onUnmounted(() => (mainStore().floorPlanPanelShowing = false))
 </script>
 <style scoped>
 .floor-plan-page-container {
@@ -82,6 +85,7 @@ watch(
   flex-direction: column;
   gap: 3rem;
   padding: 3rem;
+  position: relative;
 }
 .page-header-container {
   display: flex;
@@ -149,5 +153,26 @@ watch(
   display: flex;
   flex-direction: column;
   padding: 3rem;
+}
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.6s ease;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.slide-enter-from {
+  transform: translateX(-100%);
+}
+.slide-enter-to {
+  transform: translateX(0);
+}
+.slide-leave-from {
+  transform: translateX(0);
+}
+.slide-leave-to {
+  transform: translateX(100%);
 }
 </style>
