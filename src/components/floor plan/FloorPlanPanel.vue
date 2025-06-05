@@ -6,6 +6,42 @@
 </template>
 <script setup>
 import { mainStore } from '@/stores/mainStore'
+import { floorStore } from '@/stores/floorStore'
+import { ref, onBeforeMount, watch } from 'vue'
+
+const rooms = ref([])
+const selectedRom = ref(null)
+const tables = ref([])
+
+onBeforeMount(() => {
+  floorStore()
+    .getRooms()
+    .forEach((room) => {
+      rooms.value.push(JSON.parse(JSON.stringify({ ...room })))
+    })
+  selectedRom.value = { ...rooms.value[0] }
+  floorStore()
+    .getTables()
+    .forEach((table) => {
+      tables.value.push(JSON.parse(JSON.stringify({ ...table })))
+    })
+})
+
+watch(
+  () => selectedRom.value,
+  async (newValue) => {
+    try {
+      await floorStore().loadTables(newValue.id)
+    } finally {
+      tables.value = []
+      floorStore()
+        .getTables()
+        .forEach((table) => {
+          tables.value.push(JSON.parse(JSON.stringify({ ...table })))
+        })
+    }
+  },
+)
 </script>
 <style scoped>
 .panel-container {

@@ -59,7 +59,6 @@ function changeSelectedRoom(e) {
 const roomsListLength = computed(() => floorStore().getRooms().length)
 
 onBeforeMount(async () => {
-  console.log(mainStore().floorPlanPanelShowing)
   await floorStore().loadRooms(settingsStore().getAccountUID())
   if (floorStore().getRooms().length > 0) {
     const firstRoom = floorStore().getRooms()[0]
