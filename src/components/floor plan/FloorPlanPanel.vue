@@ -24,7 +24,7 @@
           Modifier le nom de la salle
         </button>
         <button @click="" class="add-table-btn btn">Ajouter une table</button>
-        <button @click="" class="delete-room-btn btn">Supprimer la salle</button>
+        <button @click="deleteRoom" class="delete-room-btn btn">Supprimer la salle</button>
       </div>
     </div>
   </div>
@@ -41,10 +41,19 @@ const tables = ref([])
 function changeSelectedRoom(e) {
   const newlySelectedRoom = rooms.value.find((room) => room.id === e.target.id)
   selectedRom.value = newlySelectedRoom
-  mainStore().selectedRom = newlySelectedRoom
+  mainStore().selectedRoom = newlySelectedRoom
 }
 
-function handleEditingRoomName() {}
+async function deleteRoom(e) {
+  e.preventDefault()
+  loadingDelete.value = true
+  await floorStore().deleteRoom(mainStore().selectedRoom.id)
+  loadingDelete.value = false
+  if (floorStore().getRooms().length > 0) {
+    mainStore().selectedRoom = floorStore().getRooms()[0]
+  }
+  mainStore().editRoomFormShowing = false
+}
 
 onBeforeMount(() => {
   // Reset
