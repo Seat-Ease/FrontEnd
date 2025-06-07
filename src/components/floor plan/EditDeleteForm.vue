@@ -24,24 +24,31 @@
 <script setup>
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
+import { roomNameEdited } from '@/stores/events'
 import { ref } from 'vue'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const loadingSave = ref(false)
-const loadingDelete = ref(false)
 
 const roomNameInput = ref(mainStore().selectedRoom.name)
 async function editName(e) {
   e.preventDefault()
   if (roomNameInput.value.length === 0) return
-  loadingSave.value = true
-  await floorStore().editRoomName(mainStore().selectedRoom.id, roomNameInput.value)
-  mainStore().selectedRoom = floorStore()
-    .getRooms()
-    .find((room) => room.id === mainStore().selectedRoom.id)
-  loadingSave.value = false
-  roomNameInput.value = ''
-  mainStore().editRoomFormShowing = false
+  try {
+    loadingSave.value = true
+    await floorStore().editRoomName(mainStore().selectedRoom.id, roomNameInput.value)
+    mainStore().selectedRoom = floorStore()
+      .getRooms()
+      .find((room) => room.id === mainStore().selectedRoom.id)
+    roomNameEdited().triggerEvent(true)
+  } catch (error) {
+    roomNameEdited().triggerEvent(false)
+    console.log(error)
+  } finally {
+    loadingSave.value = false
+    roomNameInput.value = ''
+    mainStore().editRoomFormShowing = false
+  }
 }
 </script>
 <style scoped>

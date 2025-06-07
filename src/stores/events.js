@@ -10,3 +10,14 @@ export const roomNameEdited = defineStore('room_name_edited', {
     },
   },
 })
+
+export const roomDeleted = defineStore('room_deleted', {
+  state: () => ({
+    eventData: null,
+  }),
+  actions: {
+    triggerEvent(data) {
+      this.eventData = data
+    },
+  },
+})

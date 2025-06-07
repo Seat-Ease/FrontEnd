@@ -12,7 +12,7 @@
           @click="changeSelectedRoom"
           class="room"
           v-for="room in rooms"
-          :class="{ selectedRoom: selectedRom.id === String(room.id) }"
+          :class="{ selectedRoom: selectedRoom.id === String(room.id) }"
           :ref="room.id"
           :id="room.id"
         >
@@ -24,7 +24,10 @@
           Modifier le nom de la salle
         </button>
         <button @click="" class="add-table-btn btn">Ajouter une table</button>
-        <button @click="deleteRoom" class="delete-room-btn btn">Supprimer la salle</button>
+        <button @click="deleteRoom" class="delete-room-btn btn">
+          Supprimer la salle
+          <span v-if="loadingDelete"><SpinnerComponent /></span>
+        </button>
       </div>
     </div>
   </div>
@@ -32,41 +35,52 @@
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
+import { roomNameEdited, roomDeleted } from '@/stores/events'
 import { ref, onBeforeMount, watch } from 'vue'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
+
+const loadingDelete = ref(false)
 
 const rooms = ref([])
-const selectedRom = ref(null)
+const selectedRoom = ref(null)
 const tables = ref([])
 
 function changeSelectedRoom(e) {
   const newlySelectedRoom = rooms.value.find((room) => room.id === e.target.id)
-  selectedRom.value = newlySelectedRoom
+  selectedRoom.value = newlySelectedRoom
   mainStore().selectedRoom = newlySelectedRoom
 }
 
-async function deleteRoom(e) {
-  e.preventDefault()
-  loadingDelete.value = true
-  await floorStore().deleteRoom(mainStore().selectedRoom.id)
-  loadingDelete.value = false
-  if (floorStore().getRooms().length > 0) {
-    mainStore().selectedRoom = floorStore().getRooms()[0]
+async function deleteRoom() {
+  try {
+    loadingDelete.value = true
+    await floorStore().deleteRoom(selectedRoom.value.id)
+    if (floorStore().getRooms().length > 0) {
+      mainStore().selectedRoom = floorStore().getRooms()[0]
+    } else mainStore().selectedRoom = null
+    roomDeleted().triggerEvent(true)
+  } catch (error) {
+    roomDeleted().triggerEvent(false)
+    console.error(error)
+  } finally {
+    loadingDelete.value = false
+    mainStore().editRoomFormShowing = false
   }
-  mainStore().editRoomFormShowing = false
 }
 
 onBeforeMount(() => {
   // Reset
   rooms.value = []
   tables.value = []
-  selectedRom.value = null
+  selectedRoom.value = null
 
   floorStore()
     .getRooms()
     .forEach((room) => {
       rooms.value.push(JSON.parse(JSON.stringify({ ...room })))
     })
-  selectedRom.value = { ...rooms.value[0] }
+  selectedRoom.value = { ...rooms.value[0] }
+  mainStore().selectedRoom = selectedRoom.value
   floorStore()
     .getTables()
     .forEach((table) => {
@@ -75,7 +89,39 @@ onBeforeMount(() => {
 })
 
 watch(
-  () => selectedRom.value,
+  () => roomNameEdited().eventData,
+  (newValue) => {
+    if (newValue === true) {
+      rooms.value = []
+
+      floorStore()
+        .getRooms()
+        .forEach((room) => {
+          rooms.value.push(JSON.parse(JSON.stringify({ ...room })))
+        })
+      selectedRoom.value = rooms.value.find((room) => room.id === selectedRoom.value.id)
+    }
+  },
+)
+
+watch(
+  () => roomDeleted().eventData,
+  (newValue) => {
+    if (newValue === true) {
+      rooms.value = []
+
+      floorStore()
+        .getRooms()
+        .forEach((room) => {
+          rooms.value.push(JSON.parse(JSON.stringify({ ...room })))
+        })
+      selectedRoom.value = mainStore().selectedRoom
+    }
+  },
+)
+
+watch(
+  () => selectedRoom.value,
   async (newValue) => {
     try {
       await floorStore().loadTables(newValue.id)
@@ -166,5 +212,8 @@ watch(
 }
 .delete-room-btn {
   background-color: red;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 </style>
