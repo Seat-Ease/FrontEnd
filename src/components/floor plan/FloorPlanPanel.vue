@@ -1,7 +1,11 @@
 <template>
   <div class="panel-container">
-    <h3 class="title">Floor Plan Panel</h3>
-    <button @click="mainStore().floorPlanPanelShowing = false">Close</button>
+    <div class="menu-bar">
+      <button class="save-btn btn">Enregistrer</button>
+      <button class="close-btn btn" @click="mainStore().floorPlanPanelShowing = false">
+        Fermer
+      </button>
+    </div>
   </div>
 </template>
 <script setup>
@@ -50,7 +54,32 @@ watch(
   left: 0;
   height: 100%;
   width: 100%;
-  background-color: aqua;
+  background-color: #1e293b;
   z-index: 10000000;
+  display: flex;
+  flex-direction: column;
+  padding: 3rem;
+}
+.menu-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.btn {
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  border-radius: 0.75rem;
+  letter-spacing: 0.05rem;
+  gap: 2rem;
+}
+.close-btn {
+  background-color: #1a365d;
+  border: 0.1rem solid #fff;
+}
+.save-btn {
+  background-color: rgb(0, 74, 177);
 }
 </style>
