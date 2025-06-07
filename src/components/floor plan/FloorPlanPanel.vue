@@ -20,7 +20,9 @@
         </p>
       </div>
       <div class="btns-container">
-        <button @click="" class="edit-name-btn btn">Modifier le nom de la salle</button>
+        <button @click="mainStore().editRoomFormShowing = true" class="edit-name-btn btn">
+          Modifier le nom de la salle
+        </button>
         <button @click="" class="add-table-btn btn">Ajouter une table</button>
         <button @click="" class="delete-room-btn btn">Supprimer la salle</button>
       </div>
@@ -37,8 +39,12 @@ const selectedRom = ref(null)
 const tables = ref([])
 
 function changeSelectedRoom(e) {
-  selectedRom.value = rooms.value.find((room) => room.id === e.target.id)
+  const newlySelectedRoom = rooms.value.find((room) => room.id === e.target.id)
+  selectedRom.value = newlySelectedRoom
+  mainStore().selectedRom = newlySelectedRoom
 }
+
+function handleEditingRoomName() {}
 
 onBeforeMount(() => {
   // Reset
@@ -83,7 +89,7 @@ watch(
   height: 100%;
   width: 100%;
   background-color: #1e293b;
-  z-index: 10000000;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   padding: 3rem;
