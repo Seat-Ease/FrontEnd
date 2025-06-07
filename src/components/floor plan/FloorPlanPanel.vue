@@ -6,6 +6,25 @@
         Fermer
       </button>
     </div>
+    <div v-if="rooms.length > 0" class="room-list-btns-container">
+      <div class="room-list-container">
+        <p
+          @click="changeSelectedRoom"
+          class="room"
+          v-for="room in rooms"
+          :class="{ selectedRoom: selectedRom.id === String(room.id) }"
+          :ref="room.id"
+          :id="room.id"
+        >
+          {{ room.name }}
+        </p>
+      </div>
+      <div class="btns-container">
+        <button @click="" class="edit-name-btn btn">Modifier le nom de la salle</button>
+        <button @click="" class="add-table-btn btn">Ajouter une table</button>
+        <button @click="" class="delete-room-btn btn">Supprimer la salle</button>
+      </div>
+    </div>
   </div>
 </template>
 <script setup>
@@ -17,7 +36,16 @@ const rooms = ref([])
 const selectedRom = ref(null)
 const tables = ref([])
 
+function changeSelectedRoom(e) {
+  selectedRom.value = rooms.value.find((room) => room.id === e.target.id)
+}
+
 onBeforeMount(() => {
+  // Reset
+  rooms.value = []
+  tables.value = []
+  selectedRom.value = null
+
   floorStore()
     .getRooms()
     .forEach((room) => {
@@ -59,6 +87,7 @@ watch(
   display: flex;
   flex-direction: column;
   padding: 3rem;
+  gap: 3rem;
 }
 .menu-bar {
   display: flex;
@@ -76,10 +105,51 @@ watch(
   gap: 2rem;
 }
 .close-btn {
-  background-color: #1a365d;
-  border: 0.1rem solid #fff;
+  background-color: #1e293b;
+  border: 0.1rem solid #516d99;
+  color: #516d99;
 }
-.save-btn {
+.save-btn,
+.add-table-btn {
   background-color: rgb(0, 74, 177);
+}
+.room-list-btns-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.room-list-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem;
+  background-color: #516d99;
+  border-radius: 0.75rem;
+  max-width: 50%;
+  overflow-x: scroll;
+}
+.room {
+  font-size: 1.3rem;
+  background-color: #516d99;
+  color: #fff;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  letter-spacing: 0.1rem;
+  transition: all 0.2s;
+}
+.selectedRoom {
+  background-color: #1e293b;
+}
+.btns-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.edit-name-btn {
+  background-color: #516d99;
+}
+.delete-room-btn {
+  background-color: red;
 }
 </style>
