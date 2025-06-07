@@ -23,7 +23,9 @@
         <button @click="mainStore().editRoomFormShowing = true" class="edit-name-btn btn">
           Modifier le nom de la salle
         </button>
-        <button @click="" class="add-table-btn btn">Ajouter une table</button>
+        <button @click="mainStore().newTableFormShowing = true" class="add-table-btn btn">
+          Ajouter une table
+        </button>
         <button @click="deleteRoom" class="delete-room-btn btn">
           Supprimer la salle
           <span v-if="loadingDelete"><SpinnerComponent /></span>
