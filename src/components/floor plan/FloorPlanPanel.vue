@@ -37,7 +37,7 @@
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
-import { roomNameEdited, roomDeleted } from '@/stores/events'
+// import { roomNameEdited, roomDeleted } from '@/stores/events'
 import { ref, onBeforeMount, watch } from 'vue'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
@@ -60,9 +60,7 @@ async function deleteRoom() {
     if (floorStore().getRooms().length > 0) {
       mainStore().selectedRoom = floorStore().getRooms()[0]
     } else mainStore().selectedRoom = null
-    roomDeleted().triggerEvent(true)
   } catch (error) {
-    roomDeleted().triggerEvent(false)
     console.error(error)
   } finally {
     loadingDelete.value = false
@@ -90,53 +88,53 @@ onBeforeMount(() => {
     })
 })
 
-watch(
-  () => roomNameEdited().eventData,
-  (newValue) => {
-    if (newValue === true) {
-      rooms.value = []
+// watch(
+//   () => roomNameEdited().eventData,
+//   (newValue) => {
+//     if (newValue === true) {
+//       rooms.value = []
 
-      floorStore()
-        .getRooms()
-        .forEach((room) => {
-          rooms.value.push(JSON.parse(JSON.stringify({ ...room })))
-        })
-      selectedRoom.value = rooms.value.find((room) => room.id === selectedRoom.value.id)
-    }
-  },
-)
+//       floorStore()
+//         .getRooms()
+//         .forEach((room) => {
+//           rooms.value.push(JSON.parse(JSON.stringify({ ...room })))
+//         })
+//       selectedRoom.value = rooms.value.find((room) => room.id === selectedRoom.value.id)
+//     }
+//   },
+// )
 
-watch(
-  () => roomDeleted().eventData,
-  (newValue) => {
-    if (newValue === true) {
-      rooms.value = []
+// watch(
+//   () => roomDeleted().eventData,
+//   (newValue) => {
+//     if (newValue === true) {
+//       rooms.value = []
 
-      floorStore()
-        .getRooms()
-        .forEach((room) => {
-          rooms.value.push(JSON.parse(JSON.stringify({ ...room })))
-        })
-      selectedRoom.value = mainStore().selectedRoom
-    }
-  },
-)
+//       floorStore()
+//         .getRooms()
+//         .forEach((room) => {
+//           rooms.value.push(JSON.parse(JSON.stringify({ ...room })))
+//         })
+//       selectedRoom.value = mainStore().selectedRoom
+//     }
+//   },
+// )
 
-watch(
-  () => selectedRoom.value,
-  async (newValue) => {
-    try {
-      await floorStore().loadTables(newValue.id)
-    } finally {
-      tables.value = []
-      floorStore()
-        .getTables()
-        .forEach((table) => {
-          tables.value.push(JSON.parse(JSON.stringify({ ...table })))
-        })
-    }
-  },
-)
+// watch(
+//   () => selectedRoom.value,
+//   async (newValue) => {
+//     try {
+//       await floorStore().loadTables(newValue.id)
+//     } finally {
+//       tables.value = []
+//       floorStore()
+//         .getTables()
+//         .forEach((table) => {
+//           tables.value.push(JSON.parse(JSON.stringify({ ...table })))
+//         })
+//     }
+//   },
+// )
 </script>
 <style scoped>
 .panel-container {

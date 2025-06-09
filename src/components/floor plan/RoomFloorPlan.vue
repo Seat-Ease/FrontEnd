@@ -49,11 +49,21 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, onBeforeMount, nextTick, reactive, watch, computed } from 'vue'
+import {
+  ref,
+  onMounted,
+  onBeforeMount,
+  nextTick,
+  reactive,
+  watch,
+  computed,
+  watchEffect,
+} from 'vue'
 import { useRoute } from 'vue-router'
 import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
+import { tableCreated } from '@/stores/events'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
@@ -333,6 +343,55 @@ watch(
       })
 
     stage.batchDraw()
+  },
+  { immediate: true },
+)
+watch(
+  () => tableCreated().eventData,
+  async (newValue) => {
+    if (newValue.value === true) {
+      loadingTables.value = true
+      try {
+        await floorStore().loadTables(mainStore().selectedRoom.id)
+      } finally {
+        loadingTables.value = false
+      }
+
+      await nextTick()
+
+      if (floorStore().getTables().length === 0) return
+
+      const stage = stageRef.value?.getNode()
+
+      const roomAlreadyExist = stage?.children.find((room) => room.attrs.id === newValue.id)
+      if (roomAlreadyExist) {
+        toggleRoomVisibility(mainStore().selectedRoom)
+        return
+      }
+
+      if (canvasContainer.value) {
+        stageConfig.width = canvasContainer.value.clientWidth
+        stageConfig.height = canvasContainer.value.clientHeight
+      }
+
+      if (!stage || floorStore().getRooms().length === 0) return
+
+      const layer = new Konva.Layer({
+        ...mainStore().selectedRoom,
+        opacity: 1,
+        visible: true,
+      })
+
+      stage.add(layer)
+
+      floorStore()
+        .getTables()
+        .forEach((table) => {
+          createTable(stage.children, table)
+        })
+
+      stage.batchDraw()
+    }
   },
   { immediate: true },
 )

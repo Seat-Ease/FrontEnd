@@ -24,7 +24,6 @@
 <script setup>
 import { floorStore } from '@/stores/floorStore'
 import { mainStore } from '@/stores/mainStore'
-import { roomNameEdited } from '@/stores/events'
 import { ref } from 'vue'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
@@ -40,9 +39,7 @@ async function editName(e) {
     mainStore().selectedRoom = floorStore()
       .getRooms()
       .find((room) => room.id === mainStore().selectedRoom.id)
-    roomNameEdited().triggerEvent(true)
   } catch (error) {
-    roomNameEdited().triggerEvent(false)
     console.log(error)
   } finally {
     loadingSave.value = false

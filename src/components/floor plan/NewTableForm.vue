@@ -43,6 +43,7 @@
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
+import { tableCreated } from '@/stores/events'
 import { ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
@@ -73,14 +74,23 @@ async function submitForm(e) {
     errorMessage.value = 'Capacité minimale ne peut pas être supérieure à la capacité maximale'
     return
   } else errorMessage.value = ''
-  loading.value = true
-  await floorStore().addTable({ ...newTableData.value })
-  loading.value = false
-  newTableData.value.name = ''
-  newTableData.value.minCovers = 1
-  newTableData.value.maxCovers = 1
-  newTableData.value.shape = 'Rect'
-  mainStore().newTableFormShowing = false
+  try {
+    loading.value = true
+    await floorStore().addTable({ ...newTableData.value })
+    mainStore().lastTableCreatedId = newTableData.value.id
+    tableCreated().triggerEvent(true)
+  } catch (e) {
+    tableCreated().triggerEvent(false)
+    mainStore().lastTableCreatedId = ''
+    console.log(e)
+  } finally {
+    loading.value = false
+    newTableData.value.name = ''
+    newTableData.value.minCovers = 1
+    newTableData.value.maxCovers = 1
+    newTableData.value.shape = 'Rect'
+    mainStore().newTableFormShowing = false
+  }
 }
 </script>
 <style scoped>

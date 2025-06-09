@@ -1,23 +1,15 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-export const roomNameEdited = defineStore('room_name_edited', {
-  state: () => ({
-    eventData: null,
-  }),
-  actions: {
-    triggerEvent(data) {
-      this.eventData = data
-    },
-  },
-})
+const eventData = ref(null)
 
-export const roomDeleted = defineStore('room_deleted', {
-  state: () => ({
-    eventData: null,
-  }),
-  actions: {
-    triggerEvent(data) {
-      this.eventData = data
-    },
-  },
+export const tableCreated = defineStore('table_created', () => {
+  function triggerEvent(data) {
+    eventData.value = { value: data, timestamp: Date.now() }
+  }
+
+  return {
+    eventData,
+    triggerEvent,
+  }
 })

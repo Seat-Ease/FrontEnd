@@ -1,33 +1,44 @@
 <template>
   <div class="floor-plan-page-container">
-    <Transition name="slide">
+    <!-- <Transition name="slide">
       <FloorPlanPanel v-if="mainStore().floorPlanPanelShowing" />
-    </Transition>
+    </Transition> -->
     <div class="page-header-container">
       <div class="title-description-container">
         <h1 class="page-title">Plan de salle</h1>
         <p class="page-description">Créez et gérez la disposition de votre restaurant</p>
       </div>
-      <button @click="mainStore().newRoomFormShowing = true" class="add-room-btn">
+      <button @click="mainStore().newRoomFormShowing = true" class="add-room-btn btn">
         Ajouter une salle
       </button>
     </div>
     <div v-if="floorStore().getRooms().length > 0" class="room-list-btns-container">
-      <div class="room-list-container">
-        <p
-          @click="changeSelectedRoom"
-          class="room"
-          v-for="room in floorStore().getRooms()"
-          :class="{ selectedRoom: mainStore().selectedRoom?.id === String(room.id) }"
-          :ref="room.id"
-          :id="room.id"
-        >
-          {{ room.name }}
-        </p>
+      <div class="top">
+        <div class="room-list-container">
+          <p
+            @click="changeSelectedRoom"
+            class="room"
+            v-for="room in floorStore().getRooms()"
+            :class="{ selectedRoom: mainStore().selectedRoom?.id === String(room.id) }"
+            :ref="room.id"
+            :id="room.id"
+          >
+            {{ room.name }}
+          </p>
+        </div>
+        <button @click="mainStore().newTableFormShowing = true" class="add-table-btn btn">
+          Ajouter une table
+        </button>
       </div>
       <div class="btns-container">
-        <button @click="mainStore().floorPlanPanelShowing = true" class="edit-room-btn">
-          Modifier la salle
+        <button @click="mainStore().editRoomFormShowing = true" class="edit-name-btn btn">
+          Modifier le nom de la salle
+        </button>
+        <button @click="deleteRoom" class="delete-room-btn btn">
+          Supprimer la salle
+          <span v-if="loadingDelete">
+            <SpinnerComponent />
+          </span>
         </button>
       </div>
     </div>
@@ -49,11 +60,28 @@ import { floorStore } from '@/stores/floorStore'
 import NoRoomComponent from '@/components/floor plan/NoRoomComponent.vue'
 import RoomFloorPlan from '@/components/floor plan/RoomFloorPlan.vue'
 import FloorPlanPanel from '@/components/floor plan/FloorPlanPanel.vue'
+import SpinnerComponent from '@/components/SpinnerComponent.vue'
+
+const loadingDelete = ref(false)
 
 function changeSelectedRoom(e) {
   mainStore().selectedRoom = floorStore()
     .getRooms()
     .find((room) => room.id === e.target.id)
+}
+
+async function deleteRoom() {
+  try {
+    loadingDelete.value = true
+    await floorStore().deleteRoom(mainStore().selectedRoom.id)
+    if (floorStore().getRooms().length > 0) {
+      mainStore().selectedRoom = floorStore().getRooms()[0]
+    } else mainStore().selectedRoom = null
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loadingDelete.value = false
+  }
 }
 
 const roomsListLength = computed(() => floorStore().getRooms().length)
@@ -74,7 +102,7 @@ watch(
   },
   { immediate: true },
 )
-onUnmounted(() => (mainStore().floorPlanPanelShowing = false))
+// onUnmounted(() => (mainStore().floorPlanPanelShowing = false))
 </script>
 <style scoped>
 .floor-plan-page-container {
@@ -91,21 +119,38 @@ onUnmounted(() => (mainStore().floorPlanPanelShowing = false))
   justify-content: space-between;
   align-items: center;
 }
-.add-room-btn,
-.add-table-btn {
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.btn {
   border: none;
-  background-color: rgb(0, 74, 177);
   color: #fff;
   font-size: 1.6rem;
   padding: 1rem 2rem;
   cursor: pointer;
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
+  gap: 2rem;
+}
+.add-table-btn,
+.add-room-btn {
+  background-color: rgb(0, 74, 177);
+}
+.edit-name-btn {
+  background-color: #516d99;
+}
+.delete-room-btn {
+  background-color: red;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 .room-list-btns-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 2rem;
 }
 .room-list-container {
   display: flex;
