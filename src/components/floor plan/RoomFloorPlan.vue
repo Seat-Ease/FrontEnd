@@ -72,7 +72,7 @@ import { useRoute } from 'vue-router'
 import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
-import { tableCreated, tableDeleted } from '@/stores/events'
+import { tableCreated, tableDeleted, tableEdited } from '@/stores/events'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
@@ -393,6 +393,13 @@ watch(
 )
 watch(
   () => tableCreated().eventData,
+  async (newValue) => {
+    if (newValue.value === true) await updateUI()
+  },
+  { immediate: true },
+)
+watch(
+  () => tableEdited().eventData,
   async (newValue) => {
     if (newValue.value === true) await updateUI()
   },

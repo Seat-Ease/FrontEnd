@@ -36,6 +36,7 @@
 <script setup>
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
+import { tableEdited } from '@/stores/events'
 import { ref } from 'vue'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
@@ -66,8 +67,15 @@ async function submitForm(e) {
     return
   } else errorMessage.value = ''
   loading.value = true
-  await floorStore().editTable(newTableData.value.id, { ...newTableData.value })
-  loading.value = false
+  try {
+    await floorStore().editTable(newTableData.value.id, { ...newTableData.value })
+    tableEdited().triggerEvent(true)
+  } catch (e) {
+    tableEdited().triggerEvent(false)
+    console.error(e)
+  } finally {
+    loading.value = false
+  }
   mainStore().tableEditingActivated = false
   mainStore().editTableFormShowing = false
 }
