@@ -1,8 +1,5 @@
 <template>
   <div class="floor-plan-page-container">
-    <!-- <Transition name="slide">
-      <FloorPlanPanel v-if="mainStore().floorPlanPanelShowing" />
-    </Transition> -->
     <div class="page-header-container">
       <div class="title-description-container">
         <h1 class="page-title">Plan de salle</h1>
@@ -59,7 +56,6 @@ import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
 import NoRoomComponent from '@/components/floor plan/NoRoomComponent.vue'
 import RoomFloorPlan from '@/components/floor plan/RoomFloorPlan.vue'
-import FloorPlanPanel from '@/components/floor plan/FloorPlanPanel.vue'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
 const loadingDelete = ref(false)
@@ -102,7 +98,6 @@ watch(
   },
   { immediate: true },
 )
-// onUnmounted(() => (mainStore().floorPlanPanelShowing = false))
 </script>
 <style scoped>
 .floor-plan-page-container {

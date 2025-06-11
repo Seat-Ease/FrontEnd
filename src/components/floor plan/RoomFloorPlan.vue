@@ -27,6 +27,10 @@
           </div>
         </div>
       </div>
+      <div v-if="mainStore().tableEditingActivated" class="btns-container">
+        <button class="edit-btn btn">Modifier la table</button>
+        <button class="delete-btn btn">Supprimer la table</button>
+      </div>
     </div>
     <div v-if="loadingTables">
       <LoadingComponent />
@@ -145,7 +149,11 @@ function createTable(stage, newTableData) {
     })
 
     newTable.on('click tap', function () {
-      mainStore().tableEditingActivated = true
+      if (mainStore().selectedTable.id === newTableData.id) {
+        mainStore().tableEditingActivated = !mainStore().tableEditingActivated
+      } else {
+        mainStore().tableEditingActivated = true
+      }
       mainStore().selectedTable = newTableData
     })
 
@@ -211,7 +219,11 @@ function createTable(stage, newTableData) {
     })
 
     newTable.on('click tap', function () {
-      mainStore().tableEditingActivated = true
+      if (mainStore().selectedTable.id === newTableData.id) {
+        mainStore().tableEditingActivated = !mainStore().tableEditingActivated
+      } else {
+        mainStore().tableEditingActivated = true
+      }
       mainStore().selectedTable = newTableData
     })
 
@@ -254,10 +266,6 @@ async function destroyTable() {
   layer?.batchDraw()
   await floorStore().deleteTable(mainStore().selectedTable.id)
   mainStore().selectedTable = null
-  mainStore().tableEditingActivated = false
-}
-function handleFreeingTable() {
-  floorStore().updateTableState(mainStore().selectedTable.id)
   mainStore().tableEditingActivated = false
 }
 onMounted(async () => {
@@ -430,7 +438,7 @@ watch(
   border-radius: 0.75rem;
   min-height: 50rem;
 }
-.tables-btns-container {
+.btns-container {
   display: flex;
   gap: 0.75rem;
 }
@@ -443,16 +451,11 @@ watch(
   border-radius: 0.75rem;
   letter-spacing: 0.05rem;
 }
-.delete-table {
+.delete-btn {
   background-color: red;
 }
-.edit-table {
-  border: 0.2rem solid #1a365d;
-  background-color: #1e293b;
-  border-radius: 0.75rem;
-}
-.free-table {
-  background-color: #516d99;
+.edit-btn {
+  background-color: #1a365d;
 }
 .table-state-legend-container {
   display: flex;
