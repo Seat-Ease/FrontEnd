@@ -31,7 +31,10 @@
         <button @click="mainStore().editTableFormShowing = true" class="edit-btn btn">
           Modifier la table
         </button>
-        <button class="delete-btn btn">Supprimer la table</button>
+        <button @click="destroyTable" class="delete-btn btn">
+          Supprimer la table
+          <span v-if="loadingDeletion"><SpinnerComponent /></span>
+        </button>
       </div>
     </div>
     <div v-if="loadingTables">
@@ -69,7 +72,7 @@ import { useRoute } from 'vue-router'
 import Konva from 'konva'
 import { mainStore } from '@/stores/mainStore'
 import { floorStore } from '@/stores/floorStore'
-import { tableCreated } from '@/stores/events'
+import { tableCreated, tableDeleted } from '@/stores/events'
 import LoadingComponent from '@/components/LoadingComponent.vue'
 import SpinnerComponent from '@/components/SpinnerComponent.vue'
 
@@ -151,7 +154,10 @@ function createTable(stage, newTableData) {
     })
 
     newTable.on('click tap', function () {
-      if (mainStore().selectedTable.id === newTableData.id) {
+      if (!mainStore().selectedTable) {
+        mainStore().selectedTable = newTableData
+        mainStore().tableEditingActivated = true
+      } else if (mainStore().selectedTable.id === newTableData.id) {
         mainStore().tableEditingActivated = !mainStore().tableEditingActivated
       } else {
         mainStore().tableEditingActivated = true
@@ -221,7 +227,10 @@ function createTable(stage, newTableData) {
     })
 
     newTable.on('click tap', function () {
-      if (mainStore().selectedTable.id === newTableData.id) {
+      if (!mainStore().selectedTable) {
+        mainStore().selectedTable = newTableData
+        mainStore().tableEditingActivated = true
+      } else if (mainStore().selectedTable.id === newTableData.id) {
         mainStore().tableEditingActivated = !mainStore().tableEditingActivated
       } else {
         mainStore().tableEditingActivated = true
@@ -249,26 +258,54 @@ function toggleRoomVisibility(selectedRoom) {
   })
 }
 async function destroyTable() {
-  const stage = stageRef.value?.getNode()
-  if (!stage || !mainStore().selectedTable?.id || !mainStore().selectedTable?.room_id) return
+  loadingDeletion.value = true
+  try {
+    await floorStore().deleteTable(mainStore().selectedTable.id)
+    tableDeleted().triggerEvent(true)
+  } catch (e) {
+    tableDeleted().triggerEvent(false)
+    console.log(e)
+  } finally {
+    loadingDeletion.value = false
+  }
 
-  const layer = stage?.children.find((room) => room.attrs.id === mainStore().selectedRoom.id)
-  if (!layer) return
-
-  const shape = layer?.findOne(`#${mainStore().selectedTable.id}`)
-  if (shape) shape?.destroy()
-
-  const nameText = layer?.findOne(`#${mainStore().selectedTable.id}-label-name`)
-  if (nameText) nameText?.destroy()
-
-  const capacityText = layer?.findOne(`#${mainStore().selectedTable.id}-label-capacity`)
-  if (capacityText) capacityText?.destroy()
-
-  // 🎨 Redraw layer
-  layer?.batchDraw()
-  await floorStore().deleteTable(mainStore().selectedTable.id)
   mainStore().selectedTable = null
   mainStore().tableEditingActivated = false
+}
+async function updateUI() {
+  loadingTables.value = true
+  try {
+    await floorStore().loadTables(mainStore().selectedRoom.id)
+  } finally {
+    loadingTables.value = false
+  }
+
+  await nextTick()
+
+  if (floorStore().getTables().length === 0) return
+
+  const stage = stageRef.value?.getNode()
+
+  if (canvasContainer.value) {
+    stageConfig.width = canvasContainer.value.clientWidth
+    stageConfig.height = canvasContainer.value.clientHeight
+  }
+
+  const layer = new Konva.Layer({
+    ...mainStore().selectedRoom,
+    opacity: 1,
+    visible: true,
+  })
+
+  stage.add(layer)
+
+  floorStore()
+    .getTables()
+    .forEach((table) => {
+      createTable(stage.children, table)
+    })
+
+  stage.batchDraw()
 }
 onMounted(async () => {
   loadingTables.value = true
@@ -336,8 +373,6 @@ watch(
       stageConfig.height = canvasContainer.value.clientHeight
     }
 
-    if (!stage || floorStore().getRooms().length === 0) return
-
     const layer = new Konva.Layer({
       ...newValue,
       opacity: 1,
@@ -359,49 +394,14 @@ watch(
 watch(
   () => tableCreated().eventData,
   async (newValue) => {
-    if (newValue.value === true) {
-      loadingTables.value = true
-      try {
-        await floorStore().loadTables(mainStore().selectedRoom.id)
-      } finally {
-        loadingTables.value = false
-      }
-
-      await nextTick()
-
-      if (floorStore().getTables().length === 0) return
-
-      const stage = stageRef.value?.getNode()
-
-      const roomAlreadyExist = stage?.children.find((room) => room.attrs.id === newValue.id)
-      if (roomAlreadyExist) {
-        toggleRoomVisibility(mainStore().selectedRoom)
-        return
-      }
-
-      if (canvasContainer.value) {
-        stageConfig.width = canvasContainer.value.clientWidth
-        stageConfig.height = canvasContainer.value.clientHeight
-      }
-
-      if (!stage || floorStore().getRooms().length === 0) return
-
-      const layer = new Konva.Layer({
-        ...mainStore().selectedRoom,
-        opacity: 1,
-        visible: true,
-      })
-
-      stage.add(layer)
-
-      floorStore()
-        .getTables()
-        .forEach((table) => {
-          createTable(stage.children, table)
-        })
-
-      stage.batchDraw()
-    }
+    if (newValue.value === true) await updateUI()
+  },
+  { immediate: true },
+)
+watch(
+  () => tableDeleted().eventData,
+  async (newValue) => {
+    if (newValue.value === true) await updateUI()
   },
   { immediate: true },
 )
@@ -455,6 +455,9 @@ watch(
 }
 .delete-btn {
   background-color: red;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 .edit-btn {
   background-color: #1a365d;

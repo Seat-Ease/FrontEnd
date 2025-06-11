@@ -13,3 +13,16 @@ export const tableCreated = defineStore('table_created', () => {
     triggerEvent,
   }
 })
+
+export const tableDeleted = defineStore('table_deleted', () => {
+  const eventData = ref(null)
+
+  function triggerEvent(data) {
+    eventData.value = { value: data, timestamp: Date.now() }
+  }
+
+  return {
+    eventData,
+    triggerEvent,
+  }
+})
