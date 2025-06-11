@@ -28,7 +28,9 @@
         </div>
       </div>
       <div v-if="mainStore().tableEditingActivated" class="btns-container">
-        <button class="edit-btn btn">Modifier la table</button>
+        <button @click="mainStore().editTableFormShowing = true" class="edit-btn btn">
+          Modifier la table
+        </button>
         <button class="delete-btn btn">Supprimer la table</button>
       </div>
     </div>
