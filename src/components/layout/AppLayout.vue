@@ -1,5 +1,8 @@
 <template>
-  <div class="app-container">
+  <div v-if="!useUserStore().isAuthResolved" class="loading-container">
+    <LoadingComponent />
+  </div>
+  <div v-else class="app-container">
     <div v-if="mainStore().newRoomFormShowing">
       <NewRoomForm />
     </div>
@@ -57,10 +60,16 @@ import FreeTablesComponent from '@/components/reservation/FreeTablesComponent.vu
 import WaitlistedForm from '@/components/waitlist/WaitlistedForm.vue'
 import NewReservationForm from '@/components/reservation/NewReservationForm.vue'
 import { Calendar, DatePicker } from 'v-calendar'
+import { useUserStore } from '@/stores/userStore'
+import LoadingComponent from '@/components/LoadingComponent.vue'
 </script>
 
 <style scoped>
-.app-container {
+.loading-container {
+  background-color: #1e293b;
+}
+.app-container,
+.loading-container {
   display: flex;
   flex-grow: 1;
   width: 100%;
