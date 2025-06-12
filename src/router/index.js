@@ -3,7 +3,6 @@ import Dashboard from '@/pages/Dashboard.vue'
 import FloorPlan from '@/pages/FloorPlan.vue'
 import Reservation from '@/pages/Reservation.vue'
 import Settings from '@/pages/Settings.vue'
-import Tables from '@/pages/Tables.vue'
 import WaitList from '@/pages/WaitList.vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import Home from '@/pages/Home.vue'
@@ -53,11 +52,6 @@ const router = createRouter({
           name: 'floor plan',
           component: FloorPlan,
         },
-        // {
-        //   path: '/tables',
-        //   name: 'tables',
-        //   component: Tables,
-        // },
         {
           path: '/app/settings',
           name: 'settings',
