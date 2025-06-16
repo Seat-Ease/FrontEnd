@@ -8,8 +8,6 @@ export const bookingStore = defineStore('bookingStore', () => {
     const restaurantRef = doc(getFirestore(app), 'restaurants', id)
     const snapshot = await getDoc(restaurantRef)
 
-    console.log(snapshot.exists())
-
     return snapshot.exists()
   }
 

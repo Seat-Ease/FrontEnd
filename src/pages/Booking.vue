@@ -1,5 +1,6 @@
 <template>
-  <div v-if="pageFound === true">
+  <div v-if="pageFound === null" class="loading-container">Loading...</div>
+  <div v-else-if="pageFound === true">
     <h1>Booking page</h1>
     <div>Restaurant id: {{ $route.params.id }}</div>
   </div>
@@ -10,19 +11,33 @@
   </div>
 </template>
 <script setup>
-import { computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { bookingStore } from '@/stores/bookingStore'
 
 const route = useRoute()
 
-const pageFound = computed(async () => await bookingStore().isIdValid(route.params.id))
+const pageFound = ref(null)
 
-onMounted(() => {
-  console.log(pageFound.value)
+onMounted(async () => {
+  try {
+    pageFound.value = await bookingStore().isIdValid(route.params.id)
+  } catch (e) {
+    console.log(e)
+  }
 })
 </script>
 <style scoped>
+.loading-container {
+  width: 100%;
+  background-color: #1e293b;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  font-weight: bold;
+}
 .not-found-container {
   display: flex;
   flex-direction: column;
