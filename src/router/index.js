@@ -8,6 +8,7 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import Home from '@/pages/Home.vue'
 import Signup from '@/pages/Signup.vue'
 import Login from '@/pages/Login.vue'
+import Booking from '@/pages/Booking.vue'
 import { onAuthStateChanged, getAuth } from 'firebase/auth'
 import { useUserStore } from '@/stores/userStore'
 import { floorStore } from '@/stores/floorStore'
@@ -68,6 +69,11 @@ const router = createRouter({
           component: WaitList,
         },
       ],
+    },
+    {
+      path: '/booking/:id',
+      name: 'booking',
+      component: Booking,
     },
   ],
 })

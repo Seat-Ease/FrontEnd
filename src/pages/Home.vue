@@ -1,5 +1,5 @@
 <template>
-  <div class="home-container">
+  <div v-if="useUserStore().isAuthResolved" class="home-container">
     <div class="top-bar">
       <h1 class="brand-container">Seat Ease</h1>
     </div>
@@ -7,8 +7,26 @@
       <RouterView />
     </main>
   </div>
+  <div v-else class="loading-container">
+    <LoadingComponent />
+  </div>
 </template>
+<script setup>
+import { useUserStore } from '@/stores/userStore'
+import LoadingComponent from '@/components/LoadingComponent.vue'
+</script>
 <style scoped>
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #1e293b;
+}
 .home-container {
   display: flex;
   flex-direction: column;
