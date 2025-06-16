@@ -5,8 +5,10 @@ import { app } from '@/firebase'
 
 export const bookingStore = defineStore('bookingStore', () => {
   async function isIdValid(id) {
-    const restaurantRef = doc(getFirestore(app), 'restaurants', account_uid)
+    const restaurantRef = doc(getFirestore(app), 'restaurants', id)
     const snapshot = await getDoc(restaurantRef)
+
+    console.log(snapshot.exists())
 
     return snapshot.exists()
   }
