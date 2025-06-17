@@ -10,11 +10,24 @@
         {{ phone_number_formatted }}
       </p>
     </div>
+    <p class="instruction">
+      Veuillez sélectionner le nombre de personnes, la date et l'heure de votre réservation
+    </p>
+    <div class="picker-container">
+      <input
+        id="party-size"
+        type="number"
+        class="party-size"
+        v-model="reservationData.party_size"
+      />
+      <input id="reservation-date" type="date" class="date" v-model="reservationData.date" />
+    </div>
   </div>
   <Page404 v-else />
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 import { useRoute } from 'vue-router'
 import { bookingStore } from '@/stores/bookingStore'
 import Page404 from '@/components/booking/Page404.vue'
@@ -25,6 +38,34 @@ const pageFound = ref(null)
 const restaurantData = ref(null)
 
 const phone_number_formatted = ref(null)
+
+function getDayFormatted() {
+  const today = new Date()
+  today.setDate(today.getDate())
+
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+const reservationData = ref({
+  id: String(uuidv4()),
+  client_name: '',
+  client_phone: '',
+  client_email: '',
+  date: getDayFormatted(),
+  time: '19:00',
+  party_size: 2,
+  seated: false,
+  tables_occupied: [],
+  service_start_time: '',
+  service_end_time: '',
+  walk_in: false,
+  cancelled: false,
+  restaurant_id: route.params.id,
+})
 
 onMounted(async () => {
   try {
@@ -74,5 +115,29 @@ onMounted(async () => {
 .phone {
   font-size: 1.2rem;
   color: #cccccc;
+}
+.instruction {
+  font-size: 1.2rem;
+  color: #f9f3f3;
+  margin-top: 5rem;
+}
+.picker-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.picker-container > input {
+  background-color: #0f172a;
+  padding: 1rem;
+  border: 0.1rem solid #1a365d;
+  border-radius: 0.75rem;
+  color: #f1f5f9;
+  font-size: 1.4rem;
+}
+.picker-container > input:focus {
+  outline: 0.2rem solid #1a365d;
+}
+.picker-container > input::placeholder {
+  color: rgb(161, 161, 161) 7;
 }
 </style>

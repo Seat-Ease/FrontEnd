@@ -29,29 +29,29 @@
       </div>
       <div class="day-time-container">
         <div class="input-container">
-          <label for="telephone-client">Date</label>
+          <label for="reservation-date">Date</label>
           <input
             v-model="reservationData.date"
-            id="telephone-client"
+            id="reservation-date"
             type="date"
             placeholder="ex: 0896541234"
           />
         </div>
         <div class="input-container">
-          <label for="telephone-client">Heure</label>
+          <label for="reservation-time">Heure</label>
           <input
             v-model="reservationData.time"
-            id="telephone-client"
+            id="reservation-time"
             type="time"
             placeholder="ex: 0896541234"
           />
         </div>
       </div>
       <div class="input-container">
-        <label for="telephone-client">Nombre de personnes</label>
+        <label for="party-size">Nombre de personnes</label>
         <input
           v-model="reservationData.party_size"
-          id="telephone-client"
+          id="party-size"
           type="number"
           placeholder="ex: 2"
         />
