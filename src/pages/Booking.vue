@@ -1,5 +1,5 @@
 <template>
-  <div v-if="pageFound === null" class="loading-container">Loading...</div>
+  <div v-if="pageFound === null" class="loading-container">Chargement en cours...</div>
   <div v-else-if="pageFound === true" class="page-container">
     <div class="restaurant-info-container">
       <h3 class="name">{{ restaurantData?.general.name }}</h3>
@@ -20,13 +20,32 @@
         class="party-size"
         v-model="reservationData.party_size"
       />
-      <input id="reservation-date" type="date" class="date" v-model="reservationData.date" />
+      <input
+        id="reservation-date"
+        type="date"
+        class="date"
+        v-model="reservationData.date"
+        @change="onDateChange"
+      />
+    </div>
+    <div v-if="slotsLoading" class="loading-slots">Chargement en cours...</div>
+    <div v-else class="slots-container">
+      <div v-if="reservationSlots.length > 0 && !slotsLoading">
+        <ul class="slots-list">
+          <li v-for="slot in reservationSlots" :key="slot.time">
+            <button class="slot-item" @click="reservationData.time = slot.time">{{ slot.time }}</button>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <p class="no-slots-txt">Aucune disponibilité pour cette date.</p>
+      </div>
     </div>
   </div>
   <Page404 v-else />
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useRoute } from 'vue-router'
 import { bookingStore } from '@/stores/bookingStore'
@@ -36,6 +55,9 @@ const route = useRoute()
 
 const pageFound = ref(null)
 const restaurantData = ref(null)
+
+const reservationSlots = computed(() => bookingStore().reservationSlots)
+const slotsLoading = ref(false)
 
 const phone_number_formatted = ref(null)
 
@@ -67,6 +89,20 @@ const reservationData = ref({
   restaurant_id: route.params.id,
 })
 
+async function onDateChange() {
+  slotsLoading.value = true
+  try {
+    await bookingStore().getReservationSlots(
+      restaurantData.value.account_uid, reservationData.value.date,
+      restaurantData.value.schedule.opening_time,
+      restaurantData.value.schedule.closing_time
+    )
+    slotsLoading.value = false
+  } catch (error) {
+    console.error('Error fetching reservation slots:', error)
+  }
+}
+
 onMounted(async () => {
   try {
     if (await bookingStore().isIdValid(route.params.id)) {
@@ -78,6 +114,18 @@ onMounted(async () => {
     }
   } catch (e) {
     console.log(e)
+  }
+
+  slotsLoading.value = true
+  try {
+    await bookingStore().getReservationSlots(
+      restaurantData.value.account_uid, reservationData.value.date,
+      restaurantData.value.schedule.opening_time,
+      restaurantData.value.schedule.closing_time
+    )
+    slotsLoading.value = false
+  } catch (error) {
+    console.error('Error fetching reservation slots:', error)
   }
 })
 </script>
@@ -91,6 +139,16 @@ onMounted(async () => {
   justify-content: center;
   font-size: 5rem;
   font-weight: bold;
+}
+.loading-slots {
+  width: 100%;
+  background-color: #1e293b;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 600;
 }
 .page-container {
   display: flex;
@@ -139,5 +197,28 @@ onMounted(async () => {
 }
 .picker-container > input::placeholder {
   color: rgb(161, 161, 161) 7;
+}
+.slots-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  list-style: none;
+}
+.slot-item {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  color: #1a365d;
+  border: none;
+  border-radius: .75rem;
+  padding: .5rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.no-slots-txt {
+  color: #f9f3f3;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 1rem;
 }
 </style>

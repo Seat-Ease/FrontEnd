@@ -82,11 +82,29 @@ let isAuthInitialized = false
 
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
+  if (!requiresAuth) {
+    // Route publique, pas besoin d'authentification ni de chargement de données
+    return next()
+  }
+
+  // Pour les routes protégées, initialise l'auth si ce n'est pas déjà fait
   if (!isAuthInitialized) {
     await new Promise((resolve) => {
       const unsubscribe = onAuthStateChanged(getAuth(app), async (firebaseUser) => {
         userStore.setUser(firebaseUser)
+        if (!firebaseUser) {
+          // Pas connecté, redirige vers /login
+          userStore.setUser({ uid: 'dummy_uid', email: 'dummy_email@mail.com' })
+          userStore.markAuthResolved()
+          console.log(useUserStore().isAuthResolved)
+          isAuthInitialized = true
+          unsubscribe()
+          resolve(true)
+          next('/login')
+          return
+        }
         try {
           const data = await settingsStore().loadRestaurantData(firebaseUser.uid)
           settingsStore().setRestaurantData(data)
@@ -100,13 +118,13 @@ router.beforeEach(async (to, from, next) => {
         isAuthInitialized = true
         unsubscribe()
         resolve(true)
+        next()
       })
     })
+    return // Empêche d'appeler next() deux fois
   }
 
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
   const isLoggedIn = !!getAuth(app).currentUser
-
   if (requiresAuth && !isLoggedIn) {
     next('/login')
   } else {
