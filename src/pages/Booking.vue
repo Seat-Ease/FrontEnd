@@ -32,8 +32,17 @@
     <div v-else class="slots-container">
       <div v-if="reservationSlots.length > 0 && !slotsLoading">
         <ul class="slots-list">
-          <li v-for="slot in reservationSlots" :key="slot.time">
-            <button class="slot-item" @click="reservationData.time = slot.time">{{ slot.time }}</button>
+          <li v-for="slot in reservationSlots" :key="slot.id">
+            <button
+              class="slot-item"
+              :class="{ 'selected-slot': selectedSlot?.id === slot.id }"
+              @click="() => {
+                updateSelectedSlot(slot)
+                reservationData.time = slot.time
+              }"
+            >
+              {{ slot.time }}
+            </button>
           </li>
         </ul>
       </div>
@@ -59,7 +68,12 @@ const restaurantData = ref(null)
 const reservationSlots = computed(() => bookingStore().reservationSlots)
 const slotsLoading = ref(false)
 
+const selectedSlot = ref(null)
 const phone_number_formatted = ref(null)
+
+function updateSelectedSlot(slot) {
+  selectedSlot.value = slot
+}
 
 function getDayFormatted() {
   const today = new Date()
@@ -220,5 +234,9 @@ onMounted(async () => {
   font-size: 1.2rem;
   text-align: center;
   margin-top: 1rem;
+}
+.selected-slot {
+  background-color: #0d9488;
+  color: #fff;
 }
 </style>
