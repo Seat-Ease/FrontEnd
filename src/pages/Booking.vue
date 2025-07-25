@@ -9,6 +9,10 @@
       <p class="phone">
         {{ phone_number_formatted }}
       </p>
+      <p class="schedule">
+        Ouvert {{ getBusinessDays(restaurantData?.schedule) }} de
+        {{ localOpeningTime }} à {{ localClosingTime }}
+      </p>
     </div>
     <p class="instruction">
       Veuillez sélectionner le nombre de personnes, la date et l'heure de votre réservation
@@ -50,6 +54,26 @@
         <p class="no-slots-txt">Aucune disponibilité pour cette date.</p>
       </div>
     </div>
+    <p class="instruction-2">
+      Veuillez entrer votre nom complet et numéro de téléphone pour finaliser la réservation.
+    </p>
+    <div class="personal-info-container">
+      <input
+        id="full-name"
+        type="text"
+        class="full-name"
+        placeholder="Nom complet"
+        v-model="reservationData.client_name"
+      />
+      <input
+        id="phone-number"
+        type="tel"
+        class="phone-number"
+        placeholder="Numéro de téléphone"
+        v-model="reservationData.client_phone"
+      />
+    </div>
+    <button class="submit-btn">Réservez</button>
   </div>
   <Page404 v-else />
 </template>
@@ -60,19 +84,43 @@ import { useRoute } from 'vue-router'
 import { bookingStore } from '@/stores/bookingStore'
 import Page404 from '@/components/booking/Page404.vue'
 
+const now = new Date()
+const todayStr = now.toISOString().slice(0, 10)
 const route = useRoute()
+const dayDict = {
+  'sunday': 'Dimanche',
+  'monday': 'Lundi',
+  'tuesday': 'Mardi',
+  'wednesday': 'Mercredi',
+  'thursday': 'Jeudi',
+  'friday': 'Vendredi',
+  'saturday': 'Samedi',
+}
 
 const pageFound = ref(null)
 const restaurantData = ref(null)
 
 const reservationSlots = computed(() => bookingStore().reservationSlots)
 const slotsLoading = ref(false)
+const localOpeningTime = ref('')
+const localClosingTime = ref('')
 
 const selectedSlot = ref(null)
 const phone_number_formatted = ref(null)
 
 function updateSelectedSlot(slot) {
   selectedSlot.value = slot
+}
+
+
+function getBusinessDays(scheduleObj) {
+  const businessDays = []
+  for (const key of Object.keys(scheduleObj)) {
+    if (scheduleObj[key] && dayDict[key]) {
+      businessDays.push(dayDict[key])
+    }
+  }
+  return businessDays.join(', ')
 }
 
 function getDayFormatted() {
@@ -123,6 +171,10 @@ onMounted(async () => {
       pageFound.value = true
       restaurantData.value = await bookingStore().getRestaurantData(route.params.id)
       phone_number_formatted.value = `(${String(restaurantData.value.general.phone).slice(0, 3)}) ${String(restaurantData.value.general.phone).slice(3, 6)}-${String(restaurantData.value.general.phone).slice(6)}`
+      localOpeningTime.value = new Date(todayStr + "T" + restaurantData.value.schedule.opening_time + ":00Z")
+        .toTimeString().slice(0, 5)
+      localClosingTime.value = new Date(todayStr + "T" + restaurantData.value.schedule.closing_time + ":00Z")
+        .toTimeString().slice(0, 5)
     } else {
       pageFound.value = false
     }
@@ -151,7 +203,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 5rem;
+  font-size: 1.5rem;
   font-weight: bold;
 }
 .loading-slots {
@@ -184,21 +236,27 @@ onMounted(async () => {
   letter-spacing: 0.1rem;
 }
 .location,
-.phone {
+.phone,
+.schedule {
   font-size: 1.2rem;
   color: #cccccc;
 }
 .instruction {
   font-size: 1.2rem;
   color: #f9f3f3;
-  margin-top: 5rem;
 }
-.picker-container {
+.instruction-2 {
+  font-size: 1.2rem;
+  color: #f9f3f3;
+}
+.picker-container,
+.personal-info-container {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
-.picker-container > input {
+.picker-container > input,
+.personal-info-container > input {
   background-color: #0f172a;
   padding: 1rem;
   border: 0.1rem solid #1a365d;
@@ -206,10 +264,12 @@ onMounted(async () => {
   color: #f1f5f9;
   font-size: 1.4rem;
 }
-.picker-container > input:focus {
+.picker-container > input:focus,
+.personal-info-container > input:focus {
   outline: 0.2rem solid #1a365d;
 }
-.picker-container > input::placeholder {
+.picker-container > input::placeholder,
+.personal-info-container > input::placeholder {
   color: rgb(161, 161, 161) 7;
 }
 .slots-list {
@@ -238,5 +298,19 @@ onMounted(async () => {
 .selected-slot {
   background-color: #0d9488;
   color: #fff;
+}
+.submit-btn {
+  background-color: #0d9488;
+  color: #fff;
+  border: none;
+  border-radius: .75rem;
+  padding: .75rem 1.5rem;
+  letter-spacing: .1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 50%;
+  align-self: center;
+  margin-bottom: 3rem;
 }
 </style>
