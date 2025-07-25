@@ -51,13 +51,13 @@
         </ul>
       </div>
       <div v-else>
-        <p class="no-slots-txt">Aucune disponibilité pour cette date.</p>
+        <p class="no-slots-txt">Aucune disponibilité pour cette date. Veuillez choisir une autre date.</p>
       </div>
     </div>
-    <p class="instruction-2">
+    <p v-if="reservationSlots.length > 0" class="instruction-2">
       Veuillez entrer votre nom complet et numéro de téléphone pour finaliser la réservation.
     </p>
-    <div class="personal-info-container">
+    <div v-if="reservationSlots.length > 0" class="personal-info-container">
       <input
         id="full-name"
         type="text"
@@ -73,7 +73,7 @@
         v-model="reservationData.client_phone"
       />
     </div>
-    <button class="submit-btn">Réservez</button>
+    <button v-if="reservationSlots.length > 0" class="submit-btn">Réservez</button>
   </div>
   <Page404 v-else />
 </template>
