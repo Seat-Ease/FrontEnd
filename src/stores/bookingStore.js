@@ -42,20 +42,24 @@ export const bookingStore = defineStore('bookingStore', () => {
       const slots = snapshot.docs.map(docSnap => {
         const slot = docSnap.data()
         const localDate = new Date(slot.date + "T" + slot.time + ":00Z");
+        const yyyy = localDate.getFullYear();
+        const mm = String(localDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(localDate.getDate()).padStart(2, '0');
         return {
           ...slot,
-          date: localDate.toISOString().split("T")[0], // YYYY-MM-DD
-          time: localDate.toTimeString().slice(0, 5), // HH:MM
+          date: `${yyyy}-${mm}-${dd}`, // date locale
+          time: localDate.toTimeString().slice(0, 5), // HH:MM locale
         };
-      }).filter(slot => {
+      })
+      .filter(slot => slot.date >= date && Number(slot.tables_available) > 0)
+      .filter(slot => {
         const now = new Date()
-        const todayStr = now.toISOString().slice(0, 10)
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
         if (date === todayStr) {
-          const slotDate = new Date(slot.date + "T" + slot.time + ":00Z");
-          return slot.date === date && slotDate >= now && Number(slot.tables_available) > 0;
+          return slot.time >= now.toTimeString().slice(0, 5) && Number(slot.tables_available) > 0;
         }
         return slot.date === date && Number(slot.tables_available) > 0
-      });
+      })
 
       // Sort slots by time (earliest to latest)
       slots.sort((a, b) => {
