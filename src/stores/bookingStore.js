@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
-import { getFirestore, doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
+import { getFirestore, doc, getDoc, collection, query, where, getDocs, updateDoc } from 'firebase/firestore'
 import { app } from '@/firebase'
 import { ref } from 'vue'
+import { reservationStore } from './reservationStore'
 
 export const bookingStore = defineStore('bookingStore', () => {
   const reservationSlots = ref([])
@@ -30,7 +31,7 @@ export const bookingStore = defineStore('bookingStore', () => {
     }
   }
 
-  async function getReservationSlots(restaurant_id, date, openingTime, closingTime) {
+  async function getReservationSlots(restaurant_id, date) {
     try {
       const db = getFirestore(app)
       const availabilitiesRef = collection(db, 'availabilities')
@@ -74,5 +75,22 @@ export const bookingStore = defineStore('bookingStore', () => {
     }
   }
 
-  return { reservationSlots, isIdValid, getRestaurantData, getReservationSlots }
+  async function createReservation(reservationData, slot) {
+    try {
+      await reservationStore().addReservation({ ...reservationData })
+    } catch (error) {
+      console.error('Erreur lors de la création de la réservation :', error)
+    }
+
+    try {
+      const availabilitieRef = doc(getFirestore(app), 'availabilities', slot.id)
+      await updateDoc(availabilitieRef, {
+        tables_available: Number(slot.tables_available) - 1
+      })
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la disponibilité :', error)
+    }
+  }
+
+  return { reservationSlots, isIdValid, getRestaurantData, getReservationSlots, createReservation }
 })

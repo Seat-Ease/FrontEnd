@@ -1,79 +1,106 @@
 <template>
   <div v-if="pageFound === null" class="loading-container">Chargement en cours...</div>
   <div v-else-if="pageFound === true" class="page-container">
-    <div class="restaurant-info-container">
-      <h3 class="name">{{ restaurantData?.general.name }}</h3>
-      <p class="location">
-        {{ restaurantData?.general.address }}, {{ restaurantData?.general.city }}
+    <div v-if="confirmationMessageShowing" class="confirmation-message-container">
+      <p class="confirmation-message">
+        Votre réservation a été créée avec succès.
+        <br />
+        Vous recevrez un e-mail de confirmation sous peu.
       </p>
-      <p class="phone">
-        {{ phone_number_formatted }}
-      </p>
-      <p class="schedule">
-        Ouvert {{ getBusinessDays(restaurantData?.schedule) }} de
-        {{ localOpeningTime }} à {{ localClosingTime }}
+      <p class="confirmation-message">
+        Cliquez
+        <span
+          @click="confirmationMessageShowing = false"
+          class="redirect-btn"
+        >
+          ici
+        </span>
+        pour retourner à la page d'accueil.
       </p>
     </div>
-    <p class="instruction">
-      Veuillez sélectionner le nombre de personnes, la date et l'heure de votre réservation
-    </p>
-    <div class="picker-container">
-      <input
-        id="party-size"
-        type="number"
-        class="party-size"
-        v-model="reservationData.party_size"
-      />
-      <input
-        id="reservation-date"
-        type="date"
-        class="date"
-        v-model="reservationData.date"
-        @change="onDateChange"
-      />
+    <div v-if="waitingMessageShowing && !confirmationMessageShowing" class="waiting-message-container">
+      <p class="waiting-message">
+        Votre réservation est en cours de traitement. Veuillez patienter.
+        <br />
+        <br />
+        Il est important de ne pas rafraîchir la page.
+      </p>
     </div>
-    <div v-if="slotsLoading" class="loading-slots">Chargement en cours...</div>
-    <div v-else class="slots-container">
-      <div v-if="reservationSlots.length > 0 && !slotsLoading">
-        <ul class="slots-list">
-          <li v-for="slot in reservationSlots" :key="slot.id">
-            <button
-              class="slot-item"
-              :class="{ 'selected-slot': selectedSlot?.id === slot.id }"
-              @click="() => {
-                updateSelectedSlot(slot)
-                reservationData.time = slot.time
-              }"
-            >
-              {{ slot.time }}
-            </button>
-          </li>
-        </ul>
+    <div v-if="!confirmationMessageShowing" class="booker-container">
+      <div class="restaurant-info-container">
+        <h3 class="name">{{ restaurantData?.general.name }}</h3>
+        <p class="location">
+          {{ restaurantData?.general.address }}, {{ restaurantData?.general.city }}
+        </p>
+        <p class="phone">
+          {{ phone_number_formatted }}
+        </p>
+        <p class="schedule">
+          Ouvert {{ getBusinessDays(restaurantData?.schedule) }} de
+          {{ localOpeningTime }} à {{ localClosingTime }}
+        </p>
       </div>
-      <div v-else>
-        <p class="no-slots-txt">Aucune disponibilité pour cette date. Veuillez choisir une autre date.</p>
+      <p class="instruction">
+        Veuillez sélectionner le nombre de personnes, la date et l'heure de votre réservation
+      </p>
+      <div class="picker-container">
+        <input
+          id="party-size"
+          type="number"
+          class="party-size"
+          v-model="reservationData.party_size"
+        />
+        <input
+          id="reservation-date"
+          type="date"
+          class="date"
+          v-model="reservationData.date"
+          @change="onDateChange"
+        />
       </div>
+      <div v-if="slotsLoading" class="loading-slots">Chargement en cours...</div>
+      <div v-else class="slots-container">
+        <div v-if="reservationSlots.length > 0 && !slotsLoading">
+          <ul class="slots-list">
+            <li v-for="slot in reservationSlots" :key="slot.id">
+              <button
+                class="slot-item"
+                :class="{ 'selected-slot': selectedSlot?.id === slot.id }"
+                @click="() => {
+                  updateSelectedSlot(slot)
+                  reservationData.time = slot.time
+                }"
+              >
+                {{ slot.time }}
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div v-else>
+          <p class="no-slots-txt">Aucune disponibilité pour cette date. Veuillez choisir une autre date.</p>
+        </div>
+      </div>
+      <p v-if="reservationSlots.length > 0" class="instruction-2">
+        Veuillez entrer votre nom complet et numéro de téléphone pour finaliser la réservation.
+      </p>
+      <div v-if="reservationSlots.length > 0" class="personal-info-container">
+        <input
+          id="full-name"
+          type="text"
+          class="full-name"
+          placeholder="Nom complet"
+          v-model="reservationData.client_name"
+        />
+        <input
+          id="phone-number"
+          type="tel"
+          class="phone-number"
+          placeholder="Numéro de téléphone"
+          v-model="reservationData.client_phone"
+        />
+      </div>
+      <button v-if="reservationSlots.length > 0" @click="submitReservation" class="submit-btn">Réservez</button>
     </div>
-    <p v-if="reservationSlots.length > 0" class="instruction-2">
-      Veuillez entrer votre nom complet et numéro de téléphone pour finaliser la réservation.
-    </p>
-    <div v-if="reservationSlots.length > 0" class="personal-info-container">
-      <input
-        id="full-name"
-        type="text"
-        class="full-name"
-        placeholder="Nom complet"
-        v-model="reservationData.client_name"
-      />
-      <input
-        id="phone-number"
-        type="tel"
-        class="phone-number"
-        placeholder="Numéro de téléphone"
-        v-model="reservationData.client_phone"
-      />
-    </div>
-    <button v-if="reservationSlots.length > 0" class="submit-btn">Réservez</button>
   </div>
   <Page404 v-else />
 </template>
@@ -82,7 +109,11 @@ import { ref, onMounted, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useRoute } from 'vue-router'
 import { bookingStore } from '@/stores/bookingStore'
+import { reservationStore } from '@/stores/reservationStore'
 import Page404 from '@/components/booking/Page404.vue'
+
+const waitingMessageShowing = ref(false)
+const confirmationMessageShowing = ref(false)
 
 const now = new Date()
 const todayStr = now.toISOString().slice(0, 10)
@@ -159,9 +190,49 @@ async function onDateChange() {
       restaurantData.value.schedule.opening_time,
       restaurantData.value.schedule.closing_time
     )
+    updateSelectedSlot(reservationSlots.value.find(slot => slot.time === reservationData.value.time))
     slotsLoading.value = false
   } catch (error) {
     console.error('Error fetching reservation slots:', error)
+  }
+}
+
+async function submitReservation() {
+  if (!selectedSlot.value) {
+    alert('Veuillez sélectionner une heure de réservation.')
+    return
+  }
+  if (reservationData.value.client_name.length === 0) {
+    alert('Veuillez entrer votre nom complet.')
+    return
+  }
+  if (reservationData.value.client_phone.length === 0) {
+    alert('Veuillez entrer votre numéro de téléphone.')
+    return
+  }
+
+  waitingMessageShowing.value = true
+  try {
+    await bookingStore().createReservation({ ...reservationData.value }, { ...selectedSlot.value })
+    reservationData.value.client_name = ''
+    reservationData.value.client_phone = ''
+    reservationData.value.date = getDayFormatted()
+    reservationData.value.time = '19:00'
+    reservationData.value.party_size = 2
+    reservationData.value.id = String(uuidv4())
+    reservationData.value.tables_occupied = []
+    reservationData.value.service_start_time = ''
+    reservationData.value.service_end_time = ''
+    reservationData.value.walk_in = false
+    reservationData.value.cancelled = false
+    reservationData.value.restaurant_id = route.params.id
+    updateSelectedSlot(reservationSlots.value.find(slot => slot.time === reservationData.value.time))
+    confirmationMessageShowing.value = true
+  } catch (error) {
+    console.error('Error creating reservation:', error)
+    alert('Une erreur est survenue lors de la réservation. Veuillez réessayer plus tard.')
+  } finally {
+    waitingMessageShowing.value = false
   }
 }
 
@@ -175,6 +246,7 @@ onMounted(async () => {
         .toTimeString().slice(0, 5)
       localClosingTime.value = new Date(todayStr + "T" + restaurantData.value.schedule.closing_time + ":00Z")
         .toTimeString().slice(0, 5)
+        updateSelectedSlot(reservationSlots.value.find(slot => slot.time === reservationData.value.time))
     } else {
       pageFound.value = false
     }
@@ -185,9 +257,7 @@ onMounted(async () => {
   slotsLoading.value = true
   try {
     await bookingStore().getReservationSlots(
-      restaurantData.value.account_uid, reservationData.value.date,
-      restaurantData.value.schedule.opening_time,
-      restaurantData.value.schedule.closing_time
+      restaurantData.value.account_uid, reservationData.value.date
     )
     slotsLoading.value = false
   } catch (error) {
@@ -196,6 +266,48 @@ onMounted(async () => {
 })
 </script>
 <style scoped>
+.confirmation-message-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 2rem;
+}
+.confirmation-message {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+}
+.redirect-btn {
+  color: #0d9488;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.waiting-message-container {
+  background-color: #00000077;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  min-height: 100%;
+  min-width: 100%;
+  z-index: 1000000;
+}
+.waiting-message {
+  background-color: #0d9488;
+  padding: 2rem 3.5rem;
+  border-radius: 0.75rem;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  width: 75%;
+  text-align: center;
+  align-self: flex-start;
+  margin-top: 25rem;
+}
 .loading-container {
   width: 100%;
   background-color: #1e293b;
@@ -216,12 +328,16 @@ onMounted(async () => {
   font-size: 1.6rem;
   font-weight: 600;
 }
-.page-container {
+.page-container,
+.booker-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 2rem;
   background-color: #1e293b;
   width: 100%;
+}
+.booker-container {
   padding: 0 2rem;
   padding-top: 2rem;
 }
