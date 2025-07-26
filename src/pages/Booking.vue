@@ -5,7 +5,7 @@
       <p class="confirmation-message">
         Votre réservation a été créée avec succès.
         <br />
-        Vous recevrez un e-mail de confirmation sous peu.
+        Vous recevrez un message de confirmation via WhatsApp sous peu.
       </p>
       <p class="confirmation-message">
         Cliquez
@@ -109,7 +109,6 @@ import { ref, onMounted, computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useRoute } from 'vue-router'
 import { bookingStore } from '@/stores/bookingStore'
-import { reservationStore } from '@/stores/reservationStore'
 import Page404 from '@/components/booking/Page404.vue'
 
 const waitingMessageShowing = ref(false)

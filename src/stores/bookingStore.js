@@ -57,7 +57,7 @@ export const bookingStore = defineStore('bookingStore', () => {
         const now = new Date()
         const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
         if (date === todayStr) {
-          return slot.time >= now.toTimeString().slice(0, 5) && Number(slot.tables_available) > 0;
+          return slot.date === date && slot.time >= now.toTimeString().slice(0, 5) && Number(slot.tables_available) > 0;
         }
         return slot.date === date && Number(slot.tables_available) > 0
       })
